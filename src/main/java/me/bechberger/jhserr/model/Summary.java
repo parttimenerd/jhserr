@@ -66,7 +66,22 @@ public class Summary {
     @JsonIgnore public @Nullable String hostname() {
         if (host == null || host.startsWith("\"")) return null;
         int comma = host.indexOf(',');
-        return comma > 0 ? host.substring(0, comma).trim() : null;
+        if (comma <= 0) return null;
+        String candidate = host.substring(0, comma).trim();
+        // CPU model strings are not hostnames
+        if (looksLikeCpuModel(candidate)) return null;
+        return candidate;
+    }
+
+    private static boolean looksLikeCpuModel(String s) {
+        String lower = s.toLowerCase();
+        return lower.contains("intel") || lower.contains("amd") || lower.contains("cpu")
+                || lower.contains("ghz") || lower.contains("mhz") || lower.contains("core")
+                || lower.contains("xeon") || lower.contains("epyc") || lower.contains("ryzen")
+                || lower.contains("opteron") || lower.contains("threadripper")
+                || lower.contains("apple m") || lower.contains("cortex")
+                || lower.contains("neoverse") || lower.contains("graviton")
+                || s.contains("@");
     }
 
     public void accept(HsErrVisitor v) { v.visitSummary(this); }

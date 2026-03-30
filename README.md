@@ -44,6 +44,8 @@ Files.writeString(Path.of("redacted.log"), redacted.toString());
 - **Redaction**: `RedactionTransformer` strips usernames, paths, hostnames,
   PIDs, IP addresses, env vars, and other sensitive data from crash reports.
   Configurable via `RedactionConfig` with presets (minimal, aggressive) and JSON config files.
+  `sensitivePathPrefixes` supports glob patterns (`*`, `**`, `?`) alongside literal prefixes.
+  Path matching is boundary-aware — `/priv` matches `/priv/var` but not `/private`.
 - **JSON serialization**: Full Jackson-based JSON serialization and deserialization
   via `HsErrJson`. Supports round-trip JSON ↔ model.
 - **CLI tool**: Two commands — `redact` for stripping sensitive data,
@@ -65,7 +67,7 @@ Files.writeString(Path.of("redacted.log"), redacted.toString());
 
 ### CLI
 
-The CLI has two commands: `redact` and `json`.
+The CLI has three commands: `redact`, `json`, and `roundtrip`.
 
 #### Redact
 
@@ -118,6 +120,16 @@ java -jar jhserr.jar json from -o restored.log report.json
 # Print the JSON schema
 java -jar jhserr.jar json schema
 java -jar jhserr.jar json schema -o schema.json
+```
+
+#### Roundtrip
+
+```bash
+# Run text roundtrip checks for all hs_err files in a directory
+java -jar jhserr.jar roundtrip sample-hserrs/new
+
+# Run text + JSON roundtrip checks
+java -jar jhserr.jar roundtrip --json sample-hserrs/new
 ```
 
 ### Library
@@ -195,8 +207,9 @@ Categories (all enabled by default unless noted):
 | `redactHostnames` | on | Hostnames from summary and uname |
 | `redactPids` | on | PIDs and thread IDs |
 | `redactEnvVars` | on | Environment variable values (except safe list) |
-| `redactPaths` | on | Sensitive path prefixes |
+| `redactPaths` | on | Sensitive path prefixes (supports globs: `*`, `**`, `?`) |
 | `redactIpAddresses` | on | IPv4 addresses |
+| `pathMode` | `KEEP_FILENAME` | `KEEP_FILENAME` / `REDACT_ALL` / `KEEP_ALL` |
 | `redactThreadNames` | off | Thread names |
 | `removeDynamicLibraries` | off | Remove entire dynamic libraries section |
 | `removeEventLogs` | off | Remove event log sections |
@@ -234,11 +247,50 @@ mvn test
 python3 release.py patch
 ```
 
-## Support, Feedback, Contributing
+### Web Tool (`hserr-web/`)
 
-This project is open to feature requests, suggestions, bug reports,
-and contributions via [GitHub Issues](https://github.com/parttimenerd/jhserr/issues).
+A browser-based version of the parser built with [GraalVM Web Image](https://www.graalvm.org/latest/reference-manual/web-image/)
+(compiles Java to WASM). Drag & drop an hs_err file to parse, redact, and view a diff — all client-side.
 
-## License
+Features:
+- **4 tabs**: editable source, JSON with syntax highlighting, redacted view, line-level diff
+- **Inline change highlighting**: the redacted tab marks only the changed substrings within each line
+- **CodeMirror JSON editor**: syntax-highlighted config editing with bracket matching
+- **Live config updates**: changes to the redaction config apply immediately (debounced)
+- **Example files**: three bundled hs_err files to try without uploading
+- **Download buttons**: export JSON or redacted text
+- **Persistent config**: redaction settings saved in localStorage
 
-This project is open source under the [MIT License](LICENSE).
+The submodule lives in `hserr-web/` and requires the following to build:
+
+- **GraalVM 25+** (install via `sdk install java 25.0.2-graal`)
+- **binaryen** v119+ for `wasm-opt` (install via `brew install binaryen` on macOS or `apt install binaryen` on Linux)
+- **Maven 3.9+**
+
+```bash
+# First, install the parser library into the local Maven repo
+mvn install -DskipTests
+
+# Then build the WASM module
+cd hserr-web
+mvn package
+# Outputs: web/hserr.js + web/hserr.js.wasm
+# Open web/index.html in a browser
+```
+
+Or use the all-in-one script (auto-detects the latest sdkman GraalVM):
+
+```bash
+./launch.sh          # builds everything and starts a dev server on :8080
+PORT=3000 ./launch.sh  # use a custom port
+```
+
+The web tool is automatically deployed to GitHub Pages on pushes to main.
+
+Support, Feedback, Contributing
+-------------------------------
+This project is open to feature requests/suggestions, bug reports etc. via <a href="https://github.com/parttimenerd/jhserr/issues">GitHub issues</a>. Contribution and feedback are encouraged and always welcome.
+
+License
+-------
+MIT, Copyright 2026 SAP SE or an SAP affiliate company, Johannes Bechberger and contributors

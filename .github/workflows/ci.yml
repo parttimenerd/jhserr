@@ -5,6 +5,9 @@ on:
     branches: [ master, main ]
   pull_request:
     branches: [ master, main ]
+  schedule:
+    - cron: '15 2 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -48,3 +51,37 @@ jobs:
         with:
           name: test-results-${{ matrix.os }}-jdk${{ matrix.java }}
           path: target/surefire-reports/
+
+  web-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up GraalVM 25
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25-ea'
+          distribution: 'graalvm'
+          cache: 'maven'
+
+      - name: Install binaryen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq binaryen
+
+      - name: Install parser library
+        run: mvn -B install -DskipTests
+
+      - name: Build hserr-web (GraalVM Web Image)
+        working-directory: hserr-web
+        run: mvn -B package 2>&1 | tee mvn.out
+
+      - name: Verify WASM output
+        run: |
+          ls -lh hserr-web/web/hserr.js hserr-web/web/hserr.js.wasm
+
+      - name: Upload web artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hserr-web
+          path: hserr-web/web/

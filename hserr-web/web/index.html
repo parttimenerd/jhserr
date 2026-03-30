@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hs_err Parser — Parse, Redact &amp; Export</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='18' font-weight='bold' fill='%2358a6ff' text-anchor='middle'%3Ehs%3C/text%3E%3C/svg%3E" />
+
+<!-- highlight.js for syntax highlighting (JSON + plaintext) -->
+<link rel="stylesheet" href="lib/github-dark.min.css" />
+<script src="lib/highlight.min.js"></script>
+
+<!-- CodeMirror 5 for JSON config editing -->
+<link rel="stylesheet" href="lib/codemirror.min.css" />
+<script src="lib/codemirror.min.js"></script>
+<script src="lib/cm-javascript.min.js"></script>
+
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #c9d1d9; --dim: #8b949e; --accent: #58a6ff;
+    --accent-hover: #79c0ff; --green: #3fb950; --red: #f85149;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    min-height: 100vh; padding: 2rem; max-width: 1100px; margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── header ─────────────────────────────────────── */
+  .header { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
+  h1 { font-size: 1.6rem; }
+  h1 span { color: var(--accent); }
+  .header-links { font-size: 0.85rem; color: var(--dim); }
+  .header-links a { margin-left: 0.5rem; }
+  .subtitle { color: var(--dim); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  /* ── drop zone ──────────────────────────────────── */
+  #drop-zone {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 3rem 2rem; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1rem;
+  }
+  #drop-zone.drag-over { border-color: var(--accent); background: rgba(88,166,255,.06); }
+  #drop-zone p { color: var(--dim); font-size: 1.05rem; }
+  #drop-zone .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+  /* ── status ─────────────────────────────────────── */
+  .status-bar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; min-height: 1.5em; }
+  #status { color: var(--dim); font-size: 0.85rem; }
+  #file-name { color: var(--accent); font-weight: 600; font-size: 0.85rem; display: none; }
+
+  /* ── tabs ────────────────────────────────────────── */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn {
+    background: none; border: none; color: var(--dim); padding: 0.6rem 1.2rem;
+    cursor: pointer; font-size: 0.9rem; border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── panels ─────────────────────────────────────── */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 8px 8px; padding: 0;
+    display: none; max-height: 60vh; overflow: auto;
+  }
+  .panel pre {
+    font-family: var(--font-mono); font-size: 0.8rem;
+    white-space: pre; word-break: normal; color: var(--text);
+    margin: 0; padding: 1rem; overflow-x: auto;
+    background: transparent !important;
+  }
+  .panel pre code {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  /* ── diff & redaction highlights ─────────────── */
+  .diff-ctx { color: var(--dim); }
+  .diff-del { background: rgba(248,81,73,.15); color: #ffa198; display: block; }
+  .diff-add { background: rgba(63,185,80,.15); color: #7ee787; display: block; }
+  .diff-skip { color: var(--dim); font-style: italic; display: block; }
+  .redact-mark { background: rgba(234, 6, 32, 0.87); border-radius: 2px; cursor: help; }
+  .redact-mark:hover { background: rgba(234, 6, 32, 1); }
+
+  /* ── buttons ────────────────────────────────────── */
+  .actions { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+  button {
+    font-family: inherit; font-size: 0.85rem; padding: 0.45rem 1rem;
+    border-radius: 6px; border: 1px solid var(--border); cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary { background: var(--surface); color: var(--text); }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  /* ── config ─────────────────────────────────────── */
+  details { margin-top: 1.5rem; }
+  summary {
+    cursor: pointer; font-weight: 600; font-size: 0.95rem;
+    color: var(--accent); margin-bottom: 0.5rem;
+  }
+  #config-area, #source-output {
+    width: 100%; font-family: var(--font-mono);
+    font-size: 0.8rem; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem;
+    resize: vertical;
+  }
+  #config-area { min-height: 200px; }
+
+  /* CodeMirror overrides to match site theme */
+  .CodeMirror {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    height: auto;
+    min-height: 200px;
+    max-height: 400px;
+  }
+  .CodeMirror-gutters {
+    background: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
+  }
+  .CodeMirror-linenumber { color: var(--dim) !important; }
+  .CodeMirror-cursor { border-left-color: var(--accent) !important; }
+  .CodeMirror-selected { background: rgba(88,166,255,.15) !important; }
+  .CodeMirror-focused .CodeMirror-selected { background: rgba(88,166,255,.2) !important; }
+  .cm-s-default .cm-string { color: #a5d6ff !important; }
+  .cm-s-default .cm-number { color: #79c0ff !important; }
+  .cm-s-default .cm-atom { color: #ff7b72 !important; }
+  .cm-s-default .cm-property { color: #d2a8ff !important; }
+  .CodeMirror-matchingbracket { color: var(--green) !important; outline: 1px solid var(--green); }
+  .CodeMirror-scroll { max-height: 400px; }
+  #source-output {
+    min-height: 300px; white-space: pre; word-break: normal;
+    overflow: auto; line-height: 1.4; border: none; border-radius: 0;
+    outline: none; tab-size: 4;
+  }
+  .config-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+  /* ── footer ─────────────────────────────────────── */
+  footer { color: var(--dim); font-size: 0.75rem; margin-top: 2rem; text-align: center; }
+
+  /* ── examples ───────────────────────────────────── */
+  .examples { margin-bottom: 1rem; }
+  .examples-label { color: var(--dim); font-size: 0.85rem; margin-right: 0.5rem; }
+  .example-btn {
+    background: var(--surface); color: var(--accent); border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+    margin-right: 0.35rem; transition: border-color 0.15s;
+  }
+  .example-btn:hover { border-color: var(--accent); }
+
+  /* ── loading overlay ────────────────────────────── */
+  #loading {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; font-size: 1.1rem; color: var(--dim);
+  }
+  #loading.hidden { display: none; }
+</style>
+</head>
+<body>
+  <div id="loading">Loading WASM module…</div>
+
+  <div class="header">
+    <h1><span>hs_err</span> Parser</h1>
+    <span class="header-links">
+      <a href="https://github.com/parttimenerd/jhserr" target="_blank" rel="noopener">GitHub</a>
+      ·
+      <a href="https://github.com/parttimenerd/jhserr#readme" target="_blank" rel="noopener">Docs</a>
+    </span>
+  </div>
+  <p class="subtitle">Parse, redact &amp; diff HotSpot crash reports — entirely in the browser via
+    <a href="https://www.graalvm.org/latest/reference-manual/web-image/" target="_blank" rel="noopener">GraalVM Web Image</a>.</p>
+
+  <div id="drop-zone">
+    <div class="icon">📂</div>
+    <p>Drag &amp; drop an <code>hs_err</code> file here</p>
+  </div>
+
+  <div class="examples">
+    <span class="examples-label">Or try an example:</span>
+    <button class="example-btn" data-file="examples/sigsegv_basic.log" data-label="SIGSEGV — macOS (1 346 lines)">SIGSEGV — macOS (1 346 lines)</button>
+    <button class="example-btn" data-file="examples/internal_error_macos.log" data-label="Internal Error — macOS (914 lines)">Internal Error — macOS (914 lines)</button>
+    <button class="example-btn" data-file="examples/shenandoah_linux.log" data-label="Shenandoah — Linux (3 651 lines)">Shenandoah — Linux (3 651 lines)</button>
+  </div>
+
+  <div class="status-bar">
+    <span id="file-name"></span>
+    <span id="status">Loading…</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-source">Source</button>
+    <button class="tab-btn" id="tab-json">JSON</button>
+    <button class="tab-btn" id="tab-redacted">Redacted</button>
+    <button class="tab-btn" id="tab-diff">Diff</button>
+  </div>
+
+  <div class="panel" id="panel-source" style="display:block">
+    <textarea id="source-output" spellcheck="false" placeholder="Paste or drop an hs_err file here...">Waiting for file…</textarea>
+  </div>
+  <div class="panel" id="panel-json">
+    <pre><code id="json-output" class="language-json">Waiting for file…</code></pre>
+  </div>
+  <div class="panel" id="panel-redacted">
+    <pre><code id="redacted-output">Waiting for file…</code></pre>
+  </div>
+  <div class="panel" id="panel-diff">
+    <pre><code id="diff-output">Waiting for file…</code></pre>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="dl-json" disabled>⬇ Download JSON</button>
+    <button class="btn-primary" id="dl-redacted" disabled>⬇ Download Redacted</button>
+  </div>
+
+  <details>
+    <summary>Redaction Configuration (JSON)</summary>
+    <textarea id="config-area" spellcheck="false"></textarea>
+    <p style="color:var(--dim);font-size:0.75rem;margin-top:0.3rem;">Edit above — changes apply live. The default config is generated from <code>RedactionConfig</code> defaults.</p>
+    <div class="config-actions">
+      <button class="btn-secondary" id="apply-config">Apply &amp; Save</button>
+      <button class="btn-secondary" id="reset-config">Reset Defaults</button>
+    </div>
+  </details>
+
+  <footer>
+    <a href="https://github.com/parttimenerd/jhserr" target="_blank" rel="noopener">jhserr</a>. A library for parsing, transforming &amp; redacting HotSpot hs_err crash report files. By <a href="https://mostlynerdless.de">Johannes Bechberger</a> from <a href="https://sapmachine.io">SapMachine</a>.
+  </footer>
+
+  <!-- GraalVM Web Image output: hserr.js loads hserr.js.wasm -->
+  <script src="hserr.js"></script>
+  <script>
+    document.getElementById('loading').classList.add('hidden');
+
+    // Initialize CodeMirror on config textarea
+    (function() {
+      var ta = document.getElementById('config-area');
+      if (typeof CodeMirror !== 'undefined') {
+        window.cmConfigEditor = CodeMirror.fromTextArea(ta, {
+          mode: {name: 'javascript', json: true},
+          lineNumbers: true,
+          matchBrackets: true,
+          autoCloseBrackets: true,
+          lineWrapping: false,
+          tabSize: 2,
+          indentWithTabs: false
+        });
+        window.cmConfigEditor.on('change', function() {
+          window.cmConfigEditor.save();
+          ta.dispatchEvent(new Event('input', {bubbles: true}));
+        });
+      }
+    })();
+
+    // Example file loading
+    document.querySelectorAll('.example-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var url = btn.getAttribute('data-file');
+        var name = url.split('/').pop();
+        btn.disabled = true;
+        btn.textContent = 'Loading…';
+        fetch(url)
+          .then(function(r) { return r.text(); })
+          .then(function(text) {
+            var file = new File([text], name, { type: 'text/plain' });
+            var dt = new DataTransfer();
+            dt.items.add(file);
+            var evt = new DragEvent('drop', { dataTransfer: dt, bubbles: true });
+            document.getElementById('drop-zone').dispatchEvent(evt);
+          })
+          .catch(function(err) {
+            document.getElementById('status').textContent = 'Failed to load example: ' + err.message;
+          })
+          .finally(function() {
+            btn.disabled = false;
+            btn.textContent = btn.getAttribute('data-label');
+          });
+      });
+    });
+  </script>
+</body>
+</html>

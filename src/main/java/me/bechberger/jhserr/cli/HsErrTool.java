@@ -5,7 +5,6 @@ import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import com.github.victools.jsonschema.module.jackson.JacksonOption;
 import me.bechberger.jhserr.HsErrReport;
 import me.bechberger.jhserr.HsErrJson;
-import me.bechberger.jhserr.model.*;
 import me.bechberger.jhserr.parser.HsErrParser;
 import me.bechberger.jhserr.transform.*;
 import me.bechberger.femtocli.FemtoCli;
@@ -22,9 +21,9 @@ import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 @Command(name = "hserr",
-        description = {"Parse and transform HotSpot error report (hs_err) files."},
-        version = "hserr-parser 0.0.0",
-        subcommands = {HsErrTool.RedactCmd.class, HsErrTool.JsonCmd.class, HsErrTool.RoundTripCmd.class},
+        description = {"Parse, transform and redact HotSpot error report (hs_err) files."},
+        version = "jhserr 0.0.0",
+    subcommands = {HsErrTool.RedactCmd.class, HsErrTool.JsonCmd.class, HsErrTool.RoundTripCmd.class},
         mixinStandardHelpOptions = true)
 public class HsErrTool implements Runnable {
 
@@ -268,13 +267,13 @@ public class HsErrTool implements Runnable {
     public static class RoundTripCmd implements Callable<Integer> {
 
         @Parameters(index = "0", description = "Path to an hs_err file or directory to scan recursively")
-        private Path path;
+        Path path;
 
         @Option(names = {"--json"}, description = "Also run JSON round-trip when text round-trip succeeds")
-        private boolean json;
+        boolean json;
 
         @Option(names = {"-w", "--watch"}, description = "Watch directory for new/changed hs_err files")
-        private boolean watch;
+        boolean watch;
 
         @Override
         public Integer call() throws Exception {
@@ -297,7 +296,7 @@ public class HsErrTool implements Runnable {
         }
 
         private int testDirectory(Path dir) throws IOException {
-            int total = 0, passed = 0, failed = 0, skipped = 0;
+            int total = 0, passed = 0, failed = 0;
             try (Stream<Path> walk = Files.walk(dir)) {
                 List<Path> files = walk
                         .filter(Files::isRegularFile)
@@ -308,7 +307,6 @@ public class HsErrTool implements Runnable {
                     int result = testFile(file);
                     if (result == 2) {
                         // SAP JVM files are skipped and not counted in total
-                        skipped++;
                     } else {
                         total++;
                         if (result == 0) passed++;

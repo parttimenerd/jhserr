@@ -30,8 +30,8 @@ public class RedactionTransformer extends HsErrTransformer {
     private final RedactionConfig config;
     private final Set<String> usernames = new LinkedHashSet<>();
     private final Set<String> hostnames = new LinkedHashSet<>();
-    /** Effective path prefixes: config-supplied + auto-discovered parent chains, sorted longest-first. */
-    private final List<String> effectivePathPrefixes = new ArrayList<>();
+    /** Compiled patterns for all sensitivePathPrefixes (literal + glob), sorted longest-first. */
+    private final List<Pattern> pathPatterns = new ArrayList<>();
     private final List<String> redactions = new ArrayList<>();
 
     public RedactionTransformer() {
@@ -91,30 +91,54 @@ public class RedactionTransformer extends HsErrTransformer {
         scanItems(report.process());
         scanItems(report.system());
 
-        // Build effective path prefixes: config-supplied + parent directories, sorted longest first
-        Set<String> allPrefixes = new LinkedHashSet<>();
-        for (String prefix : config.sensitivePathPrefixes()) {
-            addWithParents(allPrefixes, prefix);
+        // Build path patterns: globs use globToPattern, literals use boundary-aware regex
+        // Sort by descending source length so longest prefixes match first
+        List<String> prefixes = new ArrayList<>(config.sensitivePathPrefixes());
+        prefixes.sort(Comparator.comparingInt(String::length).reversed());
+        for (String prefix : prefixes) {
+            if (isGlob(prefix)) {
+                pathPatterns.add(globToPattern(prefix));
+            } else {
+                String normalized = prefix.endsWith("/") ? prefix.substring(0, prefix.length() - 1) : prefix;
+                // Match the literal prefix only at a path boundary: the prefix must be followed
+                // by '/' (subpath continues), end-of-string, or a non-path char (space, quote, etc.)
+                // — but NOT by letters/digits that would make it a longer component (e.g. /priv vs /private).
+                // Then consume the rest of the path segment (non-whitespace).
+                pathPatterns.add(Pattern.compile(
+                        Pattern.quote(normalized) + "(?=/|$|(?=[^\\w.+-]))\\S*"));
+            }
         }
-        effectivePathPrefixes.addAll(allPrefixes);
-        effectivePathPrefixes.sort(Comparator.comparingInt(String::length).reversed());
     }
 
-    /** Add a path prefix and all its parent directories (down to 2 components). */
-    private void addWithParents(Set<String> prefixes, String path) {
-        String normalized = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
-        while (normalized.contains("/")) {
-            prefixes.add(normalized);
-            int lastSlash = normalized.lastIndexOf('/');
-            if (lastSlash <= 0) break;
-            normalized = normalized.substring(0, lastSlash);
-            // Stop at root-level single-component paths like "/priv"
-            if (!normalized.contains("/") || normalized.equals("/")) break;
-            // Keep going — "/priv/jenkins" → "/priv" would be too broad
-            // Only stop when we'd reduce to just "/"
+    /** Whether the prefix contains glob wildcards. */
+    private static boolean isGlob(String prefix) {
+        return prefix.contains("*") || prefix.contains("?");
+    }
+
+    /** Convert a glob pattern to a compiled regex that matches path prefixes.
+     *  {@code **} matches across separators, {@code *} matches within one segment,
+     *  {@code ?} matches a single character. */
+    private static Pattern globToPattern(String glob) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < glob.length()) {
+            char c = glob.charAt(i);
+            if (c == '*' && i + 1 < glob.length() && glob.charAt(i + 1) == '*') {
+                sb.append(".*");
+                i += 2;
+            } else if (c == '*') {
+                sb.append("[^/]*");
+                i++;
+            } else if (c == '?') {
+                sb.append(".");
+                i++;
+            } else {
+                sb.append(Pattern.quote(String.valueOf(c)));
+                i++;
+            }
         }
-        // Also add the leaf in case it already had a trailing slash
-        prefixes.add(path.endsWith("/") ? path.substring(0, path.length() - 1) : path);
+        // Match the glob and everything after it (path continuation)
+        return Pattern.compile(sb + "\\S*");
     }
 
     private void scanItems(@Nullable ThreadSection section) {
@@ -568,11 +592,9 @@ public class RedactionTransformer extends HsErrTransformer {
         if (text == null) return null;
         String result = text;
 
-        // 1. Sensitive path prefix replacement (longest match first)
-        for (String prefix : effectivePathPrefixes) {
-            if (result.contains(prefix)) {
-                result = result.replace(prefix, config.pathPlaceholder());
-            }
+        // 1. Sensitive path prefix replacement (longest match first, boundary-aware)
+        for (Pattern p : pathPatterns) {
+            result = p.matcher(result).replaceAll(Matcher.quoteReplacement(config.pathPlaceholder()));
         }
 
         // 2. Username replacement in paths

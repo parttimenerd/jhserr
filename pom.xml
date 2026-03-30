@@ -44,6 +44,13 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven-public/</url>
+        </repository>
+    </repositories>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -116,6 +123,7 @@
                 <configuration>
                     <doclint>none</doclint>
                     <quiet>true</quiet>
+
                 </configuration>
             </plugin>
 
@@ -145,8 +153,8 @@
         </plugins>
     </build>
 
-    <!-- Release profile for Maven Central deployment -->
     <profiles>
+        <!-- Release profile for Maven Central deployment -->
         <profile>
             <id>release</id>
             <build>

@@ -57,7 +57,13 @@ build/
 .env.local
 *.log
 
+# GraalVM Web Image build artifacts
+hserr-web/web/hserr.js
+hserr-web/web/hserr.js.wasm
+hserr-web/web/hserr.js.wat
+hserr-web/web/lib/
+hserr-web/target/
+hserr-web/mvn.out
+
 # Runtime
 *.out
-
-TODO
