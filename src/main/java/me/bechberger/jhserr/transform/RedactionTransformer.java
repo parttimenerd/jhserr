@@ -224,7 +224,7 @@ public class RedactionTransformer extends HsErrTransformer {
     private void extractHostnameFromUname(String unameLine) {
         // Format: "uname: <OS> [HOSTNAME] <version> ..."
         // Linux: "uname: Linux ls3607 6.4.0-..."
-        // Darwin with hostname: "uname: Darwin FVFFN48SQ05N 22.3.0 ..."
+        // Darwin with hostname: "uname: Darwin HGJHGLJ 22.3.0 ..."
         // Darwin without hostname: "uname: Darwin 24.6.0 ..."
         String after = unameLine.substring("uname:".length()).trim();
         String[] parts = after.split("\\s+", 3);

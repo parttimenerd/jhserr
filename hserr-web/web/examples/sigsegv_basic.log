@@ -3,8 +3,8 @@
 #
 #  SIGSEGV (0xb) at pc=0x000000013000f588, pid=16540, tid=8451
 #
-# JRE version: OpenJDK Runtime Environment (22.0) (slowdebug build 22-internal-adhoc.i560383.jdk)
-# Java VM: OpenJDK 64-Bit Server VM (slowdebug 22-internal-adhoc.i560383.jdk, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+# JRE version: OpenJDK Runtime Environment (22.0) (slowdebug build 22-internal-adhoc.jbechberger.jdk)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 22-internal-adhoc.jbechberger.jdk, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
 # Problematic frame:
 # C  [libSmallProfiler.so+0xf588]  signalHandler(int, __siginfo*, void*)+0x464
 #
@@ -18,7 +18,7 @@
 
 Command Line: -agentpath:libSmallProfiler.so=interval=0.1s math.MathParser
 
-Host: FVFFN48SQ05N, "MacBookPro17,1" arm64, 8 cores, 16G, Darwin 22.6.0, macOS 13.5.1 (22G90)
+Host: HKJHJKLHJ, "MacBookPro17,1" arm64, 8 cores, 16G, Darwin 22.6.0, macOS 13.5.1 (22G90)
 Time: Thu Aug 31 17:31:03 2023 CEST elapsed time: 1.376730 seconds (0d 0h 0m 1s)
 
 ---------------  T H R E A D  ---------------
@@ -43,7 +43,7 @@ V  [libjvm.dylib+0x1099a10]  SafepointSynchronize::handle_polling_page_exception
 v  ~SafepointBlob 0x000000015ab088d0
 J 70 c1 math.Parser.init(Lmath/Lexer;)Lmath/Parser; (29 bytes) @ 0x000000015351c22c [0x000000015351c000+0x000000000000022c]
 
-[error occurred during error reporting (printing native stack (with source info)), id 0xe0000000, Internal Error (/Users/I560383/code/asgct2/jdk/src/hotspot/share/code/codeCache.inline.hpp:49)]
+[error occurred during error reporting (printing native stack (with source info)), id 0xe0000000, Internal Error (/Users/jbechberger/code/asgct2/jdk/src/hotspot/share/code/codeCache.inline.hpp:49)]
 
 Retrying call stack printing without source information...
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
@@ -63,7 +63,7 @@ V  [libjvm.dylib+0x1099a10]  SafepointSynchronize::handle_polling_page_exception
 v  ~SafepointBlob 0x000000015ab088d0
 J 70 c1 math.Parser.init(Lmath/Lexer;)Lmath/Parser; (29 bytes) @ 0x000000015351c22c [0x000000015351c000+0x000000000000022c]
 
-[error occurred during error reporting (retry printing native stack (no source info)), id 0xe0000000, Internal Error (/Users/I560383/code/asgct2/jdk/src/hotspot/share/code/codeCache.inline.hpp:49)]
+[error occurred during error reporting (retry printing native stack (no source info)), id 0xe0000000, Internal Error (/Users/jbechberger/code/asgct2/jdk/src/hotspot/share/code/codeCache.inline.hpp:49)]
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 v  ~SafepointBlob 0x000000015ab088d0
 J 70 c1 math.Parser.init(Lmath/Lexer;)Lmath/Parser; (29 bytes) @ 0x000000015351c22c [0x000000015351c000+0x000000000000022c]
@@ -90,7 +90,7 @@ x0 =0x0 is null
 x1 =0x00000000ffffffff is an unknown value
 x2 =0x00000000000120a8 is an unknown value
 x3 =0x000000012202f633 points into unknown readable memory: 62 69 6e 67 28
-x4 =0x000000010c0f24e2: <offset 0x162e4e2> in /Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib at 0x000000010aac4000
+x4 =0x000000010c0f24e2: <offset 0x162e4e2> in /Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib at 0x000000010aac4000
 x5 =0x000000016bef0700 is pointing into the stack for thread: 0x0000000116808210
 x6 =0x000000000000000a is an unknown value
 x7 =0x000000070fa7c2d8 is an oop: math.Terminal 
@@ -109,7 +109,7 @@ x12=0x0000010000000000 is an unknown value
 x13=0x0 is null
 x14=0x0 is null
 x15=0x0 is null
-x16=0x000000010bacbac4: ASGST_GetQueueElement+0 in /Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib at 0x000000010aac4000
+x16=0x000000010bacbac4: ASGST_GetQueueElement+0 in /Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib at 0x000000010aac4000
 x17=0x00000001fe8ff298 points into unknown readable memory: 0x000000019ed1892c | 2c 89 d1 9e 01 00 00 00
 x18=0x0 is null
 x19=0x33c515acf790701c is an unknown value
@@ -123,7 +123,7 @@ x26=0x00000002984007c8 is pointing into metadata
 x27=0x0 is null
 x28=0x0000000116808210 is a thread
  fp=0x000000016bef0e60 is pointing into the stack for thread: 0x0000000116808210
- lr=0x000000013000f580: _ZL13signalHandleriP9__siginfoPv+0x45c in /Users/I560383/code/experiments/writing-a-profiler/libSmallProfiler.so at 0x0000000130000000
+ lr=0x000000013000f580: _ZL13signalHandleriP9__siginfoPv+0x45c in /Users/jbechberger/code/experiments/writing-a-profiler/libSmallProfiler.so at 0x0000000130000000
  sp=0x000000016bef08c0 is pointing into the stack for thread: 0x0000000116808210
 
 Top of Stack: (sp=0x000000016bef08c0)
@@ -823,7 +823,7 @@ Event: 1.239 GC heap after
 }
 
 Dll operation events (1 events):
-Event: 0.377 Loaded shared library /Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjava.dylib
+Event: 0.377 Loaded shared library /Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjava.dylib
 
 Deoptimization events (0 events):
 No events
@@ -878,7 +878,7 @@ Event: 0.871 Protecting memory [0x000000016dfe0000,0x000000016dfec000] with prot
 
 
 Dynamic libraries:
-0x0000000104228000 	/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjli.dylib
+0x0000000104228000 	/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjli.dylib
 0x00000001b7346000 	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa
 0x00000001a2022000 	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit
 0x00000001a4a24000 	/System/Library/Frameworks/CoreData.framework/Versions/A/CoreData
@@ -1164,10 +1164,10 @@ Dynamic libraries:
 0x0000000215459000 	/System/Library/PrivateFrameworks/IO80211.framework/Versions/A/IO80211
 0x00000001ac031000 	/System/Library/PrivateFrameworks/IconFoundation.framework/Versions/A/IconFoundation
 0x00000001b1688000 	/System/Library/PrivateFrameworks/SpeechRecognitionCore.framework/Versions/A/SpeechRecognitionCore
-0x000000010aac4000 	/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib
-0x00000001042d8000 	/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjimage.dylib
-0x0000000130000000 	/Users/I560383/code/experiments/writing-a-profiler/libSmallProfiler.so
-0x000000010432c000 	/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjava.dylib
+0x000000010aac4000 	/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/server/libjvm.dylib
+0x00000001042d8000 	/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjimage.dylib
+0x0000000130000000 	/Users/jbechberger/code/experiments/writing-a-profiler/libSmallProfiler.so
+0x000000010432c000 	/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/lib/libjava.dylib
 
 
 VM Arguments:
@@ -1205,8 +1205,8 @@ Log output configuration:
  #1: stderr all=off uptime,level,tags foldmultilines=false
 
 Environment Variables:
-JAVA_HOME=/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk
-PATH=/Users/I560383/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/bin:/Users/I560383/.jbang/bin:/Users/I560383/.yarn/bin:/Users/I560383/.config/yarn/global/node_modules/.bin:/Users/I560383/bin/Azul\ Mission\ Control.app/Contents/MacOS/:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Library/Apple/usr/bin:/Applications/Privileges.app/Contents/Resources:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/I560383/.jbang/bin:/Users/I560383/.yarn/bin:/Users/I560383/.config/yarn/global/node_modules/.bin:/Users/I560383/bin/Azul\ Mission\ Control.app/Contents/MacOS/:/Users/I560383/.sdkman/candidates/pomchecker/current/bin:/Users/I560383/.sdkman/candidates/mvnd/current/bin:/Users/I560383/.sdkman/candidates/maven/current/bin:/Users/I560383/.sdkman/candidates/jreleaser/current/bin:/Users/I560383/.sdkman/candidates/jmc/current/bin:/Users/I560383/.sdkman/candidates/jbang/current/bin:/Users/I560383/.sdkman/candidates/java/current/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/I560383/Library/Application Support/JetBrains/Toolbox/scripts:/Users/I560383/Library/Application Support/JetBrains/Toolbox/scripts
+JAVA_HOME=/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk
+PATH=/Users/jbechberger/code/asgct2/jdk/build/macosx-aarch64-server-slowdebug/images/jdk/bin:/Users/jbechberger/.jbang/bin:/Users/jbechberger/.yarn/bin:/Users/jbechberger/.config/yarn/global/node_modules/.bin:/Users/jbechberger/bin/Azul\ Mission\ Control.app/Contents/MacOS/:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Library/Apple/usr/bin:/Applications/Privileges.app/Contents/Resources:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/jbechberger/.jbang/bin:/Users/jbechberger/.yarn/bin:/Users/jbechberger/.config/yarn/global/node_modules/.bin:/Users/jbechberger/bin/Azul\ Mission\ Control.app/Contents/MacOS/:/Users/jbechberger/.sdkman/candidates/pomchecker/current/bin:/Users/jbechberger/.sdkman/candidates/mvnd/current/bin:/Users/jbechberger/.sdkman/candidates/maven/current/bin:/Users/jbechberger/.sdkman/candidates/jreleaser/current/bin:/Users/jbechberger/.sdkman/candidates/jmc/current/bin:/Users/jbechberger/.sdkman/candidates/jbang/current/bin:/Users/jbechberger/.sdkman/candidates/java/current/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/jbechberger/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jbechberger/Library/Application Support/JetBrains/Toolbox/scripts
 SHELL=/bin/zsh
 LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
@@ -1328,7 +1328,7 @@ MallocLimit: unset
 ---------------  S Y S T E M  ---------------
 
 OS:
-uname: Darwin FVFFN48SQ05N 22.6.0 Darwin Kernel Version 22.6.0: Wed Jul  5 22:22:52 PDT 2023; root:xnu-8796.141.3~6/RELEASE_ARM64_T8103 arm64
+uname: Darwin IBBIIIIK 22.6.0 Darwin Kernel Version 22.6.0: Wed Jul  5 22:22:52 PDT 2023; root:xnu-8796.141.3~6/RELEASE_ARM64_T8103 arm64
 OS uptime: 3 days 22:33 hours
 rlimit (soft/hard): STACK 8176k/65520k , CORE 0k/infinity , NPROC 2666/4000 , NOFILE 10240/infinity , AS infinity/infinity , CPU infinity/infinity , DATA infinity/infinity , FSIZE infinity/infinity , MEMLOCK infinity/infinity , RSS infinity/infinity
 load average: 9.25 11.63 11.44
@@ -1342,6 +1342,6 @@ hw.l2cachesize:4194304
 
 Memory: 16k page, physical 16777216k(324576k free), swap 16777216k(582208k free)
 
-vm_info: OpenJDK 64-Bit Server VM (slowdebug 22-internal-adhoc.i560383.jdk) for bsd-aarch64 JRE (22-internal-adhoc.i560383.jdk), built on 2023-07-24T11:54:15Z by "i560383" with clang Apple LLVM 14.0.3 (clang-1403.0.22.14.1)
+vm_info: OpenJDK 64-Bit Server VM (slowdebug 22-internal-adhoc.jbechberger.jdk) for bsd-aarch64 JRE (22-internal-adhoc.jbechberger.jdk), built on 2023-07-24T11:54:15Z by "jbechberger" with clang Apple LLVM 14.0.3 (clang-1403.0.22.14.1)
 
 END.
