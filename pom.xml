@@ -45,10 +45,6 @@
     </distributionManagement>
 
     <repositories>
-        <repository>
-            <id>atlassian-public</id>
-            <url>https://packages.atlassian.com/maven-public/</url>
-        </repository>
     </repositories>
 
     <properties>

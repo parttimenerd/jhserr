@@ -66,8 +66,12 @@ jobs:
 
       - name: Install binaryen
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq binaryen
+          # Install newer binaryen from GitHub releases (apt version is too old for GC support)
+          BINARYEN_VERSION="119"
+          wget -q https://github.com/WebAssembly/binaryen/releases/download/version_${BINARYEN_VERSION}/binaryen-version_${BINARYEN_VERSION}-x86_64-linux.tar.gz
+          tar xzf binaryen-version_${BINARYEN_VERSION}-x86_64-linux.tar.gz
+          sudo mv binaryen-version_${BINARYEN_VERSION}/bin/* /usr/local/bin/
+          wasm-as --version
 
       - name: Install parser library
         run: mvn -B install -DskipTests
