@@ -26,6 +26,9 @@ class VersionBumper:
         self.pom_xml = project_root / "pom.xml"
         self.readme = project_root / "README.md"
         self.changelog = project_root / "CHANGELOG.md"
+        self.hserr_web_pom = project_root / "hserr-web" / "pom.xml"
+        self.hserr_tool = project_root / "src" / "main" / "java" / "me" / "bechberger" / "jhserr" / "cli" / "HsErrTool.java"
+        self.jbang_catalog = project_root / "jbang-catalog.json"
         self.backup_dir = project_root / ".release-backup"
         self.backups_created = False
 
@@ -68,6 +71,49 @@ class VersionBumper:
         )
         self.pom_xml.write_text(content)
         print(f"✓ Updated pom.xml: {old_version} -> {new_version}")
+
+    def update_hserr_web_pom(self, old_version: str, new_version: str):
+        if not self.hserr_web_pom.exists():
+            print("⚠ No hserr-web/pom.xml found, skipping")
+            return
+        content = self.hserr_web_pom.read_text()
+        # Update the module's own version
+        content = content.replace(
+            f'<version>{old_version}</version>',
+            f'<version>{new_version}</version>',
+            1
+        )
+        # Update the jhserr.version property
+        content = content.replace(
+            f'<jhserr.version>{old_version}</jhserr.version>',
+            f'<jhserr.version>{new_version}</jhserr.version>'
+        )
+        self.hserr_web_pom.write_text(content)
+        print(f"✓ Updated hserr-web/pom.xml: {old_version} -> {new_version}")
+
+    def update_hserr_tool(self, old_version: str, new_version: str):
+        if not self.hserr_tool.exists():
+            print("⚠ No HsErrTool.java found, skipping")
+            return
+        content = self.hserr_tool.read_text()
+        content = content.replace(
+            f'version = "jhserr {old_version}"',
+            f'version = "jhserr {new_version}"'
+        )
+        self.hserr_tool.write_text(content)
+        print(f"✓ Updated HsErrTool.java: {old_version} -> {new_version}")
+
+    def update_jbang_catalog(self, old_version: str, new_version: str):
+        if not self.jbang_catalog.exists():
+            print("⚠ No jbang-catalog.json found, skipping")
+            return
+        content = self.jbang_catalog.read_text()
+        content = content.replace(
+            f'v{old_version}/jhserr.jar',
+            f'v{new_version}/jhserr.jar'
+        )
+        self.jbang_catalog.write_text(content)
+        print(f"✓ Updated jbang-catalog.json: {old_version} -> {new_version}")
 
     def update_readme(self, old_version: str, new_version: str):
         content = self.readme.read_text()
@@ -195,9 +241,11 @@ class VersionBumper:
     def create_backups(self):
         import shutil
         self.backup_dir.mkdir(exist_ok=True)
-        for file in [self.pom_xml, self.readme, self.changelog]:
+        for file in [self.pom_xml, self.readme, self.changelog, self.hserr_web_pom, self.hserr_tool, self.jbang_catalog]:
             if file.exists():
-                shutil.copy2(file, self.backup_dir / file.name)
+                dest = self.backup_dir / file.relative_to(self.project_root)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(file, dest)
         self.backups_created = True
         print("✓ Created backups of files")
 
@@ -206,11 +254,13 @@ class VersionBumper:
         if not self.backups_created or not self.backup_dir.exists():
             return
         print("\n⚠️  Restoring files from backup...")
-        for name in ["pom.xml", "README.md", "CHANGELOG.md"]:
-            backup_file = self.backup_dir / name
+        for rel_path in ["pom.xml", "README.md", "CHANGELOG.md", "hserr-web/pom.xml",
+                         "src/main/java/me/bechberger/jhserr/cli/HsErrTool.java",
+                         "jbang-catalog.json"]:
+            backup_file = self.backup_dir / rel_path
             if backup_file.exists():
-                shutil.copy2(backup_file, self.project_root / name)
-                print(f"  ✓ Restored {name}")
+                shutil.copy2(backup_file, self.project_root / rel_path)
+                print(f"  ✓ Restored {rel_path}")
         print("✓ All files restored from backup")
 
     def cleanup_backups(self):
@@ -243,7 +293,9 @@ class VersionBumper:
         self.run_command(['mvn', 'clean', 'deploy', '-P', 'release'], "Deploying to Maven Central")
 
     def git_commit(self, version: str):
-        self.run_command(['git', 'add', 'pom.xml', 'README.md', 'CHANGELOG.md'], "Staging files")
+        self.run_command(['git', 'add', 'pom.xml', 'README.md', 'CHANGELOG.md', 'hserr-web/pom.xml',
+                          'src/main/java/me/bechberger/jhserr/cli/HsErrTool.java',
+                          'jbang-catalog.json'], "Staging files")
         self.run_command(['git', 'commit', '-m', f'Bump version to {version}'], "Committing changes")
 
     def git_tag(self, version: str):
@@ -307,9 +359,12 @@ Examples:
 
     if args.dry_run:
         print("\n=== DRY RUN MODE ===")
-        print(f"\n  pom.xml:    {current_version} -> {new_version}")
-        print(f"  README.md:  {current_version} -> {new_version}")
-        print(f"  CHANGELOG:  [Unreleased] -> [{new_version}]")
+        print(f"\n  pom.xml:              {current_version} -> {new_version}")
+        print(f"  hserr-web/pom.xml:    {current_version} -> {new_version}")
+        print(f"  HsErrTool.java:       {current_version} -> {new_version}")
+        print(f"  jbang-catalog.json:   {current_version} -> {new_version}")
+        print(f"  README.md:            {current_version} -> {new_version}")
+        print(f"  CHANGELOG:            [Unreleased] -> [{new_version}]")
         print("\n✓ No changes made (dry run)")
         return
 
@@ -323,6 +378,9 @@ Examples:
 
         print("\n=== Updating version files ===")
         bumper.update_pom_xml(current_version, new_version)
+        bumper.update_hserr_web_pom(current_version, new_version)
+        bumper.update_hserr_tool(current_version, new_version)
+        bumper.update_jbang_catalog(current_version, new_version)
         bumper.update_readme(current_version, new_version)
         bumper.update_changelog(new_version)
 

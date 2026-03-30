@@ -15,6 +15,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jhserr.version>0.1.0</jhserr.version>
     </properties>
 
     <build>
@@ -73,7 +74,7 @@
                         <configuration>
                             <executable>${project.basedir}/generate-reflect-config.sh</executable>
                             <arguments>
-                                <argument>${settings.localRepository}/me/bechberger/jhserr/${project.version}/jhserr-${project.version}.jar</argument>
+                                <argument>${settings.localRepository}/me/bechberger/jhserr/${jhserr.version}/jhserr-${jhserr.version}.jar</argument>
                                 <argument>${project.build.directory}</argument>
                             </arguments>
                         </configuration>
@@ -108,7 +109,7 @@
         <dependency>
             <groupId>me.bechberger</groupId>
             <artifactId>jhserr</artifactId>
-            <version>0.1.0</version>
+            <version>${jhserr.version}</version>
         </dependency>
     </dependencies>
 </project>
