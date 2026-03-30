@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: temurin
+          distribution: sapmachine
           cache: maven
 
       - name: Build and test
@@ -54,6 +54,10 @@ jobs:
 
   web-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -89,3 +93,8 @@ jobs:
         with:
           name: hserr-web
           path: hserr-web/web/
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: hserr-web
