@@ -75,6 +75,9 @@ public class RedactionTransformer extends HsErrTransformer {
         usernames.addAll(config.additionalUsernames());
         hostnames.addAll(config.additionalHostnames());
 
+        // Build ignore set for hostname false-positive exclusions
+        Set<String> hostnameIgnoreSet = new HashSet<>(config.hostnameIgnoreList());
+
         if (report.header() != null) {
             scanText(report.header().jreVersion());
             scanText(report.header().problematicFrame());
@@ -90,6 +93,9 @@ public class RedactionTransformer extends HsErrTransformer {
         scanItems(report.thread());
         scanItems(report.process());
         scanItems(report.system());
+
+        // Remove ignored hostnames (false-positive exclusions)
+        hostnames.removeAll(hostnameIgnoreSet);
 
         // Build path patterns: globs use globToPattern, literals use boundary-aware regex
         // Sort by descending source length so longest prefixes match first

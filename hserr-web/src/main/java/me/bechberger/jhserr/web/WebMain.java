@@ -30,8 +30,12 @@ public class WebMain {
     public static final JSObject CONFIG_AREA = getElementById("config-area");
     public static final JSObject DL_JSON_BTN = getElementById("dl-json");
     public static final JSObject DL_REDACTED_BTN = getElementById("dl-redacted");
+    public static final JSObject COPY_JSON_BTN = getElementById("copy-json");
+    public static final JSObject COPY_REDACTED_BTN = getElementById("copy-redacted");
     public static final JSObject APPLY_CONFIG_BTN = getElementById("apply-config");
     public static final JSObject RESET_CONFIG_BTN = getElementById("reset-config");
+    public static final JSObject CONFIG_ERROR = getElementById("config-error");
+    public static final JSObject REDACTION_SUMMARY = getElementById("redaction-summary");
     public static final JSObject TAB_SOURCE = getElementById("tab-source");
     public static final JSObject TAB_JSON = getElementById("tab-json");
     public static final JSObject TAB_REDACTED = getElementById("tab-redacted");
@@ -64,6 +68,8 @@ public class WebMain {
         addEventListener(DROP_ZONE, "drop", WebMain::onDrop);
         addEventListener(DL_JSON_BTN, "click", e -> downloadJson());
         addEventListener(DL_REDACTED_BTN, "click", e -> downloadRedacted());
+        addEventListener(COPY_JSON_BTN, "click", e -> copyJson());
+        addEventListener(COPY_REDACTED_BTN, "click", e -> copyRedacted());
         addEventListener(APPLY_CONFIG_BTN, "click", e -> applyConfig());
         addEventListener(RESET_CONFIG_BTN, "click", e -> resetConfig());
         addEventListener(CONFIG_AREA, "input", e -> onConfigInput());
@@ -73,7 +79,7 @@ public class WebMain {
         addEventListener(TAB_REDACTED, "click", e -> showTab("redacted"));
         addEventListener(TAB_DIFF, "click", e -> showTab("diff"));
 
-        setStatus("Drop an hs_err file to begin.");
+        setStatus("Drop an hs_err file or paste its contents into the Source tab.");
     }
 
     // ── drag & drop ─────────────────────────────────────────────────────
@@ -148,9 +154,13 @@ public class WebMain {
         try {
             String configJson = getConfigValue();
             RedactionConfig config = RedactionConfig.fromJson(configJson);
+            setTextContent(CONFIG_ERROR, ""); // clear previous errors
             RedactionTransformer transformer = new RedactionTransformer(config);
             HsErrReport redacted = transformer.transform(currentReport);
             String redactedText = redacted.toString();
+
+            // Redaction summary (only applied changes)
+            buildRedactionSummary(config, originalText, redactedText, transformer);
 
             // Redacted tab with inline change highlights
             buildRedactedView(originalText, redactedText);
@@ -160,9 +170,37 @@ public class WebMain {
                 buildDiff(originalText, redactedText);
             }
         } catch (Exception ex) {
+            setTextContent(CONFIG_ERROR, "Config error: " + ex.getMessage());
             setTextContent(REDACTED_OUTPUT, "Redaction error: " + ex.getMessage());
             setTextContent(DIFF_OUTPUT, "");
         }
+    }
+
+    private static void buildRedactionSummary(RedactionConfig config, String original, String redacted, RedactionTransformer transformer) {
+        if (original == null || original.equals(redacted)) {
+            setInnerHTML(REDACTION_SUMMARY, "<span class=\"count\">0</span> redactions");
+            return;
+        }
+        // Count actual changed lines
+        String[] origLines = original.split("\n", -1);
+        String[] redLines = redacted.split("\n", -1);
+        int changed = 0;
+        int limit = Math.min(origLines.length, redLines.length);
+        for (int i = 0; i < limit; i++) {
+            if (!origLines[i].equals(redLines[i])) changed++;
+        }
+        changed += Math.abs(origLines.length - redLines.length);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<span class=\"count\">").append(changed).append("</span> line")
+          .append(changed != 1 ? "s" : "").append(" changed");
+        if (config.redactUsernames() && !transformer.usernames().isEmpty()) {
+            sb.append(" · Users: ").append(String.join(", ", transformer.usernames()));
+        }
+        if (config.redactHostnames() && !transformer.hostnames().isEmpty()) {
+            sb.append(" · Hosts: ").append(String.join(", ", transformer.hostnames()));
+        }
+        setInnerHTML(REDACTION_SUMMARY, sb.toString());
     }
 
     /** Build redacted view with changed portions highlighted inline. */
@@ -286,6 +324,11 @@ public class WebMain {
     private static void onSourceInput() {
         String content = getStringProperty(SOURCE_OUTPUT, "value");
         if (content == null || content.isEmpty()) return;
+        // Show a name hint when text is pasted directly
+        if (originalText == null || originalText.isEmpty()) {
+            setProperty(FILE_NAME_SPAN, "textContent", "(pasted)");
+            setDisplay(FILE_NAME_SPAN, "inline");
+        }
         debounce(() -> processFile(content), 500);
     }
 
@@ -322,6 +365,16 @@ public class WebMain {
         triggerDownload("hserr_redacted.log", text, "text/plain");
     }
 
+    private static void copyJson() {
+        String json = getStringProperty(JSON_OUTPUT, "textContent");
+        copyToClipboard(json, COPY_JSON_BTN);
+    }
+
+    private static void copyRedacted() {
+        String text = getStringProperty(REDACTED_OUTPUT, "textContent");
+        copyToClipboard(text, COPY_REDACTED_BTN);
+    }
+
     // ── tab switching ───────────────────────────────────────────────────
 
     private static void showTab(String tab) {
@@ -348,6 +401,8 @@ public class WebMain {
     private static void enableButtons(boolean on) {
         DL_JSON_BTN.set("disabled", JSBoolean.of(!on));
         DL_REDACTED_BTN.set("disabled", JSBoolean.of(!on));
+        COPY_JSON_BTN.set("disabled", JSBoolean.of(!on));
+        COPY_REDACTED_BTN.set("disabled", JSBoolean.of(!on));
     }
 
     // ── JS bridge methods ───────────────────────────────────────────────
@@ -475,6 +530,16 @@ public class WebMain {
         URL.revokeObjectURL(url);
         """)
     private static native void triggerDownload(String filename, String content, String mimeType);
+
+    @JS.Coerce
+    @JS("""
+        navigator.clipboard.writeText(text).then(function() {
+            var orig = btn.textContent;
+            btn.textContent = '\u2713 Copied!';
+            setTimeout(function() { btn.textContent = orig; }, 1500);
+        });
+        """)
+    private static native void copyToClipboard(String text, JSObject btn);
 }
 
 @FunctionalInterface

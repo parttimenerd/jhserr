@@ -170,6 +170,38 @@
     z-index: 999; font-size: 1.1rem; color: var(--dim);
   }
   #loading.hidden { display: none; }
+
+  /* ── file input ─────────────────────────────────── */
+  #file-input { display: none; }
+
+  /* ── config error ───────────────────────────────── */
+  #config-error {
+    color: var(--red); font-size: 0.8rem; font-family: var(--font-mono);
+    margin-top: 0.4rem; min-height: 1.2em; white-space: pre-wrap;
+  }
+
+  /* ── redaction summary ──────────────────────────── */
+  #redaction-summary {
+    font-size: 0.8rem; color: var(--dim); margin-bottom: 0.5rem;
+    min-height: 1em;
+  }
+  #redaction-summary .count { color: var(--accent); font-weight: 600; }
+
+  /* ── search bar ─────────────────────────────────── */
+  .search-bar {
+    display: flex; gap: 0.4rem; align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .search-bar input {
+    flex: 1; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.35rem 0.6rem; font-family: var(--font-mono);
+    font-size: 0.8rem; outline: none;
+  }
+  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar .search-count { color: var(--dim); font-size: 0.75rem; white-space: nowrap; }
+  mark.search-hit { background: rgba(234,179,8,.35); color: inherit; border-radius: 2px; }
+  mark.search-hit.current { background: rgba(234,179,8,.7); }
 </style>
 </head>
 <body>
@@ -186,7 +218,9 @@
 
   <div id="drop-zone">
     <div class="icon">📂</div>
-    <p>Drag &amp; drop an <code>hs_err</code> file here</p>
+    <p>Drag &amp; drop an <code>hs_err</code> file here, or paste contents into the Source tab below</p>
+    <p style="margin-top:0.5rem;"><button class="btn-secondary" id="browse-btn" style="font-size:0.85rem;">Browse files…</button></p>
+    <input type="file" id="file-input" accept=".log,.txt,.hs_err,*">
   </div>
 
   <div class="examples">
@@ -201,6 +235,15 @@
     <span id="status">Loading…</span>
   </div>
 
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search in active panel… (Ctrl+F)" />
+    <span class="search-count" id="search-count"></span>
+    <button class="btn-secondary" id="search-prev" style="padding:0.2rem 0.5rem;">▲</button>
+    <button class="btn-secondary" id="search-next" style="padding:0.2rem 0.5rem;">▼</button>
+  </div>
+
+  <div id="redaction-summary"></div>
+
   <div class="tabs">
     <button class="tab-btn active" id="tab-source">Source</button>
     <button class="tab-btn" id="tab-json">JSON</button>
@@ -209,7 +252,7 @@
   </div>
 
   <div class="panel" id="panel-source" style="display:block">
-    <textarea id="source-output" spellcheck="false" placeholder="Paste or drop an hs_err file here...">Waiting for file…</textarea>
+    <textarea id="source-output" spellcheck="false" placeholder="Paste hs_err file contents here..."></textarea>
   </div>
   <div class="panel" id="panel-json">
     <pre><code id="json-output" class="language-json">Waiting for file…</code></pre>
@@ -224,12 +267,15 @@
   <div class="actions">
     <button class="btn-primary" id="dl-json" disabled>⬇ Download JSON</button>
     <button class="btn-primary" id="dl-redacted" disabled>⬇ Download Redacted</button>
+    <button class="btn-secondary" id="copy-json" disabled>📋 Copy JSON</button>
+    <button class="btn-secondary" id="copy-redacted" disabled>📋 Copy Redacted</button>
   </div>
 
   <details>
     <summary>Redaction Configuration (JSON)</summary>
     <textarea id="config-area" spellcheck="false"></textarea>
     <p style="color:var(--dim);font-size:0.75rem;margin-top:0.3rem;">Edit above — changes apply live. The default config is generated from <code>RedactionConfig</code> defaults.</p>
+    <div id="config-error"></div>
     <div class="config-actions">
       <button class="btn-secondary" id="apply-config">Apply &amp; Save</button>
       <button class="btn-secondary" id="reset-config">Reset Defaults</button>
@@ -290,6 +336,149 @@
           });
       });
     });
+
+    // File browse button
+    document.getElementById('browse-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('file-input').click();
+    });
+    document.getElementById('file-input').addEventListener('change', function() {
+      var file = this.files[0];
+      if (!file) return;
+      var dt = new DataTransfer();
+      dt.items.add(file);
+      var evt = new DragEvent('drop', { dataTransfer: dt, bubbles: true });
+      document.getElementById('drop-zone').dispatchEvent(evt);
+      this.value = '';
+    });
+
+    // Copy to clipboard buttons
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1500);
+      });
+    }
+    document.getElementById('copy-json').addEventListener('click', function() {
+      copyToClipboard(document.getElementById('json-output').textContent, this);
+    });
+    document.getElementById('copy-redacted').addEventListener('click', function() {
+      copyToClipboard(document.getElementById('redacted-output').textContent, this);
+    });
+
+    // Search within panels
+    (function() {
+      var input = document.getElementById('search-input');
+      var countEl = document.getElementById('search-count');
+      var hits = [];
+      var currentIdx = -1;
+
+      function getActivePanel() {
+        var panels = ['panel-source', 'panel-json', 'panel-redacted', 'panel-diff'];
+        for (var i = 0; i < panels.length; i++) {
+          var p = document.getElementById(panels[i]);
+          if (p.style.display !== 'none') return p;
+        }
+        return null;
+      }
+
+      function clearHighlights() {
+        document.querySelectorAll('mark.search-hit').forEach(function(m) {
+          m.outerHTML = m.textContent;
+        });
+        hits = [];
+        currentIdx = -1;
+        countEl.textContent = '';
+      }
+
+      function doSearch() {
+        clearHighlights();
+        var query = input.value.trim();
+        if (!query) return;
+
+        var panel = getActivePanel();
+        if (!panel) return;
+
+        // For source panel (textarea), use browser find or skip highlighting
+        var sourceTextarea = panel.querySelector('textarea');
+        if (sourceTextarea) {
+          // Highlight in textarea via selection
+          var text = sourceTextarea.value;
+          var lower = text.toLowerCase();
+          var q = query.toLowerCase();
+          var count = 0;
+          var pos = 0;
+          var firstIdx = -1;
+          while ((pos = lower.indexOf(q, pos)) !== -1) {
+            if (firstIdx === -1) firstIdx = pos;
+            count++;
+            pos += q.length;
+          }
+          countEl.textContent = count > 0 ? count + ' match' + (count > 1 ? 'es' : '') : 'No matches';
+          if (firstIdx >= 0) {
+            sourceTextarea.focus();
+            sourceTextarea.setSelectionRange(firstIdx, firstIdx + q.length);
+          }
+          return;
+        }
+
+        // For pre/code panels, highlight with <mark>
+        var codeEl = panel.querySelector('code') || panel.querySelector('pre');
+        if (!codeEl) return;
+
+        var html = codeEl.innerHTML;
+        var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var re = new RegExp('(?![^<]*>)(' + escaped + ')', 'gi');
+        codeEl.innerHTML = html.replace(re, '<mark class="search-hit">$1</mark>');
+
+        hits = Array.from(codeEl.querySelectorAll('mark.search-hit'));
+        countEl.textContent = hits.length > 0 ? hits.length + ' match' + (hits.length > 1 ? 'es' : '') : 'No matches';
+        if (hits.length > 0) {
+          currentIdx = 0;
+          hits[0].classList.add('current');
+          hits[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      }
+
+      function navigate(dir) {
+        if (hits.length === 0) return;
+        hits[currentIdx].classList.remove('current');
+        currentIdx = (currentIdx + dir + hits.length) % hits.length;
+        hits[currentIdx].classList.add('current');
+        hits[currentIdx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+        countEl.textContent = (currentIdx + 1) + ' / ' + hits.length;
+      }
+
+      var debounceTimer;
+      input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(doSearch, 200);
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); navigate(e.shiftKey ? -1 : 1); }
+        if (e.key === 'Escape') { input.value = ''; clearHighlights(); }
+      });
+      document.getElementById('search-prev').addEventListener('click', function() { navigate(-1); });
+      document.getElementById('search-next').addEventListener('click', function() { navigate(1); });
+
+      // Ctrl+F / Cmd+F to focus search
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+          e.preventDefault();
+          input.focus();
+          input.select();
+        }
+      });
+
+      // Clear search highlights on tab switch
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          clearHighlights();
+          input.value = '';
+        });
+      });
+    })();
   </script>
 </body>
 </html>

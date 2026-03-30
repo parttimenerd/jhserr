@@ -87,6 +87,9 @@ public final class RedactionConfig {
     /** Extra hostnames to redact (in addition to auto-discovered from Summary/uname). */
     @JsonProperty private final List<String> additionalHostnames = new ArrayList<>();
 
+    /** Hostnames that should never be redacted (false-positive exclusions). */
+    @JsonProperty private final List<String> hostnameIgnoreList = new ArrayList<>();
+
     /**
      * Absolute directory prefixes that should be replaced entirely.
      * If a path starts with one of these, the matching prefix is replaced.
@@ -133,6 +136,7 @@ public final class RedactionConfig {
         this.tidPlaceholder = other.tidPlaceholder;
         this.additionalUsernames.addAll(other.additionalUsernames);
         this.additionalHostnames.addAll(other.additionalHostnames);
+        this.hostnameIgnoreList.addAll(other.hostnameIgnoreList);
         this.sensitivePathPrefixes.addAll(other.sensitivePathPrefixes);
         this.sensitiveStrings.addAll(other.sensitiveStrings);
         this.safeEnvVars.clear();
@@ -181,6 +185,7 @@ public final class RedactionConfig {
     public String tidPlaceholder()           { return tidPlaceholder; }
     public List<String> additionalUsernames()   { return Collections.unmodifiableList(additionalUsernames); }
     public List<String> additionalHostnames()   { return Collections.unmodifiableList(additionalHostnames); }
+    public List<String> hostnameIgnoreList()     { return Collections.unmodifiableList(hostnameIgnoreList); }
     public List<String> sensitivePathPrefixes() { return Collections.unmodifiableList(sensitivePathPrefixes); }
     public List<String> sensitiveStrings()      { return Collections.unmodifiableList(sensitiveStrings); }
     public Set<String> safeEnvVars()         { return Collections.unmodifiableSet(safeEnvVars); }
@@ -211,6 +216,11 @@ public final class RedactionConfig {
 
     public RedactionConfig addAdditionalHostname(String hostname) {
         additionalHostnames.add(hostname);
+        return this;
+    }
+
+    public RedactionConfig addHostnameIgnore(String hostname) {
+        hostnameIgnoreList.add(hostname);
         return this;
     }
 

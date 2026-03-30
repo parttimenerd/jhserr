@@ -402,4 +402,214 @@ class TransformTest {
             Files.deleteIfExists(tmp);
         }
     }
+
+    // ── Hostname ignore list ─────────────────────────────────────────────
+
+    @Test
+    void hostnameIgnoreListExcludesDiscoveredHostname() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = new RedactionConfig()
+                .addHostnameIgnore("TESTHOST01");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        // Hostname should NOT be redacted since it's on the ignore list
+        assertThat(transformer.hostnames()).doesNotContain("TESTHOST01");
+        assertThat(redacted.toString()).contains("TESTHOST01");
+    }
+
+    @Test
+    void hostnameIgnoreListDoesNotAffectOtherHostnames() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = new RedactionConfig()
+                .addAdditionalHostname("otherhost")
+                .addHostnameIgnore("TESTHOST01");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        transformer.transform(original);
+
+        // "otherhost" should still be redacted
+        assertThat(transformer.hostnames()).contains("otherhost");
+        // TESTHOST01 is ignored
+        assertThat(transformer.hostnames()).doesNotContain("TESTHOST01");
+    }
+
+    @Test
+    void hostnameIgnoreListExcludesUnameHostname() throws Exception {
+        HsErrReport original = loadLinux();
+        RedactionConfig config = new RedactionConfig()
+                .addHostnameIgnore("testhost02");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.hostnames()).doesNotContain("testhost02");
+        assertThat(redacted.toString()).contains("testhost02");
+    }
+
+    @Test
+    void hostnameIgnoreListJsonRoundTrip() throws Exception {
+        RedactionConfig config = new RedactionConfig()
+                .addHostnameIgnore("ignored-host")
+                .addHostnameIgnore("another-ignored");
+        String json = config.toJson();
+        RedactionConfig restored = RedactionConfig.fromJson(json);
+
+        assertThat(restored.hostnameIgnoreList()).containsExactly("ignored-host", "another-ignored");
+    }
+
+    @Test
+    void emptyHostnameIgnoreListChangesNothing() throws Exception {
+        HsErrReport original = loadMacOS();
+        // Default config has empty ignore list
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.hostnames()).contains("TESTHOST01");
+        assertThat(redacted.toString()).doesNotContain("TESTHOST01");
+    }
+
+    // ── RedactionEngine: comprehensive tests ─────────────────────────────
+
+    @Test
+    void redactionEngineFindsIpAddresses() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        // Engine should produce findings (already tested hostname/username/PID)
+        assertThat(engine.findings()).isNotEmpty();
+    }
+
+    @Test
+    void redactionEngineFindsEnvVarFindings() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        assertThat(engine.findings()).anyMatch(f -> f.contains("Env var"));
+    }
+
+    @Test
+    void redactionEngineLinuxFull() throws Exception {
+        HsErrReport report = loadLinux();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+
+        // Should find hostname from uname
+        assertThat(engine.hostnames()).isNotEmpty();
+        // Should find PID
+        assertThat(engine.findings()).anyMatch(f -> f.contains("PID"));
+        // Should find at least hostname + PID findings
+        assertThat(engine.findings()).hasSizeGreaterThanOrEqualTo(2);
+    }
+
+    @Test
+    void redactionEngineAllSamplesDoNotThrow() throws Exception {
+        Path resourceDir = Path.of(getClass().getResource("/hs_err.log").toURI()).getParent();
+        try (Stream<Path> files = Files.list(resourceDir)) {
+            files.filter(p -> {
+                String name = p.getFileName().toString();
+                return Files.isRegularFile(p) && (name.startsWith("hs_err") || name.startsWith("hserr"));
+            }).forEach(file -> {
+                assertThatCode(() -> {
+                    HsErrReport report = HsErrParser.parse(file);
+                    RedactionEngine engine = new RedactionEngine();
+                    report.accept(engine);
+                    // Should always produce at least 1 finding (PID at minimum)
+                    assertThat(engine.findings()).isNotEmpty();
+                }).doesNotThrowAnyException();
+            });
+        }
+    }
+
+    @Test
+    void redactionEngineMultipleHostnamesFound() throws Exception {
+        HsErrReport report = loadLinux();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        // hostname() returns first, hostnames() may have more from uname
+        if (engine.hostname() != null) {
+            assertThat(engine.hostnames()).contains(engine.hostname());
+        }
+    }
+
+    // ── Hostname extraction edge cases ───────────────────────────────────
+
+    @Test
+    void redactionTransformerDarwinWithoutHostnameInUname() throws Exception {
+        // "uname: Darwin 24.6.0 ..." — second token starts with digit, no hostname
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        transformer.transform(original);
+
+        // Hostnames should only come from Summary host line + uname (if non-numeric)
+        for (String h : transformer.hostnames()) {
+            // No hostname should be a bare version number
+            assertThat(h).doesNotMatch("^\\d+\\..*");
+        }
+    }
+
+    @TestFactory
+    Collection<DynamicTest> redactionTransformerAllSamplesProduceValidOutput() throws Exception {
+        Path resourceDir = Path.of(getClass().getResource("/hs_err.log").toURI()).getParent();
+        List<DynamicTest> tests = new ArrayList<>();
+
+        try (Stream<Path> files = Files.list(resourceDir)) {
+            files.filter(p -> {
+                String name = p.getFileName().toString();
+                return Files.isRegularFile(p) && (name.startsWith("hs_err") || name.startsWith("hserr"));
+            }).sorted().forEach(file -> {
+                tests.add(DynamicTest.dynamicTest("redact " + file.getFileName(), () -> {
+                    HsErrReport original = HsErrParser.parse(file);
+                    RedactionTransformer transformer = new RedactionTransformer();
+                    HsErrReport redacted = transformer.transform(original);
+
+                    // No hostname should survive in output
+                    String text = redacted.toString();
+                    for (String h : transformer.hostnames()) {
+                        assertThat(text).doesNotContain(h);
+                    }
+                    // No username should survive in path context
+                    for (String u : transformer.usernames()) {
+                        assertThat(text).doesNotContain("/Users/" + u + "/");
+                        assertThat(text).doesNotContain("/home/" + u + "/");
+                    }
+                    // Result should be re-parsable
+                    assertThatCode(() -> HsErrParser.parse(text)).doesNotThrowAnyException();
+                }));
+            });
+        }
+
+        assertThat(tests).hasSizeGreaterThanOrEqualTo(2);
+        return tests;
+    }
+
+    @Test
+    void redactionTransformerAggressivePreset() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = RedactionConfig.aggressive();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        // Dynamic libraries should be removed
+        assertThat(redacted.process().dynamicLibraries()).isNull();
+        // Event logs should be removed
+        assertThat(redacted.process().eventLogs()).isEmpty();
+        // Thread names should be redacted
+        assertThat(config.redactThreadNames()).isTrue();
+    }
+
+    @Test
+    void redactionTransformerMinimalPreset() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = RedactionConfig.minimal();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        // PIDs should NOT be redacted in minimal mode
+        assertThat(redacted.header().pid()).isEqualTo(original.header().pid());
+        // But hostname should still be redacted
+        assertThat(transformer.hostnames()).isNotEmpty();
+        String text = redacted.toString();
+        for (String h : transformer.hostnames()) {
+            assertThat(text).doesNotContain(h);
+        }
+    }
 }

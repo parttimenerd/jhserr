@@ -74,6 +74,9 @@ public class HsErrTool implements Runnable {
         @Option(names = {"--hostname"}, description = "Additional hostname to redact")
         private String[] hostnames;
 
+        @Option(names = {"--hostname-ignore"}, description = "Hostname to exclude from redaction (false-positive)")
+        private String[] hostnameIgnores;
+
         @Option(names = {"--sensitive-path"}, description = "Sensitive path prefix to redact")
         private String[] sensitivePaths;
 
@@ -163,6 +166,9 @@ public class HsErrTool implements Runnable {
             }
             if (hostnames != null) {
                 for (String h : hostnames) config.addAdditionalHostname(h);
+            }
+            if (hostnameIgnores != null) {
+                for (String h : hostnameIgnores) config.addHostnameIgnore(h);
             }
             if (sensitivePaths != null) {
                 for (String p : sensitivePaths) config.addSensitivePathPrefix(p);
