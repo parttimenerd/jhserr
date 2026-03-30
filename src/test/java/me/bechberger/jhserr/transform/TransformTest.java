@@ -1,0 +1,405 @@
+package me.bechberger.jhserr.transform;
+
+import me.bechberger.jhserr.HsErrReport;
+import me.bechberger.jhserr.model.*;
+import me.bechberger.jhserr.parser.HsErrParser;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+class TransformTest {
+
+    private HsErrReport loadMacOS() throws Exception {
+        Path p = Path.of(TransformTest.class.getResource("/hs_err.log").toURI());
+        return HsErrParser.parse(p);
+    }
+
+    private HsErrReport loadLinux() throws Exception {
+        Path p = Path.of(TransformTest.class.getResource("/hserr_example").toURI());
+        return HsErrParser.parse(p);
+    }
+
+    // ── RedactionEngine (read-only visitor) ──────────────────────────────
+
+    @Test
+    void redactionFindsHostname() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        assertThat(engine.hostname()).isEqualTo("TESTHOST01");
+        assertThat(engine.findings()).anyMatch(f -> f.contains("Hostname"));
+    }
+
+    @Test
+    void redactionFindsUsernames() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        assertThat(engine.usernames()).isNotEmpty();
+        assertThat(engine.findings()).anyMatch(f -> f.contains("Username"));
+    }
+
+    @Test
+    void redactionFindsPid() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        assertThat(engine.findings()).anyMatch(f -> f.contains("PID"));
+    }
+
+    // ── HsErrTransformer (identity) ──────────────────────────────────────
+
+    @Test
+    void identityTransformPreservesRoundTrip() throws Exception {
+        HsErrReport original = loadMacOS();
+        HsErrTransformer identity = new HsErrTransformer();
+        HsErrReport transformed = identity.transform(original);
+
+        assertThat(transformed.toString()).isEqualTo(original.toString());
+    }
+
+    @TestFactory
+    Collection<DynamicTest> identityTransformAllSamples() throws Exception {
+        Path resourceDir = Path.of(getClass().getResource("/hs_err.log").toURI()).getParent();
+        List<DynamicTest> tests = new ArrayList<>();
+
+        try (Stream<Path> files = Files.list(resourceDir)) {
+            files.filter(p -> {
+                String name = p.getFileName().toString();
+                return Files.isRegularFile(p) && (name.startsWith("hs_err") || name.startsWith("hserr"));
+            }).sorted().forEach(file -> {
+                tests.add(DynamicTest.dynamicTest("identity " + file.getFileName(), () -> {
+                    HsErrReport original = HsErrParser.parse(file);
+                    HsErrReport transformed = new HsErrTransformer().transform(original);
+                    assertThat(transformed.toString()).isEqualTo(original.toString());
+                }));
+            });
+        }
+
+        assertThat(tests).hasSizeGreaterThanOrEqualTo(2);
+        return tests;
+    }
+
+    @Test
+    void identityTransformPreservesStructure() throws Exception {
+        HsErrReport original = loadMacOS();
+        HsErrReport transformed = new HsErrTransformer().transform(original);
+
+        assertThat(transformed.header()).isNotNull();
+        assertThat(transformed.header().errorType()).isEqualTo("SIGSEGV");
+        assertThat(transformed.summary()).isNotNull();
+        assertThat(transformed.thread()).isNotNull();
+        assertThat(transformed.process()).isNotNull();
+        assertThat(transformed.system()).isNotNull();
+        assertThat(transformed.complete()).isTrue();
+    }
+
+    // ── Custom transformer: filtering ────────────────────────────────────
+
+    @Test
+    void filteringTransformerRemovesItems() throws Exception {
+        HsErrReport original = loadMacOS();
+
+        // Remove all event logs
+        HsErrTransformer filter = new HsErrTransformer() {
+            @Override
+            protected SectionItem transformEventLog(EventLog eventLog) {
+                return null; // filter out
+            }
+        };
+        HsErrReport filtered = filter.transform(original);
+
+        assertThat(original.process().eventLogs()).isNotEmpty();
+        assertThat(filtered.process().eventLogs()).isEmpty();
+        // Other items preserved
+        assertThat(filtered.process().javaThreads()).isNotNull();
+        assertThat(filtered.process().dynamicLibraries()).isNotNull();
+    }
+
+    @Test
+    void filteringTransformerRemovesDynamicLibraries() throws Exception {
+        HsErrReport original = loadMacOS();
+
+        HsErrTransformer filter = new HsErrTransformer() {
+            @Override
+            protected SectionItem transformDynamicLibraries(DynamicLibraries libs) {
+                return null;
+            }
+        };
+        HsErrReport filtered = filter.transform(original);
+
+        assertThat(original.process().dynamicLibraries()).isNotNull();
+        assertThat(filtered.process().dynamicLibraries()).isNull();
+    }
+
+    @Test
+    void transformerComposition() throws Exception {
+        HsErrReport original = loadMacOS();
+
+        HsErrTransformer stripEvents = new HsErrTransformer() {
+            @Override protected SectionItem transformEventLog(EventLog e) { return null; }
+        };
+        HsErrTransformer stripLibs = new HsErrTransformer() {
+            @Override protected SectionItem transformDynamicLibraries(DynamicLibraries d) { return null; }
+        };
+
+        HsErrReport result = stripLibs.transform(stripEvents.transform(original));
+
+        assertThat(result.process().eventLogs()).isEmpty();
+        assertThat(result.process().dynamicLibraries()).isNull();
+        // Structure still valid
+        assertThat(result.process().javaThreads()).isNotNull();
+        assertThat(result.header().errorType()).isEqualTo("SIGSEGV");
+    }
+
+    // ── RedactionTransformer ─────────────────────────────────────────────
+
+    @Test
+    void redactionTransformerRedactsPid() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(original.header().pid()).isEqualTo("16540");
+        assertThat(redacted.header().pid()).isEqualTo("0");
+        assertThat(redacted.header().errorDetail()).contains("pid=0");
+        assertThat(redacted.header().errorDetail()).doesNotContain("pid=16540");
+        assertThat(transformer.redactions()).anyMatch(r -> r.contains("PID"));
+    }
+
+    @Test
+    void redactionTransformerRedactsHostname() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.hostname()).isEqualTo("TESTHOST01");
+        String redactedText = redacted.toString();
+        assertThat(redactedText).doesNotContain("TESTHOST01");
+        assertThat(transformer.redactions()).anyMatch(r -> r.contains("hostname"));
+    }
+
+    @Test
+    void redactionTransformerRedactsUsernames() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.usernames()).isNotEmpty();
+        String redactedText = redacted.toString();
+        for (String username : transformer.usernames()) {
+            assertThat(redactedText).doesNotContain("/Users/" + username + "/");
+            assertThat(redactedText).doesNotContain("/home/" + username + "/");
+        }
+        assertThat(redactedText).contains("REDACTED_USER");
+    }
+
+    @Test
+    void redactionTransformerProducesValidReport() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        // Redacted report still has all sections
+        assertThat(redacted.header()).isNotNull();
+        assertThat(redacted.summary()).isNotNull();
+        assertThat(redacted.thread()).isNotNull();
+        assertThat(redacted.process()).isNotNull();
+        assertThat(redacted.system()).isNotNull();
+        assertThat(redacted.complete()).isTrue();
+
+        // Can re-parse the redacted output (round-trip through text)
+        HsErrReport reparsed = HsErrParser.parse(redacted.toString());
+        assertThat(reparsed.header().errorType()).isEqualTo("SIGSEGV");
+        assertThat(reparsed.complete()).isTrue();
+    }
+
+    @Test
+    void redactionTransformerRedactsEnvVars() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        EnvironmentVariables origEnv = original.process().environmentVariables();
+        EnvironmentVariables redactedEnv = redacted.process().environmentVariables();
+        assertThat(origEnv).isNotNull();
+        assertThat(redactedEnv).isNotNull();
+
+        // PATH should be preserved (safe var)
+        assertThat(redactedEnv.vars()).containsKey("PATH");
+        // Non-safe vars should be redacted to ***
+        Set<String> safeVars = new RedactionConfig().safeEnvVars();
+        for (var entry : redactedEnv.vars().entrySet()) {
+            if (!safeVars.contains(entry.getKey())) {
+                assertThat(entry.getValue()).isEqualTo("***");
+            }
+        }
+        assertThat(transformer.redactions()).anyMatch(r -> r.contains("env var"));
+    }
+
+    // ── RedactionEngine: uname hostname discovery ────────────────────────
+
+    @Test
+    void redactionEngineFindsLinuxHostnameFromUname() throws Exception {
+        HsErrReport report = loadLinux();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        assertThat(engine.hostnames()).contains("testhost02");
+        assertThat(engine.findings()).anyMatch(f -> f.contains("uname"));
+    }
+
+    @Test
+    void redactionEngineReturnsSingleHostnameFromHostname() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionEngine engine = new RedactionEngine();
+        report.accept(engine);
+        // hostname() returns first discovered — from Summary
+        assertThat(engine.hostname()).isEqualTo("TESTHOST01");
+    }
+
+    // ── RedactionTransformer: uname hostname redaction ───────────────────
+
+    @Test
+    void redactionTransformerRedactsUnameHostname() throws Exception {
+        HsErrReport original = loadLinux();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.hostnames()).contains("testhost02");
+        String text = redacted.toString();
+        assertThat(text).doesNotContain("testhost02");
+    }
+
+    @Test
+    void redactionTransformerRedactsMacHostnameFromUname() throws Exception {
+        // hs_err.log has "uname: Darwin TESTHOST01 22.6.0 ..." and Summary host: TESTHOST01
+        HsErrReport original = loadMacOS();
+        RedactionTransformer transformer = new RedactionTransformer();
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.hostnames()).contains("TESTHOST01");
+        assertThat(redacted.toString()).doesNotContain("TESTHOST01");
+    }
+
+    // ── RedactionTransformer: sensitive path prefix ──────────────────────
+
+    @Test
+    void redactionTransformerRedactsSensitivePathPrefixes() throws Exception {
+        HsErrReport original = loadLinux();
+        RedactionConfig config = new RedactionConfig()
+                .addSensitivePathPrefix("/build/workspace/openjdk-jdk-dev")
+                .addSensitivePathPrefix("/test/output");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        String text = redacted.toString();
+        assertThat(text).doesNotContain("/build/workspace/openjdk-jdk-dev");
+        assertThat(text).doesNotContain("/test/output");
+        // Replaced with default path placeholder
+        assertThat(text).contains("<redacted-path>");
+    }
+
+    @Test
+    void redactionTransformerRedactsParentPaths() throws Exception {
+        HsErrReport original = loadLinux();
+        RedactionConfig config = new RedactionConfig()
+                .addSensitivePathPrefix("/build/workspace/openjdk-jdk-dev");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        // Not only the full path but parent prefixes should not appear literally
+        String text = redacted.toString();
+        assertThat(text).doesNotContain("/build/workspace/openjdk-jdk-dev");
+        assertThat(text).doesNotContain("/build/workspace");
+    }
+
+    // ── RedactionTransformer: additional usernames/hostnames ─────────────
+
+    @Test
+    void redactionTransformerRedactsAdditionalUsernames() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = new RedactionConfig()
+                .addAdditionalUsername("testuser");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        assertThat(transformer.usernames()).contains("testuser");
+        assertThat(redacted.toString()).doesNotContain("/Users/testuser/");
+    }
+
+    @Test
+    void redactionTransformerRedactsAdditionalHostnames() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = new RedactionConfig()
+                .addAdditionalHostname("customhost");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        transformer.transform(original);
+
+        assertThat(transformer.hostnames()).contains("customhost");
+        assertThat(transformer.hostnames()).contains("TESTHOST01");
+    }
+
+    // ── RedactionTransformer: sensitive strings ──────────────────────────
+
+    @Test
+    void redactionTransformerRedactsSensitiveStrings() throws Exception {
+        HsErrReport original = loadMacOS();
+        RedactionConfig config = new RedactionConfig()
+                .addSensitiveString("SIGSEGV");
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(original);
+
+        // The sensitive string should be replaced
+        assertThat(redacted.header().errorDetail()).doesNotContain("SIGSEGV");
+    }
+
+    // ── RedactionConfig: JSON round-trip ─────────────────────────────────
+
+    @Test
+    void redactionConfigJsonRoundTrip() throws Exception {
+        RedactionConfig config = new RedactionConfig()
+                .setRedactPids(false)
+                .setUserPlaceholder("USER")
+                .setHostPlaceholder("HOST")
+                .addAdditionalUsername("alice")
+                .addAdditionalHostname("server1")
+                .addSensitivePathPrefix("/priv/jenkins")
+                .addSensitiveString("secret-token");
+
+        String json = config.toJson();
+        RedactionConfig restored = RedactionConfig.fromJson(json);
+
+        assertThat(restored.redactPids()).isFalse();
+        assertThat(restored.userPlaceholder()).isEqualTo("USER");
+        assertThat(restored.hostPlaceholder()).isEqualTo("HOST");
+        assertThat(restored.additionalUsernames()).containsExactly("alice");
+        assertThat(restored.additionalHostnames()).containsExactly("server1");
+        assertThat(restored.sensitivePathPrefixes()).containsExactly("/priv/jenkins");
+        assertThat(restored.sensitiveStrings()).containsExactly("secret-token");
+    }
+
+    @Test
+    void redactionConfigJsonFileRoundTrip() throws Exception {
+        RedactionConfig config = RedactionConfig.aggressive()
+                .addAdditionalUsername("bob")
+                .addSensitivePathPrefix("/opt/secret");
+
+        Path tmp = Files.createTempFile("redaction-config", ".json");
+        try {
+            config.toJsonFile(tmp);
+            RedactionConfig restored = RedactionConfig.fromJsonFile(tmp);
+            assertThat(restored.removeDynamicLibraries()).isTrue();
+            assertThat(restored.removeEventLogs()).isTrue();
+            assertThat(restored.additionalUsernames()).containsExactly("bob");
+            assertThat(restored.sensitivePathPrefixes()).containsExactly("/opt/secret");
+        } finally {
+            Files.deleteIfExists(tmp);
+        }
+    }
+}

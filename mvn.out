@@ -1,0 +1,457 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< me.bechberger:jhserr >------------------------
+[INFO] Building jhserr 0.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ jhserr ---
+[INFO] skip non existing resourceDirectory /Users/i560383_1/code/experiments/jdk/hserr-parser/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ jhserr ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ jhserr ---
+[INFO] Copying 15 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ jhserr ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ jhserr ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running me.bechberger.jhserr.parser.JsonRoundTripTest
+[INFO] Tests run: 45, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.618 s -- in me.bechberger.jhserr.parser.JsonRoundTripTest
+[INFO] Running me.bechberger.jhserr.parser.HsErrParserLinuxTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in me.bechberger.jhserr.parser.HsErrParserLinuxTest
+[INFO] Running me.bechberger.jhserr.parser.AllSamplesTest
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in me.bechberger.jhserr.parser.AllSamplesTest
+[INFO] Running me.bechberger.jhserr.parser.HsErrParserMacOSTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in me.bechberger.jhserr.parser.HsErrParserMacOSTest
+[INFO] Running me.bechberger.jhserr.parser.RoundTripTest
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in me.bechberger.jhserr.parser.RoundTripTest
+[INFO] Running me.bechberger.jhserr.parser.DumpItemsTest
+=== hs_err.log ===
+
+-- THREAD --
+[0] BlankLine: <blank>
+[1] ThreadInfo: ThreadInfo
+[2] BlankLine: <blank>
+[3] StackBoundsInfo: StackBoundsInfo
+[4] FrameList: FrameList
+[5] BlankLine: <blank>
+[6] ErrorDuringError: ErrorDuringError
+[7] BlankLine: <blank>
+[8] NamedSection: Retrying call stack printing without source information... (+0 body lines)
+[9] FrameList: FrameList
+[10] BlankLine: <blank>
+[11] ErrorDuringError: ErrorDuringError
+[12] FrameList: FrameList
+[13] BlankLine: <blank>
+[14] SignalInfo: SignalInfo
+[15] BlankLine: <blank>
+[16] Registers: Registers
+[17] BlankLine: <blank>
+[18] NamedSection: Register to memory mapping: (+40 body lines)
+[19] BlankLine: <blank>
+[20] NamedSection: Top of Stack: (sp=0x000000016bef08c0) (+66 body lines)
+[21] BlankLine: <blank>
+[22] BlankLine: <blank>
+[23] NamedSection: Stack slot to memory mapping: (+304 body lines)
+[24] BlankLine: <blank>
+[25] BlankLine: <blank>
+
+-- PROCESS --
+[0] BlankLine: <blank>
+[1] UidInfo: UidInfo
+[2] BlankLine: <blank>
+[3] UmaskInfo: UmaskInfo
+[4] BlankLine: <blank>
+[5] SmrInfo: SmrInfo
+[6] BlankLine: <blank>
+[7] ThreadList: ThreadList
+[8] BlankLine: <blank>
+[9] ThreadList: ThreadList
+[10] BlankLine: <blank>
+[11] CompileTasksInfo: CompileTasksInfo
+[12] BlankLine: <blank>
+[13] VmStateInfo: VmStateInfo
+[14] BlankLine: <blank>
+[15] VmMutexInfo: VmMutexInfo
+[16] BlankLine: <blank>
+[17] HeapAddressInfo: HeapAddressInfo
+[18] BlankLine: <blank>
+[19] CdsInfo: CdsInfo
+[20] CompressedClassSpaceInfo: CompressedClassSpaceInfo
+[21] NarrowKlassInfo: NarrowKlassInfo
+[22] BlankLine: <blank>
+[23] GcPreciousLog: GC Precious Log: (+16 body lines)
+[24] BlankLine: <blank>
+[25] HeapSummary: Heap: (+4 body lines)
+[26] BlankLine: <blank>
+[27] HeapRegions: Heap Regions: E=young(eden), S=young(survivor), O=old, HS=humongous(starts), HC=humongous(continues), CS=collection set, F=free, TAMS=top-at-mark-start, PB=parsable bottom (+129 body lines)
+[28] BlankLine: <blank>
+[29] NamedSection: Card table byte_map: [0x0000000109000000,0x0000000109800000] _byte_map_base: 0x0000000105800000 (+0 body lines)
+[30] BlankLine: <blank>
+[31] NamedSection: Marking Bits: (CMBitMap*) 0x0000000120826a20 (+0 body lines)
+[32] NamedSection:  Bits: [0x0000000122800000, 0x0000000126800000) (+0 body lines)
+[33] BlankLine: <blank>
+[34] PollingPageInfo: PollingPageInfo
+[35] BlankLine: <blank>
+[36] MetaspaceInfo: MetaspaceInfo
+[37] BlankLine: <blank>
+[38] BlankLine: <blank>
+[39] NamedSection: Internal statistics: (+18 body lines)
+[40] BlankLine: <blank>
+[41] CodeCacheInfo: CodeCacheInfo
+[42] CodeCacheInfo: CodeCacheInfo
+[43] CodeCacheInfo: CodeCacheInfo
+[44] BlankLine: <blank>
+[45] EventLog: EventLog
+[46] BlankLine: <blank>
+[47] EventLog: EventLog
+[48] BlankLine: <blank>
+[49] EventLog: EventLog
+[50] BlankLine: <blank>
+[51] EventLog: EventLog
+[52] BlankLine: <blank>
+[53] EventLog: EventLog
+[54] BlankLine: <blank>
+[55] EventLog: EventLog
+[56] BlankLine: <blank>
+[57] EventLog: EventLog
+[58] BlankLine: <blank>
+[59] EventLog: EventLog
+[60] BlankLine: <blank>
+[61] EventLog: EventLog
+[62] BlankLine: <blank>
+[63] EventLog: EventLog
+[64] BlankLine: <blank>
+[65] EventLog: EventLog
+[66] BlankLine: <blank>
+[67] BlankLine: <blank>
+[68] DynamicLibraries: DynamicLibraries
+[69] BlankLine: <blank>
+[70] BlankLine: <blank>
+[71] VmArguments: VmArguments
+[72] BlankLine: <blank>
+[73] GlobalFlags: GlobalFlags
+[74] BlankLine: <blank>
+[75] LoggingConfig: LoggingConfig
+[76] BlankLine: <blank>
+[77] EnvironmentVariables: EnvironmentVariables
+[78] BlankLine: <blank>
+[79] ActiveLocale: ActiveLocale
+[80] BlankLine: <blank>
+[81] SignalHandlers: Signal Handlers: (+12 body lines)
+[82] BlankLine: <blank>
+[83] BlankLine: <blank>
+[84] NativeMemoryTracking: Native Memory Tracking: (+83 body lines)
+[85] NamedSection: Preinit state:entries: 338 (primary: 338, empties: 7581), sum bytes: 13947, longest chain length: 1 (+2 body lines)
+[86] BlankLine: <blank>
+
+-- SYSTEM --
+[0] BlankLine: <blank>
+[1] OsInfo: OS: (+4 body lines)
+[2] BlankLine: <blank>
+[3] CpuInfo: CPU: total 8 (initial active 8) 0x61:0x0:0x1b588bb3:0, fp, asimd, aes, pmull, sha1, sha256, crc32, lse, sha3, sha512 (+5 body lines)
+[4] BlankLine: <blank>
+[5] MemoryInfo: MemoryInfo
+[6] BlankLine: <blank>
+[7] VmInfo: vm_info: vm_info: OpenJDK 64-Bit Server VM (slowdebug 22-internal-adh...
+[8] BlankLine: <blank>
+
+=== hserr_example ===
+
+-- THREAD --
+[0] BlankLine: <blank>
+[1] ThreadInfo: ThreadInfo
+[2] BlankLine: <blank>
+[3] StackBoundsInfo: StackBoundsInfo
+[4] FrameList: FrameList
+[5] FrameList: FrameList
+[6] Registers: Registers
+[7] BlankLine: <blank>
+[8] BlankLine: <blank>
+[9] NamedSection: Register to memory mapping: (+86 body lines)
+[10] BlankLine: <blank>
+[11] NamedSection: Top of Stack: (sp=0x00007fff60ffccf0) (+66 body lines)
+[12] BlankLine: <blank>
+[13] BlankLine: <blank>
+[14] NamedSection: Stack slot to memory mapping: (+9 body lines)
+[15] BlankLine: <blank>
+[16] NamedSection: Lock stack of current Java thread (top to bottom): (+681 body lines)
+[17] BlankLine: <blank>
+[18] BlankLine: <blank>
+
+-- PROCESS --
+[0] BlankLine: <blank>
+[1] UidInfo: UidInfo
+[2] BlankLine: <blank>
+[3] UmaskInfo: UmaskInfo
+[4] BlankLine: <blank>
+[5] SmrInfo: SmrInfo
+[6] BlankLine: <blank>
+[7] ThreadList: ThreadList
+[8] BlankLine: <blank>
+[9] ThreadList: ThreadList
+[10] BlankLine: <blank>
+[11] CompileTasksInfo: CompileTasksInfo
+[12] BlankLine: <blank>
+[13] VmStateInfo: VmStateInfo
+[14] BlankLine: <blank>
+[15] VmMutexInfo: VmMutexInfo
+[16] BlankLine: <blank>
+[17] HeapAddressInfo: HeapAddressInfo
+[18] BlankLine: <blank>
+[19] CdsInfo: CdsInfo
+[20] CompressedClassSpaceInfo: CompressedClassSpaceInfo
+[21] NamedSection: UseCompressedClassPointers 1, UseCompactObjectHeaders 1 (+0 body lines)
+[22] NarrowKlassInfo: NarrowKlassInfo
+[23] NarrowKlassInfo: NarrowKlassInfo
+[24] NamedSection: Encoding Range: [0x0000013c00000000 - 0x0000013d00000000), (4294967296 bytes) (+0 body lines)
+[25] NamedSection: Klass Range:    [0x0000013c00000000 - 0x0000013c41000000), (1090519040 bytes) (+0 body lines)
+[26] NamedSection: Klass ID Range:  [1 - 1064960) (1064959) (+0 body lines)
+[27] NamedSection: Protection zone: [0x0000013c00000000 - 0x0000013c00010000), (65536 bytes) (+0 body lines)
+[28] BlankLine: <blank>
+[29] GcPreciousLog: GC Precious Log: (+12 body lines)
+[30] BlankLine: <blank>
+[31] HeapSummary: Heap: (+9 body lines)
+[32] BlankLine: <blank>
+[33] BlankLine: <blank>
+[34] HeapRegions: Heap Regions: (+1543 body lines)
+[35] BlankLine: <blank>
+[36] PollingPageInfo: PollingPageInfo
+[37] BlankLine: <blank>
+[38] MetaspaceInfo: MetaspaceInfo
+[39] MetaspaceInfo: MetaspaceInfo
+[40] NamedSection: UseCompressedClassPointers 1, UseCompactObjectHeaders 1 (+0 body lines)
+[41] NarrowKlassInfo: NarrowKlassInfo
+[42] NarrowKlassInfo: NarrowKlassInfo
+[43] NamedSection: Encoding Range: [0x0000013c00000000 - 0x0000013d00000000), (4294967296 bytes) (+0 body lines)
+[44] NamedSection: Klass Range:    [0x0000013c00000000 - 0x0000013c41000000), (1090519040 bytes) (+0 body lines)
+[45] NamedSection: Klass ID Range:  [1 - 1064960) (1064959) (+0 body lines)
+[46] NamedSection: Protection zone: [0x0000013c00000000 - 0x0000013c00010000), (65536 bytes) (+0 body lines)
+[47] BlankLine: <blank>
+[48] BlankLine: <blank>
+[49] NamedSection: Internal statistics: (+18 body lines)
+[50] BlankLine: <blank>
+[51] CodeCacheInfo: CodeCacheInfo
+[52] CodeCacheInfo: CodeCacheInfo
+[53] CodeCacheInfo: CodeCacheInfo
+[54] CodeCacheInfo: CodeCacheInfo
+[55] CompilationInfo: CompilationInfo
+[56] BlankLine: <blank>
+[57] EventLog: EventLog
+[58] BlankLine: <blank>
+[59] EventLog: EventLog
+[60] BlankLine: <blank>
+[61] EventLog: EventLog
+[62] BlankLine: <blank>
+[63] EventLog: EventLog
+[64] BlankLine: <blank>
+[65] EventLog: EventLog
+[66] BlankLine: <blank>
+[67] EventLog: EventLog
+[68] BlankLine: <blank>
+[69] EventLog: EventLog
+[70] BlankLine: <blank>
+[71] EventLog: EventLog
+[72] BlankLine: <blank>
+[73] EventLog: EventLog
+[74] BlankLine: <blank>
+[75] EventLog: EventLog
+[76] BlankLine: <blank>
+[77] EventLog: EventLog
+[78] BlankLine: <blank>
+[79] EventLog: EventLog
+[80] BlankLine: <blank>
+[81] EventLog: EventLog
+[82] BlankLine: <blank>
+[83] BlankLine: <blank>
+[84] DynamicLibraries: DynamicLibraries
+[85] BlankLine: <blank>
+[86] NamedSection: JVMTI agents: none (+0 body lines)
+[87] BlankLine: <blank>
+[88] BlankLine: <blank>
+[89] VmArguments: VmArguments
+[90] BlankLine: <blank>
+[91] GlobalFlags: GlobalFlags
+[92] BlankLine: <blank>
+[93] LoggingConfig: LoggingConfig
+[94] BlankLine: <blank>
+[95] ReleaseFileInfo: ReleaseFileInfo
+[96] BlankLine: <blank>
+[97] EnvironmentVariables: EnvironmentVariables
+[98] BlankLine: <blank>
+[99] ActiveLocale: ActiveLocale
+[100] BlankLine: <blank>
+[101] SignalHandlers: Signal Handlers: (+12 body lines)
+[102] BlankLine: <blank>
+[103] BlankLine: <blank>
+[104] NativeMemoryTracking: Native Memory Tracking: (+88 body lines)
+[105] BlankLine: <blank>
+[106] NamedSection: Preinit state:entries: 473 (primary: 473, empties: 7718), sum bytes: 31016, longest chain length: 1 (+18 body lines)
+[107] BlankLine: <blank>
+
+-- SYSTEM --
+[0] BlankLine: <blank>
+[1] OsInfo: OS: (+111 body lines)
+[2] CpuInfo: CPU: total 64 (initial active 64) ppc64 sha aes mfdscr darn brw (+337 body lines)
+[3] BlankLine: <blank>
+[4] NamedSection: Memory: 64k page, physical 133594752k(115506176k free), swap 20971456k(20743616k free) (+1 body lines)
+[5] BlankLine: <blank>
+[6] VmInfo: vm_info: vm_info: OpenJDK 64-Bit Server VM (fastdebug 27-internal-adh...
+[7] BlankLine: <blank>
+
+=== hs_err_pid42500.log ===
+
+-- THREAD --
+[0] BlankLine: <blank>
+[1] ThreadInfo: ThreadInfo
+[2] BlankLine: <blank>
+[3] StackBoundsInfo: StackBoundsInfo
+[4] FrameList: FrameList
+[5] FrameList: FrameList
+[6] BlankLine: <blank>
+[7] SignalInfo: SignalInfo
+[8] BlankLine: <blank>
+[9] Registers: Registers
+[10] BlankLine: <blank>
+[11] NamedSection: Register to memory mapping: (+107 body lines)
+[12] BlankLine: <blank>
+[13] BlankLine: <blank>
+[14] NamedSection: Top of Stack: (sp=0x000000016f532310) (+66 body lines)
+[15] BlankLine: <blank>
+[16] BlankLine: <blank>
+[17] NamedSection: Stack slot to memory mapping: (+853 body lines)
+[18] BlankLine: <blank>
+[19] BlankLine: <blank>
+
+-- PROCESS --
+[0] BlankLine: <blank>
+[1] SmrInfo: SmrInfo
+[2] BlankLine: <blank>
+[3] ThreadList: ThreadList
+[4] BlankLine: <blank>
+[5] ThreadList: ThreadList
+[6] BlankLine: <blank>
+[7] CompileTasksInfo: CompileTasksInfo
+[8] BlankLine: <blank>
+[9] VmStateInfo: VmStateInfo
+[10] BlankLine: <blank>
+[11] VmMutexInfo: VmMutexInfo
+[12] BlankLine: <blank>
+[13] HeapAddressInfo: HeapAddressInfo
+[14] BlankLine: <blank>
+[15] CdsInfo: CdsInfo
+[16] CompressedClassSpaceInfo: CompressedClassSpaceInfo
+[17] NarrowKlassInfo: NarrowKlassInfo
+[18] BlankLine: <blank>
+[19] GcPreciousLog: GC Precious Log: (+16 body lines)
+[20] BlankLine: <blank>
+[21] HeapSummary: Heap: (+4 body lines)
+[22] BlankLine: <blank>
+[23] HeapRegions: Heap Regions: E=young(eden), S=young(survivor), O=old, HS=humongous(starts), HC=humongous(continues), CS=collection set, F=free, OA=open archive, CA=closed archive, TAMS=top-at-mark-start, PB=parsable bottom (+130 body lines)
+[24] BlankLine: <blank>
+[25] NamedSection: Card table byte_map: [0x0000000119b4c000,0x000000011a34c000] _byte_map_base: 0x000000011634c000 (+0 body lines)
+[26] BlankLine: <blank>
+[27] NamedSection: Marking Bits: (CMBitMap*) 0x0000000146840810 (+0 body lines)
+[28] NamedSection:  Bits: [0x000000011ab4c000, 0x000000011eb4c000) (+0 body lines)
+[29] BlankLine: <blank>
+[30] PollingPageInfo: PollingPageInfo
+[31] BlankLine: <blank>
+[32] MetaspaceInfo: MetaspaceInfo
+[33] MetaspaceInfo: MetaspaceInfo
+[34] BlankLine: <blank>
+[35] BlankLine: <blank>
+[36] NamedSection: Internal statistics: (+14 body lines)
+[37] BlankLine: <blank>
+[38] CodeCacheInfo: CodeCacheInfo
+[39] CodeCacheInfo: CodeCacheInfo
+[40] CodeCacheInfo: CodeCacheInfo
+[41] BlankLine: <blank>
+[42] EventLog: EventLog
+[43] BlankLine: <blank>
+[44] EventLog: EventLog
+[45] BlankLine: <blank>
+[46] EventLog: EventLog
+[47] BlankLine: <blank>
+[48] EventLog: EventLog
+[49] BlankLine: <blank>
+[50] EventLog: EventLog
+[51] BlankLine: <blank>
+[52] EventLog: EventLog
+[53] BlankLine: <blank>
+[54] EventLog: EventLog
+[55] BlankLine: <blank>
+[56] EventLog: EventLog
+[57] BlankLine: <blank>
+[58] EventLog: EventLog
+[59] BlankLine: <blank>
+[60] EventLog: EventLog
+[61] BlankLine: <blank>
+[62] BlankLine: <blank>
+[63] DynamicLibraries: DynamicLibraries
+[64] BlankLine: <blank>
+[65] BlankLine: <blank>
+[66] VmArguments: VmArguments
+[67] BlankLine: <blank>
+[68] GlobalFlags: GlobalFlags
+[69] BlankLine: <blank>
+[70] LoggingConfig: LoggingConfig
+[71] BlankLine: <blank>
+[72] EnvironmentVariables: EnvironmentVariables
+[73] BlankLine: <blank>
+[74] ActiveLocale: ActiveLocale
+[75] BlankLine: <blank>
+[76] SignalHandlers: Signal Handlers: (+12 body lines)
+[77] BlankLine: <blank>
+[78] BlankLine: <blank>
+
+-- SYSTEM --
+[0] BlankLine: <blank>
+[1] OsInfo: OS: (+4 body lines)
+[2] BlankLine: <blank>
+[3] CpuInfo: CPU: total 8 (initial active 8) 0x61:0x0:0x1b588bb3:0, fp, asimd, aes, pmull, crc32, lse (+0 body lines)
+[4] BlankLine: <blank>
+[5] MemoryInfo: MemoryInfo
+[6] BlankLine: <blank>
+[7] VmInfo: vm_info: vm_info: OpenJDK 64-Bit Server VM (20-ea+30-2297) for bsd-aa...
+[8] BlankLine: <blank>
+
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in me.bechberger.jhserr.parser.DumpItemsTest
+[INFO] Running me.bechberger.jhserr.model.CodeCacheInfoTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in me.bechberger.jhserr.model.CodeCacheInfoTest
+[INFO] Running me.bechberger.jhserr.model.LoggingConfigTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in me.bechberger.jhserr.model.LoggingConfigTest
+[INFO] Running me.bechberger.jhserr.model.VmInfoTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in me.bechberger.jhserr.model.VmInfoTest
+[INFO] Running me.bechberger.jhserr.model.VmMutexInfoTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in me.bechberger.jhserr.model.VmMutexInfoTest
+[INFO] Running me.bechberger.jhserr.model.ReleaseFileInfoTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in me.bechberger.jhserr.model.ReleaseFileInfoTest
+[INFO] Running me.bechberger.jhserr.model.VisitorTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in me.bechberger.jhserr.model.VisitorTest
+[INFO] Running me.bechberger.jhserr.model.SmrInfoTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in me.bechberger.jhserr.model.SmrInfoTest
+[INFO] Running me.bechberger.jhserr.model.ActiveLocaleTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in me.bechberger.jhserr.model.ActiveLocaleTest
+[INFO] Running me.bechberger.jhserr.model.CompileTasksInfoTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in me.bechberger.jhserr.model.CompileTasksInfoTest
+[INFO] Running me.bechberger.jhserr.transform.TransformTest
+[INFO] Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.130 s -- in me.bechberger.jhserr.transform.TransformTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 151, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.689 s
+[INFO] Finished at: 2026-03-28T12:04:24+01:00
+[INFO] ------------------------------------------------------------------------

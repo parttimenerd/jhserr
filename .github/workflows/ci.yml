@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+        java: [ 17, 21 ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build and test
+        run: mvn -B verify
+
+      - name: Package assembly JAR
+        run: mvn -B package -DskipTests
+
+      - name: Upload assembled JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: jhserr-${{ matrix.os }}-jdk${{ matrix.java }}
+          path: target/jhserr.jar
+
+      - name: Upload executable JAR
+        if: matrix.os == 'ubuntu-latest' && matrix.java == 17
+        uses: actions/upload-artifact@v4
+        with:
+          name: jhserr-exec
+          path: target/jhserr-exec.jar
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-jdk${{ matrix.java }}
+          path: target/surefire-reports/

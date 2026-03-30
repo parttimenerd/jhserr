@@ -1,0 +1,1759 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000194456388, pid=2829, tid=4867
+#
+# JRE version: OpenJDK Runtime Environment SapMachine (25.0+36) (build 25+36-LTS)
+# Java VM: OpenJDK 64-Bit Server VM SapMachine (25+36-LTS, mixed mode, sharing, tiered, compressed oops, compact obj headers, g1 gc, bsd-aarch64)
+# Problematic frame:
+# C  [libsystem_kernel.dylib+0x9388]  __pthread_kill+0x8
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/SAP/SapMachine/issues/new
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: org.example.CrashPanamaRaise
+
+Host: "Mac16,8" arm64, 12 cores, 48G, Darwin 24.6.0, macOS 15.7.2 (24G325)
+Time: Tue Dec 23 13:00:35 2025 CET elapsed time: 0.077722 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000145808c00):  JavaThread "main"             [_thread_in_native, id=4867, stack(0x000000016b6f0000,0x000000016b8f3000) (2060K)]
+
+Stack: [0x000000016b6f0000,0x000000016b8f3000],  sp=0x000000016b8f26d0,  free space=2057k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libsystem_kernel.dylib+0x9388]  __pthread_kill+0x8
+C  [libsystem_c.dylib+0x40cc4]  raise+0x20
+v  ~RuntimeStub::nep_invoker_blob 0x00000001171837f8
+j  java.lang.invoke.LambdaForm$MH+0x0000400001047000.invoke(Ljava/lang/Object;JI)I+10 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x000040000104a800.invokeExact_MT(Ljava/lang/Object;JILjava/lang/Object;)I+21 java.base@25
+j  jdk.internal.foreign.abi.DowncallStub+0x0000400001048000.invoke(Ljava/lang/foreign/SegmentAllocator;Ljava/lang/foreign/MemorySegment;I)I+44 java.base@25
+j  java.lang.invoke.LambdaForm$DMH+0x0000400001048400.invokeStaticInit(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;I)I+14 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x0000400001049800.invoke(Ljava/lang/Object;I)I+44 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x0000400001049c00.invokeExact_MT(Ljava/lang/Object;ILjava/lang/Object;)I+19 java.base@25
+j  org.example.CrashPanamaRaise.main([Ljava/lang/String;)V+91
+v  ~StubRoutines::call_stub 0x000000011704c154
+V  [libjvm.dylib+0x4e8640]  JavaCalls::call_helper(JavaValue*, methodHandle const&, JavaCallArguments*, JavaThread*)+0x3e0
+V  [libjvm.dylib+0x56d3d4]  jni_invoke_static(JNIEnv_*, JavaValue*, _jobject*, JNICallType, _jmethodID*, JNI_ArgumentPusher*, JavaThread*)+0x174
+V  [libjvm.dylib+0x570a34]  jni_CallStaticVoidMethod+0xe4
+C  [libjli.dylib+0xa92c]  JavaMain+0x918
+C  [libjli.dylib+0xd6ac]  ThreadJavaMain+0xc
+C  [libsystem_pthread.dylib+0x6bc8]  _pthread_start+0x88
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+v  ~RuntimeStub::nep_invoker_blob 0x00000001171837cc
+j  java.lang.invoke.LambdaForm$MH+0x0000400001047000.invoke(Ljava/lang/Object;JI)I+10 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x000040000104a800.invokeExact_MT(Ljava/lang/Object;JILjava/lang/Object;)I+21 java.base@25
+j  jdk.internal.foreign.abi.DowncallStub+0x0000400001048000.invoke(Ljava/lang/foreign/SegmentAllocator;Ljava/lang/foreign/MemorySegment;I)I+44 java.base@25
+j  java.lang.invoke.LambdaForm$DMH+0x0000400001048400.invokeStaticInit(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;I)I+14 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x0000400001049800.invoke(Ljava/lang/Object;I)I+44 java.base@25
+j  java.lang.invoke.LambdaForm$MH+0x0000400001049c00.invokeExact_MT(Ljava/lang/Object;ILjava/lang/Object;)I+19 java.base@25
+j  org.example.CrashPanamaRaise.main([Ljava/lang/String;)V+91
+v  ~StubRoutines::call_stub 0x000000011704c154
+
+siginfo: si_signo: 11 (SIGSEGV), si_code: 2 (SEGV_ACCERR), si_addr: 0x0000000000000000
+
+Registers:
+ x0=0x0000000000000000  x1=0x0000000000000000  x2=0x000000000000000b  x3=0x000000052fc19370
+ x4=0x00000000fffffffe  x5=0x0000000000000000  x6=0x0000000145808c00  x7=0x0000000000000090
+ x8=0x0b567cf7882d38ec  x9=0x0b567cf6e3a208ec x10=0x00000001458090b4 x11=0x0000000000000002
+x12=0x000000013010cf58 x13=0x0000000000000000 x14=0x0000000106cfbce0 x15=0x00004000005720f0
+x16=0x0000000000000148 x17=0x0000000203479548 x18=0x0000000000000000 x19=0x000000000000000b
+x20=0x0000000000001303 x21=0x000000016b8f30e0 x22=0x000000013040e252 x23=0x000000000000000a
+x24=0x000000016b8f2808 x25=0x000000016b8f2e98 x26=0x000000013040e3f8 x27=0x0000000000000000
+x28=0x0000000145808c00  fp=0x000000016b8f26f0  lr=0x000000019448f848  sp=0x000000016b8f26d0
+pc=0x0000000194456388 cpsr=0x0000000040000000
+
+Register to memory mapping:
+
+x0 =0x0 is null
+x1 =0x0 is null
+x2 =0x000000000000000b is an unknown value
+x3 =0x000000052fc19370 is an oop: jdk.internal.foreign.abi.NativeEntryPoint 
+{0x000000052fc19370} - klass: 'jdk/internal/foreign/abi/NativeEntryPoint' - flags: 
+
+ - ---- fields (total size 3 words):
+ - private final 'downcallStubAddress' 'J' @8  4682430400 (0x00000001171837c0)
+ - private final 'methodType' 'Ljava/lang/invoke/MethodType;' @16  a 'java/lang/invoke/MethodType'{0x000000052fab1a58} = (JI)I (0xa5f5634b)
+x4 =0x00000000fffffffe is an unknown value
+x5 =0x0 is null
+x6 =0x0000000145808c00 is a thread
+x7 =0x0000000000000090 is an unknown value
+x8 =0x0b567cf7882d38ec is an unknown value
+x9 =0x0b567cf6e3a208ec is an unknown value
+x10=0x00000001458090b4 points into unknown readable memory: 04 00 00 00
+x11=0x0000000000000002 is an unknown value
+x12={method} {0x000000013010cf58} 'linkToNative' '(JILjava/lang/Object;)I' in 'java/lang/invoke/MethodHandle'
+x13=0x0 is null
+x14=0x0000000106cfbce0: _ZL15vm_symbol_index+0 in /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/server/libjvm.dylib at 0x0000000105e5c000
+x15=0x00004000005720f0 is pointing into metadata
+x16=0x0000000000000148 is an unknown value
+x17=0x0000000203479548 points into unknown readable memory: 0x0000000194456380 | 80 63 45 94 01 00 00 00
+x18=0x0 is null
+x19=0x000000000000000b is an unknown value
+x20=0x0000000000001303 is an unknown value
+x21=0x000000016b8f30e0 points into unknown readable memory: 0x000000016b8f3000 | 00 30 8f 6b 01 00 00 00
+x22=0x000000013040e252 is pointing into metadata
+x23=0x000000000000000a is an unknown value
+x24=0x000000016b8f2808 is pointing into the stack for thread: 0x0000000145808c00
+x25=0x000000016b8f2e98 is pointing into the stack for thread: 0x0000000145808c00
+x26=0x000000013040e3f8 is pointing into metadata
+x27=0x0 is null
+x28=0x0000000145808c00 is a thread
+ fp=0x000000016b8f26f0 is pointing into the stack for thread: 0x0000000145808c00
+ lr=0x000000019448f848: pthread_kill+0x128 in /usr/lib/system/libsystem_pthread.dylib at 0x0000000194489000
+ sp=0x000000016b8f26d0 is pointing into the stack for thread: 0x0000000145808c00
+
+Top of Stack: (sp=0x000000016b8f26d0)
+0x000000016b8f26d0:   000000013040e252 0000000106c89bc8   R.@0............
+0x000000016b8f26e0:   000000016b8f2760 000000000000000b   `'.k............
+0x000000016b8f26f0:   000000016b8f2710 0000000194360cc4   .'.k......6.....
+0x000000016b8f2700:   000000016b8f2760 000000016b8f2740   `'.k....@'.k....
+0x000000016b8f2710:   000000016b8f2730 00000001171837f8   0'.k.....7......
+0x000000016b8f2720:   000000016b8f27d0 000000011705f484   .'.k............
+0x000000016b8f2730:   000000016b8f27d0 0000000117050928   .'.k....(.......
+0x000000016b8f2740:   0000000000000000 000000013010c6f0   ...........0....
+0x000000016b8f2750:   0000000000000000 000000016b8f2740   ........@'.k....
+0x000000016b8f2760:   000000052fc19370 000000000000000b   p../............
+0x000000016b8f2770:   0000000194360ca4 0000000000000000   ..6.............
+0x000000016b8f2780:   fffffffffffffff6 000000013040e252   ........R.@0....
+0x000000016b8f2790:   0000000000000007 000000013040e3f8   ..........@0....
+0x000000016b8f27a0:   000000052fc38838 ffffffffffffffee   8../............
+0x000000016b8f27b0:   0000000000000000 000000013040e260   ........`.@0....
+0x000000016b8f27c0:   fffffffffffffff2 000000016b8f27d0   .........'.k....
+0x000000016b8f27d0:   000000016b8f2860 0000000117050928   `(.k....(.......
+0x000000016b8f27e0:   0000000000000000 000000052fc19370   ........p../....
+0x000000016b8f27f0:   000000000000000b 0000000194360ca4   ..........6.....
+0x000000016b8f2800:   0000000000000000 000000052fc38948   ........H../....
+0x000000016b8f2810:   fffffffffffffff6 000000013041529d   .........RA0....
+0x000000016b8f2820:   0000000000000007 0000000130415460   ........`TA0....
+0x000000016b8f2830:   000000052fcebdf8 ffffffffffffffee   .../............
+0x000000016b8f2840:   0000000000000000 00000001304152b0   .........RA0....
+0x000000016b8f2850:   fffffffffffffff2 000000016b8f2860   ........`(.k....
+0x000000016b8f2860:   000000016b8f28f0 0000000117050928   .(.k....(.......
+0x000000016b8f2870:   0000000000000000 000000052fab1a58   ........X../....
+0x000000016b8f2880:   000000000000000b 0000000194360ca4   ..........6.....
+0x000000016b8f2890:   0000000000000000 000000052fc38948   ........H../....
+0x000000016b8f28a0:   fffffffffffffff6 000000013041039c   ..........A0....
+0x000000016b8f28b0:   000000000000000b 0000000130410598   ..........A0....
+0x000000016b8f28c0:   000000052fc97dc0 ffffffffffffffee   .}./............
+
+Instructions: (pc=0x0000000194456388)
+  0x0000000194456288:   f6 57 4b a9 f8 5f 4a a9 fa 67 49 a9 ff 83 03 91
+  0x0000000194456298:   ff 0f 5f d6 f8 23 40 b9 b8 fe ff 35 f9 3b 40 b9
+  0x00000001944562a8:   3f 4f 00 71 28 fe ff 54 09 f1 00 51 3f 0b 49 6b
+  0x00000001944562b8:   c8 fd ff 54 22 f7 7e d3 49 f0 00 11 1f 01 09 6b
+  0x00000001944562c8:   41 fd ff 54 e8 43 42 f8 e8 02 00 f9 e8 c3 42 f8
+  0x00000001944562d8:   c8 02 00 f9 e8 37 40 b9 a8 02 00 b9 69 02 40 b9
+  0x00000001944562e8:   e8 03 00 91 3f 03 09 6b 09 01 00 54 22 f5 7e d3
+  0x00000001944562f8:   01 f1 00 91 e0 03 14 aa fb de ff 97 79 02 00 b9
+  0x0000000194456308:   58 26 80 12 dc ff ff 17 01 f1 00 91 e0 03 14 aa
+  0x0000000194456318:   f5 de ff 97 18 00 80 52 79 02 00 b9 d6 ff ff 17
+  0x0000000194456328:   90 0c 80 d2 01 10 00 d4 03 01 00 54 7f 23 03 d5
+  0x0000000194456338:   fd 7b bf a9 fd 03 00 91 a6 e0 ff 97 bf 03 00 91
+  0x0000000194456348:   fd 7b c1 a8 ff 0f 5f d6 c0 03 5f d6 d0 37 80 d2
+  0x0000000194456358:   01 10 00 d4 03 01 00 54 7f 23 03 d5 fd 7b bf a9
+  0x0000000194456368:   fd 03 00 91 9b e0 ff 97 bf 03 00 91 fd 7b c1 a8
+  0x0000000194456378:   ff 0f 5f d6 c0 03 5f d6 10 29 80 d2 01 10 00 d4
+=>0x0000000194456388:   03 01 00 54 7f 23 03 d5 fd 7b bf a9 fd 03 00 91
+  0x0000000194456398:   90 e0 ff 97 bf 03 00 91 fd 7b c1 a8 ff 0f 5f d6
+  0x00000001944563a8:   c0 03 5f d6 70 0a 80 d2 01 10 00 d4 03 01 00 54
+  0x00000001944563b8:   7f 23 03 d5 fd 7b bf a9 fd 03 00 91 85 e0 ff 97
+  0x00000001944563c8:   bf 03 00 91 fd 7b c1 a8 ff 0f 5f d6 c0 03 5f d6
+  0x00000001944563d8:   70 30 80 d2 01 10 00 d4 03 01 00 54 7f 23 03 d5
+  0x00000001944563e8:   fd 7b bf a9 fd 03 00 91 7a e0 ff 97 bf 03 00 91
+  0x00000001944563f8:   fd 7b c1 a8 ff 0f 5f d6 c0 03 5f d6 64 01 00 34
+  0x0000000194456408:   68 d0 3b d5 a9 fe 36 d0 29 21 22 91 08 05 40 f9
+  0x0000000194456418:   1f 01 00 f1 28 01 88 9a c9 02 80 52 09 01 00 b9
+  0x0000000194456428:   00 00 80 12 c0 03 5f d6 04 08 80 52 ce eb ff 17
+  0x0000000194456438:   50 0d 80 d2 01 10 00 d4 03 01 00 54 7f 23 03 d5
+  0x0000000194456448:   fd 7b bf a9 fd 03 00 91 62 e0 ff 97 bf 03 00 91
+  0x0000000194456458:   fd 7b c1 a8 ff 0f 5f d6 c0 03 5f d6 d0 03 80 d2
+  0x0000000194456468:   01 10 00 d4 03 01 00 54 7f 23 03 d5 fd 7b bf a9
+  0x0000000194456478:   fd 03 00 91 06 e4 ff 97 bf 03 00 91 fd 7b c1 a8
+
+
+Stack slot to memory mapping:
+
+stack at sp + 0 slots: 0x000000013040e252 is pointing into metadata
+stack at sp + 1 slots: 0x0000000106c89bc8: _ZN19TemplateInterpreter13_active_tableE+0 in /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/server/libjvm.dylib at 0x0000000105e5c000
+stack at sp + 2 slots: 0x000000016b8f2760 is pointing into the stack for thread: 0x0000000145808c00
+stack at sp + 3 slots: 0x000000000000000b is an unknown value
+stack at sp + 4 slots: 0x000000016b8f2710 is pointing into the stack for thread: 0x0000000145808c00
+stack at sp + 5 slots: 0x0000000194360cc4: raise+0x20 in /usr/lib/system/libsystem_c.dylib at 0x0000000194320000
+stack at sp + 6 slots: 0x000000016b8f2760 is pointing into the stack for thread: 0x0000000145808c00
+stack at sp + 7 slots: 0x000000016b8f2740 is pointing into the stack for thread: 0x0000000145808c00
+
+Lock stack of current Java thread (top to bottom):
+
+--------------------------------------------------------------------------------
+Decoding CodeBlob, name: nep_invoker_blob, at  [0x00000001171837c0, 0x0000000117183888]  200 bytes
+[MachCode]
+  0x00000001171837c0: fd7b bfa9 | fd03 0091 | bf43 00d1 | 0900 0010 | 890b 02f9 | e903 0091 | 8907 02f9 | 9d0f 02f9 
+  0x00000001171837e0: e903 7eb2 | 8ad3 1291 | 49fd 9f88 | e903 01aa | e003 02aa | 2001 3fd6 | a900 80d2 | 89b7 04b9 
+  0x0000000117183800: bf3b 03d5 | 89a3 0091 | 29fd dfc8 | bf03 09eb | e801 0054 | 89b3 44b9 | a901 0035 | e903 7db2 
+  0x0000000117183820: 8ad3 1291 | 49fd 9f88 | 89c3 5439 | 3f09 0071 | e001 0054 | 9f07 02f9 | 9f0f 02f9 | 9f0b 02f9 
+  0x0000000117183840: bf03 0091 | fd7b c1a8 | c003 5fd6 | e003 00f9 | e003 1caa | 892c 94d2 | a9c6 a0f2 | 2900 c0f2 
+  0x0000000117183860: 2001 3fd6 | e003 40f9 | edff ff17 | e003 00f9 | 8950 9cd2 | 49cf a0f2 | 2900 c0f2 | 2001 3fd6 
+  0x0000000117183880: e003 40f9 | ecff ff17 
+[/MachCode]
+--------------------------------------------------------------------------------
+
+
+---------------  P R O C E S S  ---------------
+
+uid  : 501 euid : 501 gid  : 20 egid : 20
+
+umask: 0022 (----w--w-)
+
+Threads class SMR info:
+_java_thread_list=0x0000600002eaf3a0, length=10, elements={
+0x0000000145808c00, 0x000000014581de00, 0x000000014500ea00, 0x0000000145822400,
+0x000000013501a000, 0x000000013501b400, 0x00000001450a2c00, 0x00000001450a3600,
+0x000000014581f200, 0x000000014585d800
+}
+
+Java Threads: ( => current thread )
+=>0x0000000145808c00 JavaThread "main"                              [_thread_in_native, id=4867, stack(0x000000016b6f0000,0x000000016b8f3000) (2060K)]
+  0x000000014581de00 JavaThread "Reference Handler"          daemon [_thread_blocked, id=24323, stack(0x000000016c868000,0x000000016ca6b000) (2060K)]
+  0x000000014500ea00 JavaThread "Finalizer"                  daemon [_thread_blocked, id=28931, stack(0x000000016ca74000,0x000000016cc77000) (2060K)]
+  0x0000000145822400 JavaThread "Signal Dispatcher"          daemon [_thread_blocked, id=24835, stack(0x000000016cc80000,0x000000016ce83000) (2060K)]
+  0x000000013501a000 JavaThread "Service Thread"             daemon [_thread_blocked, id=25347, stack(0x000000016ce8c000,0x000000016d08f000) (2060K)]
+  0x000000013501b400 JavaThread "Monitor Deflation Thread"   daemon [_thread_blocked, id=25859, stack(0x000000016d098000,0x000000016d29b000) (2060K)]
+  0x00000001450a2c00 JavaThread "C2 CompilerThread0"         daemon [_thread_blocked, id=26371, stack(0x000000016d2a4000,0x000000016d4a7000) (2060K)]
+  0x00000001450a3600 JavaThread "C1 CompilerThread0"         daemon [_thread_blocked, id=28675, stack(0x000000016d4b0000,0x000000016d6b3000) (2060K)]
+  0x000000014581f200 JavaThread "Notification Thread"        daemon [_thread_blocked, id=28163, stack(0x000000016d8c8000,0x000000016dacb000) (2060K)]
+  0x000000014585d800 JavaThread "Common-Cleaner"             daemon [_thread_blocked, id=27651, stack(0x000000016dad4000,0x000000016dcd7000) (2060K)]
+Total: 10
+
+Other Threads:
+  0x0000000135018a00 VMThread "VM Thread"                           [id=19459, stack(0x000000016c544000,0x000000016c747000) (2060K)]
+  0x0000000134e05840 WatcherThread "VM Periodic Task Thread"        [id=20743, stack(0x000000016c338000,0x000000016c53b000) (2060K)]
+  0x00000001450a7600 NamedThread "vitals sampler thread"            [id=28419, stack(0x000000016d6bc000,0x000000016d8bf000) (2060K)]
+  0x000000014504c200 WorkerThread "GC Thread#0"                     [id=14339, stack(0x000000016b8fc000,0x000000016baff000) (2060K)]
+  0x000000014505f000 ConcurrentGCThread "G1 Main Marker"            [id=12803, stack(0x000000016bb08000,0x000000016bd0b000) (2060K)]
+  0x000000014505f600 WorkerThread "G1 Conc#0"                       [id=13315, stack(0x000000016bd14000,0x000000016bf17000) (2060K)]
+  0x000000014509bc00 ConcurrentGCThread "G1 Refine#0"               [id=21507, stack(0x000000016bf20000,0x000000016c123000) (2060K)]
+  0x000000014509c200 ConcurrentGCThread "G1 Service"                [id=16643, stack(0x000000016c12c000,0x000000016c32f000) (2060K)]
+Total: 7
+
+Threads with active compile tasks:
+Total: 0
+
+VM state: not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap address: 0x0000000500000000, size: 12288 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+
+CDS archive(s) mapped at: [0x0000400000000000-0x0000400000e54000-0x0000400000e54000), size 15024128, SharedBaseAddress: 0x0000400000000000, ArchiveRelocationMode: 1.
+Compressed class space mapped at: 0x0000400001000000-0x0000400041000000, reserved size: 1073741824
+UseCompressedClassPointers 1, UseCompactObjectHeaders 1
+Narrow klass pointer bits 22, Max shift 10
+Narrow klass base: 0x0000400000000000, Narrow klass shift: 10
+Encoding Range: [0x0000400000000000 - 0x0000400100000000), (4294967296 bytes)
+Klass Range:    [0x0000400000004000 - 0x0000400041000000), (1090502656 bytes)
+Klass ID Range:  [16 - 1064960) (1064944)
+Protection zone: [0x0000400000000000 - 0x0000400000004000), (16384 bytes)
+
+GC Precious Log:
+ CardTable entry size: 512
+ Card Set container configuration: InlinePtr #cards 4 size 8 Array Of Cards #cards 64 size 144 Howl #buckets 8 coarsen threshold 14745 Howl Bitmap #cards 2048 size 272 coarsen threshold 1843 Card regions per heap region 1 cards per card region 16384
+ CPUs: 12 total, 12 available
+ Memory: 49152M
+ Large Page Support: Disabled
+ NUMA Support: Disabled
+ Compressed Oops: Enabled (Zero based)
+ Heap Region Size: 8M
+ Heap Min Capacity: 8M
+ Heap Initial Capacity: 768M
+ Heap Max Capacity: 12G
+ Pre-touch: Disabled
+ Parallel Workers: 10
+ Concurrent Workers: 3
+ Concurrent Refinement Workers: 10
+ Periodic GC: Disabled
+
+Heap:
+ garbage-first heap   total reserved 12582912K, committed 794624K, used 1070K [0x0000000500000000, 0x0000000800000000)
+  region size 8192K, 1 young (8192K), 0 survivors (0K)
+
+Heap Regions: E=young(eden), S=young(survivor), O=old, HS=humongous(starts), HC=humongous(continues), CS=collection set, F=free, TAMS=top-at-mark-start, PB=parsable bottom
+|   0|0x0000000500000000, 0x0000000500000000, 0x0000000500800000|  0%| F|  |TAMS 0x0000000500000000| PB 0x0000000500000000| Untracked |  0
+|   1|0x0000000500800000, 0x0000000500800000, 0x0000000501000000|  0%| F|  |TAMS 0x0000000500800000| PB 0x0000000500800000| Untracked |  0
+|   2|0x0000000501000000, 0x0000000501000000, 0x0000000501800000|  0%| F|  |TAMS 0x0000000501000000| PB 0x0000000501000000| Untracked |  0
+|   3|0x0000000501800000, 0x0000000501800000, 0x0000000502000000|  0%| F|  |TAMS 0x0000000501800000| PB 0x0000000501800000| Untracked |  0
+|   4|0x0000000502000000, 0x0000000502000000, 0x0000000502800000|  0%| F|  |TAMS 0x0000000502000000| PB 0x0000000502000000| Untracked |  0
+|   5|0x0000000502800000, 0x0000000502800000, 0x0000000503000000|  0%| F|  |TAMS 0x0000000502800000| PB 0x0000000502800000| Untracked |  0
+|   6|0x0000000503000000, 0x0000000503000000, 0x0000000503800000|  0%| F|  |TAMS 0x0000000503000000| PB 0x0000000503000000| Untracked |  0
+|   7|0x0000000503800000, 0x0000000503800000, 0x0000000504000000|  0%| F|  |TAMS 0x0000000503800000| PB 0x0000000503800000| Untracked |  0
+|   8|0x0000000504000000, 0x0000000504000000, 0x0000000504800000|  0%| F|  |TAMS 0x0000000504000000| PB 0x0000000504000000| Untracked |  0
+|   9|0x0000000504800000, 0x0000000504800000, 0x0000000505000000|  0%| F|  |TAMS 0x0000000504800000| PB 0x0000000504800000| Untracked |  0
+|  10|0x0000000505000000, 0x0000000505000000, 0x0000000505800000|  0%| F|  |TAMS 0x0000000505000000| PB 0x0000000505000000| Untracked |  0
+|  11|0x0000000505800000, 0x0000000505800000, 0x0000000506000000|  0%| F|  |TAMS 0x0000000505800000| PB 0x0000000505800000| Untracked |  0
+|  12|0x0000000506000000, 0x0000000506000000, 0x0000000506800000|  0%| F|  |TAMS 0x0000000506000000| PB 0x0000000506000000| Untracked |  0
+|  13|0x0000000506800000, 0x0000000506800000, 0x0000000507000000|  0%| F|  |TAMS 0x0000000506800000| PB 0x0000000506800000| Untracked |  0
+|  14|0x0000000507000000, 0x0000000507000000, 0x0000000507800000|  0%| F|  |TAMS 0x0000000507000000| PB 0x0000000507000000| Untracked |  0
+|  15|0x0000000507800000, 0x0000000507800000, 0x0000000508000000|  0%| F|  |TAMS 0x0000000507800000| PB 0x0000000507800000| Untracked |  0
+|  16|0x0000000508000000, 0x0000000508000000, 0x0000000508800000|  0%| F|  |TAMS 0x0000000508000000| PB 0x0000000508000000| Untracked |  0
+|  17|0x0000000508800000, 0x0000000508800000, 0x0000000509000000|  0%| F|  |TAMS 0x0000000508800000| PB 0x0000000508800000| Untracked |  0
+|  18|0x0000000509000000, 0x0000000509000000, 0x0000000509800000|  0%| F|  |TAMS 0x0000000509000000| PB 0x0000000509000000| Untracked |  0
+|  19|0x0000000509800000, 0x0000000509800000, 0x000000050a000000|  0%| F|  |TAMS 0x0000000509800000| PB 0x0000000509800000| Untracked |  0
+|  20|0x000000050a000000, 0x000000050a000000, 0x000000050a800000|  0%| F|  |TAMS 0x000000050a000000| PB 0x000000050a000000| Untracked |  0
+|  21|0x000000050a800000, 0x000000050a800000, 0x000000050b000000|  0%| F|  |TAMS 0x000000050a800000| PB 0x000000050a800000| Untracked |  0
+|  22|0x000000050b000000, 0x000000050b000000, 0x000000050b800000|  0%| F|  |TAMS 0x000000050b000000| PB 0x000000050b000000| Untracked |  0
+|  23|0x000000050b800000, 0x000000050b800000, 0x000000050c000000|  0%| F|  |TAMS 0x000000050b800000| PB 0x000000050b800000| Untracked |  0
+|  24|0x000000050c000000, 0x000000050c000000, 0x000000050c800000|  0%| F|  |TAMS 0x000000050c000000| PB 0x000000050c000000| Untracked |  0
+|  25|0x000000050c800000, 0x000000050c800000, 0x000000050d000000|  0%| F|  |TAMS 0x000000050c800000| PB 0x000000050c800000| Untracked |  0
+|  26|0x000000050d000000, 0x000000050d000000, 0x000000050d800000|  0%| F|  |TAMS 0x000000050d000000| PB 0x000000050d000000| Untracked |  0
+|  27|0x000000050d800000, 0x000000050d800000, 0x000000050e000000|  0%| F|  |TAMS 0x000000050d800000| PB 0x000000050d800000| Untracked |  0
+|  28|0x000000050e000000, 0x000000050e000000, 0x000000050e800000|  0%| F|  |TAMS 0x000000050e000000| PB 0x000000050e000000| Untracked |  0
+|  29|0x000000050e800000, 0x000000050e800000, 0x000000050f000000|  0%| F|  |TAMS 0x000000050e800000| PB 0x000000050e800000| Untracked |  0
+|  30|0x000000050f000000, 0x000000050f000000, 0x000000050f800000|  0%| F|  |TAMS 0x000000050f000000| PB 0x000000050f000000| Untracked |  0
+|  31|0x000000050f800000, 0x000000050f800000, 0x0000000510000000|  0%| F|  |TAMS 0x000000050f800000| PB 0x000000050f800000| Untracked |  0
+|  32|0x0000000510000000, 0x0000000510000000, 0x0000000510800000|  0%| F|  |TAMS 0x0000000510000000| PB 0x0000000510000000| Untracked |  0
+|  33|0x0000000510800000, 0x0000000510800000, 0x0000000511000000|  0%| F|  |TAMS 0x0000000510800000| PB 0x0000000510800000| Untracked |  0
+|  34|0x0000000511000000, 0x0000000511000000, 0x0000000511800000|  0%| F|  |TAMS 0x0000000511000000| PB 0x0000000511000000| Untracked |  0
+|  35|0x0000000511800000, 0x0000000511800000, 0x0000000512000000|  0%| F|  |TAMS 0x0000000511800000| PB 0x0000000511800000| Untracked |  0
+|  36|0x0000000512000000, 0x0000000512000000, 0x0000000512800000|  0%| F|  |TAMS 0x0000000512000000| PB 0x0000000512000000| Untracked |  0
+|  37|0x0000000512800000, 0x0000000512800000, 0x0000000513000000|  0%| F|  |TAMS 0x0000000512800000| PB 0x0000000512800000| Untracked |  0
+|  38|0x0000000513000000, 0x0000000513000000, 0x0000000513800000|  0%| F|  |TAMS 0x0000000513000000| PB 0x0000000513000000| Untracked |  0
+|  39|0x0000000513800000, 0x0000000513800000, 0x0000000514000000|  0%| F|  |TAMS 0x0000000513800000| PB 0x0000000513800000| Untracked |  0
+|  40|0x0000000514000000, 0x0000000514000000, 0x0000000514800000|  0%| F|  |TAMS 0x0000000514000000| PB 0x0000000514000000| Untracked |  0
+|  41|0x0000000514800000, 0x0000000514800000, 0x0000000515000000|  0%| F|  |TAMS 0x0000000514800000| PB 0x0000000514800000| Untracked |  0
+|  42|0x0000000515000000, 0x0000000515000000, 0x0000000515800000|  0%| F|  |TAMS 0x0000000515000000| PB 0x0000000515000000| Untracked |  0
+|  43|0x0000000515800000, 0x0000000515800000, 0x0000000516000000|  0%| F|  |TAMS 0x0000000515800000| PB 0x0000000515800000| Untracked |  0
+|  44|0x0000000516000000, 0x0000000516000000, 0x0000000516800000|  0%| F|  |TAMS 0x0000000516000000| PB 0x0000000516000000| Untracked |  0
+|  45|0x0000000516800000, 0x0000000516800000, 0x0000000517000000|  0%| F|  |TAMS 0x0000000516800000| PB 0x0000000516800000| Untracked |  0
+|  46|0x0000000517000000, 0x0000000517000000, 0x0000000517800000|  0%| F|  |TAMS 0x0000000517000000| PB 0x0000000517000000| Untracked |  0
+|  47|0x0000000517800000, 0x0000000517800000, 0x0000000518000000|  0%| F|  |TAMS 0x0000000517800000| PB 0x0000000517800000| Untracked |  0
+|  48|0x0000000518000000, 0x0000000518000000, 0x0000000518800000|  0%| F|  |TAMS 0x0000000518000000| PB 0x0000000518000000| Untracked |  0
+|  49|0x0000000518800000, 0x0000000518800000, 0x0000000519000000|  0%| F|  |TAMS 0x0000000518800000| PB 0x0000000518800000| Untracked |  0
+|  50|0x0000000519000000, 0x0000000519000000, 0x0000000519800000|  0%| F|  |TAMS 0x0000000519000000| PB 0x0000000519000000| Untracked |  0
+|  51|0x0000000519800000, 0x0000000519800000, 0x000000051a000000|  0%| F|  |TAMS 0x0000000519800000| PB 0x0000000519800000| Untracked |  0
+|  52|0x000000051a000000, 0x000000051a000000, 0x000000051a800000|  0%| F|  |TAMS 0x000000051a000000| PB 0x000000051a000000| Untracked |  0
+|  53|0x000000051a800000, 0x000000051a800000, 0x000000051b000000|  0%| F|  |TAMS 0x000000051a800000| PB 0x000000051a800000| Untracked |  0
+|  54|0x000000051b000000, 0x000000051b000000, 0x000000051b800000|  0%| F|  |TAMS 0x000000051b000000| PB 0x000000051b000000| Untracked |  0
+|  55|0x000000051b800000, 0x000000051b800000, 0x000000051c000000|  0%| F|  |TAMS 0x000000051b800000| PB 0x000000051b800000| Untracked |  0
+|  56|0x000000051c000000, 0x000000051c000000, 0x000000051c800000|  0%| F|  |TAMS 0x000000051c000000| PB 0x000000051c000000| Untracked |  0
+|  57|0x000000051c800000, 0x000000051c800000, 0x000000051d000000|  0%| F|  |TAMS 0x000000051c800000| PB 0x000000051c800000| Untracked |  0
+|  58|0x000000051d000000, 0x000000051d000000, 0x000000051d800000|  0%| F|  |TAMS 0x000000051d000000| PB 0x000000051d000000| Untracked |  0
+|  59|0x000000051d800000, 0x000000051d800000, 0x000000051e000000|  0%| F|  |TAMS 0x000000051d800000| PB 0x000000051d800000| Untracked |  0
+|  60|0x000000051e000000, 0x000000051e000000, 0x000000051e800000|  0%| F|  |TAMS 0x000000051e000000| PB 0x000000051e000000| Untracked |  0
+|  61|0x000000051e800000, 0x000000051e800000, 0x000000051f000000|  0%| F|  |TAMS 0x000000051e800000| PB 0x000000051e800000| Untracked |  0
+|  62|0x000000051f000000, 0x000000051f000000, 0x000000051f800000|  0%| F|  |TAMS 0x000000051f000000| PB 0x000000051f000000| Untracked |  0
+|  63|0x000000051f800000, 0x000000051f800000, 0x0000000520000000|  0%| F|  |TAMS 0x000000051f800000| PB 0x000000051f800000| Untracked |  0
+|  64|0x0000000520000000, 0x0000000520000000, 0x0000000520800000|  0%| F|  |TAMS 0x0000000520000000| PB 0x0000000520000000| Untracked |  0
+|  65|0x0000000520800000, 0x0000000520800000, 0x0000000521000000|  0%| F|  |TAMS 0x0000000520800000| PB 0x0000000520800000| Untracked |  0
+|  66|0x0000000521000000, 0x0000000521000000, 0x0000000521800000|  0%| F|  |TAMS 0x0000000521000000| PB 0x0000000521000000| Untracked |  0
+|  67|0x0000000521800000, 0x0000000521800000, 0x0000000522000000|  0%| F|  |TAMS 0x0000000521800000| PB 0x0000000521800000| Untracked |  0
+|  68|0x0000000522000000, 0x0000000522000000, 0x0000000522800000|  0%| F|  |TAMS 0x0000000522000000| PB 0x0000000522000000| Untracked |  0
+|  69|0x0000000522800000, 0x0000000522800000, 0x0000000523000000|  0%| F|  |TAMS 0x0000000522800000| PB 0x0000000522800000| Untracked |  0
+|  70|0x0000000523000000, 0x0000000523000000, 0x0000000523800000|  0%| F|  |TAMS 0x0000000523000000| PB 0x0000000523000000| Untracked |  0
+|  71|0x0000000523800000, 0x0000000523800000, 0x0000000524000000|  0%| F|  |TAMS 0x0000000523800000| PB 0x0000000523800000| Untracked |  0
+|  72|0x0000000524000000, 0x0000000524000000, 0x0000000524800000|  0%| F|  |TAMS 0x0000000524000000| PB 0x0000000524000000| Untracked |  0
+|  73|0x0000000524800000, 0x0000000524800000, 0x0000000525000000|  0%| F|  |TAMS 0x0000000524800000| PB 0x0000000524800000| Untracked |  0
+|  74|0x0000000525000000, 0x0000000525000000, 0x0000000525800000|  0%| F|  |TAMS 0x0000000525000000| PB 0x0000000525000000| Untracked |  0
+|  75|0x0000000525800000, 0x0000000525800000, 0x0000000526000000|  0%| F|  |TAMS 0x0000000525800000| PB 0x0000000525800000| Untracked |  0
+|  76|0x0000000526000000, 0x0000000526000000, 0x0000000526800000|  0%| F|  |TAMS 0x0000000526000000| PB 0x0000000526000000| Untracked |  0
+|  77|0x0000000526800000, 0x0000000526800000, 0x0000000527000000|  0%| F|  |TAMS 0x0000000526800000| PB 0x0000000526800000| Untracked |  0
+|  78|0x0000000527000000, 0x0000000527000000, 0x0000000527800000|  0%| F|  |TAMS 0x0000000527000000| PB 0x0000000527000000| Untracked |  0
+|  79|0x0000000527800000, 0x0000000527800000, 0x0000000528000000|  0%| F|  |TAMS 0x0000000527800000| PB 0x0000000527800000| Untracked |  0
+|  80|0x0000000528000000, 0x0000000528000000, 0x0000000528800000|  0%| F|  |TAMS 0x0000000528000000| PB 0x0000000528000000| Untracked |  0
+|  81|0x0000000528800000, 0x0000000528800000, 0x0000000529000000|  0%| F|  |TAMS 0x0000000528800000| PB 0x0000000528800000| Untracked |  0
+|  82|0x0000000529000000, 0x0000000529000000, 0x0000000529800000|  0%| F|  |TAMS 0x0000000529000000| PB 0x0000000529000000| Untracked |  0
+|  83|0x0000000529800000, 0x0000000529800000, 0x000000052a000000|  0%| F|  |TAMS 0x0000000529800000| PB 0x0000000529800000| Untracked |  0
+|  84|0x000000052a000000, 0x000000052a000000, 0x000000052a800000|  0%| F|  |TAMS 0x000000052a000000| PB 0x000000052a000000| Untracked |  0
+|  85|0x000000052a800000, 0x000000052a800000, 0x000000052b000000|  0%| F|  |TAMS 0x000000052a800000| PB 0x000000052a800000| Untracked |  0
+|  86|0x000000052b000000, 0x000000052b000000, 0x000000052b800000|  0%| F|  |TAMS 0x000000052b000000| PB 0x000000052b000000| Untracked |  0
+|  87|0x000000052b800000, 0x000000052b800000, 0x000000052c000000|  0%| F|  |TAMS 0x000000052b800000| PB 0x000000052b800000| Untracked |  0
+|  88|0x000000052c000000, 0x000000052c000000, 0x000000052c800000|  0%| F|  |TAMS 0x000000052c000000| PB 0x000000052c000000| Untracked |  0
+|  89|0x000000052c800000, 0x000000052c800000, 0x000000052d000000|  0%| F|  |TAMS 0x000000052c800000| PB 0x000000052c800000| Untracked |  0
+|  90|0x000000052d000000, 0x000000052d000000, 0x000000052d800000|  0%| F|  |TAMS 0x000000052d000000| PB 0x000000052d000000| Untracked |  0
+|  91|0x000000052d800000, 0x000000052d800000, 0x000000052e000000|  0%| F|  |TAMS 0x000000052d800000| PB 0x000000052d800000| Untracked |  0
+|  92|0x000000052e000000, 0x000000052e000000, 0x000000052e800000|  0%| F|  |TAMS 0x000000052e000000| PB 0x000000052e000000| Untracked |  0
+|  93|0x000000052e800000, 0x000000052e800000, 0x000000052f000000|  0%| F|  |TAMS 0x000000052e800000| PB 0x000000052e800000| Untracked |  0
+|  94|0x000000052f000000, 0x000000052f000000, 0x000000052f800000|  0%| F|  |TAMS 0x000000052f000000| PB 0x000000052f000000| Untracked |  0
+|  95|0x000000052f800000, 0x000000052fdcb9c0, 0x0000000530000000| 72%| E|  |TAMS 0x000000052f800000| PB 0x000000052f800000| Complete |  0
+|1535|0x00000007ff800000, 0x00000007ff90b9e0, 0x0000000800000000| 13%| O|  |TAMS 0x00000007ff800000| PB 0x00000007ff800000| Untracked |  0
+
+Card table byte_map: [0x0000000120318000,0x0000000121b18000] _byte_map_base: 0x000000011db18000
+
+Marking Bits: (CMBitMap*) 0x000000014504c810
+ Bits: [0x0000000121b18000, 0x000000012db18000)
+
+Polling page: 0x000000010483c000
+
+Metaspace:
+Metaspace        used 1551K, committed 1728K, reserved 1114112K
+ class space     used 213K, committed 256K, reserved 1048576K
+
+Usage:
+  Non-class:      1.31 MB used.
+      Class:    213.17 KB used.
+       Both:      1.51 MB used.
+
+Virtual space:
+  Non-class space:       64.00 MB reserved,       1.44 MB (  2%) committed,  1 nodes.
+      Class space:        1.00 GB reserved,     256.00 KB ( <1%) committed,  1 nodes.
+             Both:        1.06 GB reserved,       1.69 MB ( <1%) committed. 
+
+Chunk freelists:
+   Non-Class:  11.92 MB
+       Class:  15.71 MB
+        Both:  27.62 MB
+
+MaxMetaspaceSize: unlimited
+CompressedClassSpaceSize: 1.00 GB
+Initial GC threshold: 21.00 MB
+Current GC threshold: 21.00 MB
+CDS: on
+ - commit_granule_bytes: 65536.
+ - commit_granule_words: 8192.
+ - virtual_space_node_default_size: 8388608.
+ - enlarge_chunks_in_place: 1.
+UseCompressedClassPointers 1, UseCompactObjectHeaders 1
+Narrow klass pointer bits 22, Max shift 10
+Narrow klass base: 0x0000400000000000, Narrow klass shift: 10
+Encoding Range: [0x0000400000000000 - 0x0000400100000000), (4294967296 bytes)
+Klass Range:    [0x0000400000004000 - 0x0000400041000000), (1090502656 bytes)
+Klass ID Range:  [16 - 1064960) (1064944)
+Protection zone: [0x0000400000000000 - 0x0000400000004000), (16384 bytes)
+
+
+Internal statistics:
+
+num_allocs_failed_limit: 0.
+num_arena_births: 86.
+num_arena_deaths: 0.
+num_vsnodes_births: 2.
+num_vsnodes_deaths: 0.
+num_space_committed: 27.
+num_space_uncommitted: 0.
+num_chunks_returned_to_freelist: 0.
+num_chunks_taken_from_freelist: 86.
+num_chunk_merges: 0.
+num_chunk_splits: 66.
+num_chunks_enlarged: 41.
+num_inconsistent_stats: 0.
+
+CodeHeap 'non-profiled nmethods': size=120048Kb used=78Kb max_used=78Kb free=119969Kb
+ bounds [0x00000001175dc000, 0x000000011784c000, 0x000000011eb18000]
+CodeHeap 'profiled nmethods': size=120016Kb used=542Kb max_used=542Kb free=119474Kb
+ bounds [0x000000010fb18000, 0x000000010fd88000, 0x000000011704c000]
+CodeHeap 'non-nmethods': size=5696Kb used=1239Kb max_used=1254Kb free=4456Kb
+ bounds [0x000000011704c000, 0x00000001172bc000, 0x00000001175dc000]
+CodeCache: size=245760Kb, used=1859Kb, max_used=1874Kb, free=243899Kb
+ total_blobs=870, nmethods=435, adapters=343, full_count=0
+Compilation: enabled, stopped_count=0, restarted_count=0
+
+Compilation events (75 events):
+Event: 0.072 Thread 0x00000001450a3600 nmethod 376 0x000000010fb94e88 code [0x000000010fb94f80, 0x000000010fb95360]
+Event: 0.072 Thread 0x00000001450a3600  363       1       java.lang.invoke.MethodHandles$Lookup::previousLookupClass (5 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 363 0x00000001175ebe08 code [0x00000001175ebf00, 0x00000001175ebfe0]
+Event: 0.072 Thread 0x00000001450a3600  380       3       java.util.ImmutableCollections$ListN::size (6 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 380 0x000000010fb95388 code [0x000000010fb95480, 0x000000010fb955b0]
+Event: 0.072 Thread 0x00000001450a3600  379       3       java.lang.invoke.LambdaForm$NamedFunction::methodType (28 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 379 0x000000010fb955c8 code [0x000000010fb956c0, 0x000000010fb95a90]
+Event: 0.072 Thread 0x00000001450a3600  271       1       jdk.internal.classfile.impl.AbstractAttributeMapper::allowMultiple (5 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 271 0x00000001175ec008 code [0x00000001175ec100, 0x00000001175ec1e0]
+Event: 0.072 Thread 0x00000001450a3600  296       1       java.lang.Class::getModule (5 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 296 0x00000001175ec208 code [0x00000001175ec300, 0x00000001175ec3e0]
+Event: 0.072 Thread 0x00000001450a3600  368       1       jdk.internal.classfile.impl.BufWriterImpl::constantPool (5 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 368 0x00000001175ec408 code [0x00000001175ec500, 0x00000001175ec5e0]
+Event: 0.072 Thread 0x00000001450a3600  369       1       jdk.internal.classfile.impl.AbstractAttributeMapper::name (5 bytes)
+Event: 0.072 Thread 0x00000001450a3600 nmethod 369 0x00000001175ec608 code [0x00000001175ec700, 0x00000001175ec7e0]
+Event: 0.072 Thread 0x00000001450a3600  371       1       jdk.internal.classfile.impl.BufWriterImpl::thisClass (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 371 0x00000001175ec808 code [0x00000001175ec900, 0x00000001175ec9e0]
+Event: 0.073 Thread 0x00000001450a3600  372       1       jdk.internal.classfile.impl.DirectMethodBuilder::methodName (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 372 0x00000001175eca08 code [0x00000001175ecb00, 0x00000001175ecbe0]
+Event: 0.073 Thread 0x00000001450a3600  381       1       jdk.internal.classfile.impl.BufWriterImpl::getMajorVersion (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 381 0x00000001175ecc08 code [0x00000001175ecd00, 0x00000001175ecde0]
+Event: 0.073 Thread 0x00000001450a3600  382       1       jdk.internal.classfile.impl.RawBytecodeHelper$CodeRange::length (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 382 0x00000001175ece08 code [0x00000001175ecf00, 0x00000001175ecfe0]
+Event: 0.073 Thread 0x00000001450a3600  385       1       jdk.internal.classfile.impl.StackMapGenerator::maxStack (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 385 0x00000001175ed008 code [0x00000001175ed100, 0x00000001175ed1e0]
+Event: 0.073 Thread 0x00000001450a3600  386       1       jdk.internal.classfile.impl.StackMapGenerator::maxLocals (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 386 0x00000001175ed208 code [0x00000001175ed300, 0x00000001175ed3e0]
+Event: 0.073 Thread 0x00000001450a3600  390       1       sun.invoke.util.Wrapper::basicClassDescriptor (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 390 0x00000001175ed408 code [0x00000001175ed500, 0x00000001175ed5e0]
+Event: 0.073 Thread 0x00000001450a3600  334       1       jdk.internal.util.ClassFileDumper::isEnabled (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 334 0x00000001175ed608 code [0x00000001175ed700, 0x00000001175ed7e0]
+Event: 0.073 Thread 0x00000001450a3600  389       1       java.lang.invoke.MethodTypeForm::parameterSlotCount (5 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 389 0x00000001175ed808 code [0x00000001175ed900, 0x00000001175ed9e0]
+Event: 0.073 Thread 0x00000001450a3600  400       3       java.lang.invoke.MethodType::erase (8 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 400 0x000000010fb95ac8 code [0x000000010fb95bc0, 0x000000010fb95d88]
+Event: 0.073 Thread 0x00000001450a3600  401       3       jdk.internal.classfile.impl.AbstractPoolEntry$AbstractMemberRefEntry::<init> (12 bytes)
+Event: 0.073 Thread 0x00000001450a3600 nmethod 401 0x000000010fb95dc8 code [0x000000010fb95ec0, 0x000000010fb96038]
+Event: 0.074 Thread 0x00000001450a3600  405       3       jdk.internal.classfile.impl.BufWriterImpl::patchInt (41 bytes)
+Event: 0.074 Thread 0x00000001450a3600 nmethod 405 0x000000010fb96048 code [0x000000010fb96140, 0x000000010fb96330]
+Event: 0.075 Thread 0x00000001450a2c00  407       4       jdk.internal.classfile.impl.SplitConstantPool::map (161 bytes)
+Event: 0.075 Thread 0x00000001450a3600  408       3       java.lang.invoke.MemberName::<init> (50 bytes)
+Event: 0.075 Thread 0x00000001450a3600 nmethod 408 0x000000010fb96348 code [0x000000010fb96440, 0x000000010fb968e8]
+Event: 0.075 Thread 0x00000001450a3600  409       3       java.lang.invoke.MethodTypeForm::cachedLambdaForm (23 bytes)
+Event: 0.075 Thread 0x00000001450a3600 nmethod 409 0x000000010fb96908 code [0x000000010fb96a00, 0x000000010fb96d80]
+Event: 0.075 Thread 0x00000001450a3600  412       3       jdk.internal.classfile.impl.DirectCodeBuilder::constantPool (5 bytes)
+Event: 0.075 Thread 0x00000001450a3600 nmethod 412 0x000000010fb96d88 code [0x000000010fb96e80, 0x000000010fb96fc0]
+Event: 0.075 Thread 0x00000001450a3600  413       3       java.lang.invoke.LambdaForm::forceInterpretation (14 bytes)
+Event: 0.075 Thread 0x00000001450a3600 nmethod 413 0x000000010fb96fc8 code [0x000000010fb970c0, 0x000000010fb97238]
+Event: 0.076 Thread 0x00000001450a3600  415       3       java.lang.invoke.MethodTypeForm::canonicalize (59 bytes)
+Event: 0.076 Thread 0x00000001450a3600 nmethod 415 0x000000010fb97248 code [0x000000010fb97340, 0x000000010fb97798]
+Event: 0.076 Thread 0x00000001450a3600  416       3       jdk.internal.util.ReferencedKeyMap::existingKey (32 bytes)
+Event: 0.076 Thread 0x00000001450a3600 nmethod 416 0x000000010fb977c8 code [0x000000010fb978c0, 0x000000010fb988b8]
+Event: 0.076 Thread 0x00000001450a3600  422       3       jdk.internal.classfile.impl.StackMapGenerator$Frame::decStack (29 bytes)
+Event: 0.076 Thread 0x00000001450a3600 nmethod 422 0x000000010fb988c8 code [0x000000010fb989c0, 0x000000010fb98c10]
+Event: 0.076 Thread 0x00000001450a3600  417       3       jdk.internal.util.ReferencedKeyMap::internKey (57 bytes)
+Event: 0.076 Thread 0x00000001450a3600 nmethod 417 0x000000010fb98c48 code [0x000000010fb98d40, 0x000000010fb99d78]
+Event: 0.076 Thread 0x00000001450a3600  418       3       jdk.internal.classfile.impl.DirectCodeBuilder::loadLocal (126 bytes)
+Event: 0.076 Thread 0x00000001450a3600 nmethod 418 0x000000010fb99d88 code [0x000000010fb99e80, 0x000000010fb9af48]
+Event: 0.076 Thread 0x00000001450a3600  419       3       sun.invoke.util.VerifyType::isNullConversion (157 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 419 0x000000010fb9af88 code [0x000000010fb9b080, 0x000000010fb9d0d0]
+Event: 0.077 Thread 0x00000001450a3600  420       3       jdk.internal.constant.MethodTypeDescImpl::ofValidated (27 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 420 0x000000010fb9d108 code [0x000000010fb9d200, 0x000000010fb9d678]
+Event: 0.077 Thread 0x00000001450a3600  421       3       jdk.internal.constant.MethodTypeDescImpl::<init> (15 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 421 0x000000010fb9d688 code [0x000000010fb9d780, 0x000000010fb9d998]
+Event: 0.077 Thread 0x00000001450a3600  425       3       java.lang.invoke.LambdaForm$NamedFunction::returnType (11 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 425 0x000000010fb9d9c8 code [0x000000010fb9dac0, 0x000000010fb9e290]
+Event: 0.077 Thread 0x00000001450a3600  428       3       jdk.internal.classfile.impl.StackMapGenerator$Frame::pushStack (84 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 428 0x000000010fb9e2c8 code [0x000000010fb9e3c0, 0x000000010fb9eab8]
+Event: 0.077 Thread 0x00000001450a3600  430       3       java.lang.invoke.MemberName$Factory::resolveOrFail (83 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 430 0x000000010fb9eb48 code [0x000000010fb9ec40, 0x000000010fb9f568]
+Event: 0.077 Thread 0x00000001450a3600  434       3       java.util.concurrent.ConcurrentHashMap::casTabAt (20 bytes)
+Event: 0.077 Thread 0x00000001450a3600 nmethod 434 0x000000010fb9f588 code [0x000000010fb9f680, 0x000000010fb9f7d8]
+Event: 0.077 Thread 0x00000001450a3600  429       1       jdk.internal.classfile.impl.AbstractPoolEntry$FieldRefEntryImpl::tag (3 bytes)
+Event: 0.077 Thread 0x00000001450a2c00 nmethod 407 0x00000001175ef208 code [0x00000001175ef300, 0x00000001175ef818]
+Event: 0.077 Thread 0x00000001450a3600 nmethod 429 0x00000001175ef848 code [0x00000001175ef940, 0x00000001175efa20]
+
+GC Heap Usage History (0 events):
+No events
+
+Metaspace Usage History (0 events):
+No events
+
+Dll operation events (4 events):
+Event: 0.008 Loaded shared library /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libjava.dylib
+Event: 0.036 Loaded shared library /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libnio.dylib
+Event: 0.038 Loaded shared library /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libzip.dylib
+Event: 0.052 Loaded shared library /Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libsyslookup.dylib
+
+Deoptimization events (0 events):
+No events
+
+Classes loaded (75 events):
+Event: 0.063 Loading class java/util/stream/ReduceOps$CountingSink$OfRef done
+Event: 0.064 Loading class jdk/internal/foreign/abi/LinkerOptions$CaptureCallState
+Event: 0.064 Loading class jdk/internal/foreign/abi/LinkerOptions$CaptureCallState done
+Event: 0.066 Loading class jdk/internal/foreign/abi/CallingSequence
+Event: 0.066 Loading class jdk/internal/foreign/abi/CallingSequence done
+Event: 0.066 Loading class jdk/internal/foreign/abi/DowncallLinker
+Event: 0.066 Loading class jdk/internal/foreign/abi/DowncallLinker done
+Event: 0.066 Loading class jdk/internal/foreign/abi/DowncallLinker$InvocationData
+Event: 0.066 Loading class jdk/internal/foreign/abi/DowncallLinker$InvocationData done
+Event: 0.067 Loading class java/util/stream/Nodes$FixedNodeBuilder
+Event: 0.067 Loading class java/util/stream/Nodes$ArrayNode
+Event: 0.067 Loading class java/util/stream/Nodes$ArrayNode done
+Event: 0.067 Loading class java/util/stream/Nodes$FixedNodeBuilder done
+Event: 0.067 Loading class jdk/internal/foreign/abi/NativeEntryPoint$CacheKey
+Event: 0.067 Loading class jdk/internal/foreign/abi/NativeEntryPoint$CacheKey done
+Event: 0.069 Loading class java/lang/invoke/NativeMethodHandle
+Event: 0.069 Loading class java/lang/invoke/NativeMethodHandle done
+Event: 0.069 Loading class java/lang/invoke/NativeMethodHandle$Lazy
+Event: 0.069 Loading class java/lang/invoke/NativeMethodHandle$Lazy done
+Event: 0.070 Loading class jdk/internal/foreign/abi/BindingSpecializer
+Event: 0.070 Loading class jdk/internal/foreign/abi/BindingSpecializer done
+Event: 0.070 Loading class jdk/internal/vm/annotation/ForceInline
+Event: 0.070 Loading class jdk/internal/vm/annotation/ForceInline done
+Event: 0.071 Loading class java/lang/classfile/ClassFileVersion
+Event: 0.071 Loading class java/lang/classfile/ClassFileVersion done
+Event: 0.071 Loading class jdk/internal/classfile/impl/ClassFileVersionImpl
+Event: 0.071 Loading class jdk/internal/classfile/impl/ClassFileVersionImpl done
+Event: 0.072 Loading class java/lang/classfile/constantpool/ConstantPoolBuilder$1
+Event: 0.072 Loading class java/lang/classfile/constantpool/ConstantPoolBuilder$1 done
+Event: 0.072 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$MethodHandleEntryImpl
+Event: 0.072 Loading class java/lang/classfile/constantpool/MethodHandleEntry
+Event: 0.072 Loading class java/lang/classfile/constantpool/MethodHandleEntry done
+Event: 0.072 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$MethodHandleEntryImpl done
+Event: 0.072 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$ConstantDynamicEntryImpl
+Event: 0.072 Loading class java/lang/classfile/constantpool/ConstantDynamicEntry
+Event: 0.073 Loading class java/lang/classfile/constantpool/DynamicConstantPoolEntry
+Event: 0.073 Loading class java/lang/classfile/constantpool/DynamicConstantPoolEntry done
+Event: 0.073 Loading class java/lang/classfile/constantpool/ConstantDynamicEntry done
+Event: 0.073 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$AbstractDynamicConstantPoolEntry
+Event: 0.073 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$AbstractDynamicConstantPoolEntry done
+Event: 0.073 Loading class jdk/internal/classfile/impl/AbstractPoolEntry$ConstantDynamicEntryImpl done
+Event: 0.073 Loading class java/lang/classfile/CodeBuilder$BlockCodeBuilder
+Event: 0.073 Loading class java/lang/classfile/CodeBuilder$BlockCodeBuilder done
+Event: 0.073 Loading class jdk/internal/classfile/impl/BlockCodeBuilderImpl
+Event: 0.073 Loading class jdk/internal/classfile/impl/NonterminalCodeBuilder
+Event: 0.073 Loading class jdk/internal/classfile/impl/NonterminalCodeBuilder done
+Event: 0.073 Loading class jdk/internal/classfile/impl/BlockCodeBuilderImpl done
+Event: 0.074 Loading class java/lang/classfile/instruction/LoadInstruction
+Event: 0.074 Loading class java/lang/classfile/Instruction
+Event: 0.074 Loading class java/lang/classfile/Instruction done
+Event: 0.074 Loading class java/lang/classfile/instruction/LoadInstruction done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundLoadInstruction
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundInstruction
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundInstruction done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundLoadInstruction done
+Event: 0.074 Loading class java/lang/classfile/instruction/InvokeInstruction
+Event: 0.074 Loading class java/lang/classfile/instruction/InvokeInstruction done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundInvokeInstruction
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractInstruction$UnboundInvokeInstruction done
+Event: 0.074 Loading class java/lang/classfile/instruction/ExceptionCatch
+Event: 0.074 Loading class java/lang/classfile/instruction/ExceptionCatch done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractPseudoInstruction$ExceptionCatchImpl
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractPseudoInstruction
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractPseudoInstruction done
+Event: 0.074 Loading class jdk/internal/classfile/impl/AbstractPseudoInstruction$ExceptionCatchImpl done
+Event: 0.074 Loading class jdk/internal/classfile/impl/StackMapGenerator$RawExceptionCatch
+Event: 0.074 Loading class jdk/internal/classfile/impl/StackMapGenerator$RawExceptionCatch done
+Event: 0.075 Loading class jdk/internal/classfile/impl/SplitConstantPool$1
+Event: 0.075 Loading class jdk/internal/classfile/impl/SplitConstantPool$1 done
+Event: 0.075 Loading class jdk/internal/classfile/impl/AbstractAttributeMapper$BootstrapMethodsMapper
+Event: 0.075 Loading class jdk/internal/classfile/impl/AbstractAttributeMapper$BootstrapMethodsMapper done
+Event: 0.077 Loading class java/lang/invoke/ConstantBootstraps
+Event: 0.077 Loading class java/lang/invoke/ConstantBootstraps done
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (28 events):
+Event: 0.043 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f823ee8}: 'long java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object)'> (0x000000052f823ee8) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.043 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f82eb00}: 'long java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object)'> (0x000000052f82eb00) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.044 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f836b20}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, long, java.lang.Object)'> (0x000000052f836b20) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.044 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f83e640}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, long, java.lang.Object)'> (0x000000052f83e640) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.044 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f8468d0}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, long)'> (0x000000052f8468d0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.046 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f858010}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.newInvokeSpecial(java.lang.Object, long, java.lang.Object)'> (0x000000052f858010) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.047 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f86fed8}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeInterface(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052f86fed8) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.047 Thread 0x0000000145808c00 Exception <a 'java/lang/IncompatibleClassChangeError'{0x000000052f8779b0}: Found class java.lang.Object, but interface was expected> (0x000000052f8779b0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 871]
+Event: 0.047 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f8784a0}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052f8784a0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.048 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f880488}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object)'> (0x000000052f880488) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.048 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f888090}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object)'> (0x000000052f888090) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.048 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f890c50}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, long, long)'> (0x000000052f890c50) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.048 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f8986f0}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, long, long)'> (0x000000052f8986f0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.050 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f8abc78}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object)'> (0x000000052f8abc78) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.056 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052f8f20f0}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeSpecial(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052f8f20f0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.059 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fa235b0}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeInterface(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052fa235b0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.059 Thread 0x0000000145808c00 Exception <a 'java/lang/IncompatibleClassChangeError'{0x000000052fa2afe8}: Found class java.lang.Object, but interface was expected> (0x000000052fa2afe8) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 871]
+Event: 0.064 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fa70590}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeInterface(java.lang.Object, java.lang.Object)'> (0x000000052fa70590) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.064 Thread 0x0000000145808c00 Exception <a 'java/lang/IncompatibleClassChangeError'{0x000000052fa77fc0}: Found class java.lang.Object, but interface was expected> (0x000000052fa77fc0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 871]
+Event: 0.066 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fab2540}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.invokeVirtual(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052fab2540) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.069 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fc19c68}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, long)'> (0x000000052fc19c68) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.069 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fc28378}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.newInvokeSpecial(java.lang.Object, long)'> (0x000000052fc28378) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.070 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fc4acd8}: 'java.lang.Object java.lang.invoke.DirectMethodHandle$Holder.newInvokeSpecial(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052fc4acd8) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.072 Thread 0x0000000145808c00 Exception <a 'java/lang/IncompatibleClassChangeError'{0x000000052fc739f0}: Found class java.lang.Object, but interface was expected> (0x000000052fc739f0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 871]
+Event: 0.073 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fc83df0}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, int, java.lang.Object)'> (0x000000052fc83df0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.075 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fc98728}: 'int java.lang.invoke.DirectMethodHandle$Holder.invokeStaticInit(java.lang.Object, java.lang.Object, java.lang.Object, int)'> (0x000000052fc98728) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.076 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fccb5f0}: 'int java.lang.invoke.Invokers$Holder.invokeExact_MT(java.lang.Object, int, java.lang.Object)'> (0x000000052fccb5f0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+Event: 0.077 Thread 0x0000000145808c00 Exception <a 'java/lang/NoSuchMethodError'{0x000000052fcd00e0}: 'java.lang.Object java.lang.invoke.Invokers$Holder.invoke_MT(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)'> (0x000000052fcd00e0) 
+thrown [src/hotspot/share/interpreter/linkResolver.cpp, line 804]
+
+VM Operations (0 events):
+No events
+
+Memory protections (11 events):
+Event: 0.007 Protecting memory [0x000000016b6f0000,0x000000016b6fc000] with protection modes 0
+Event: 0.019 Protecting memory [0x0000400000000000,0x0000400000004000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016c868000,0x000000016c874000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016ca74000,0x000000016ca80000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016cc80000,0x000000016cc8c000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016ce8c000,0x000000016ce98000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016d098000,0x000000016d0a4000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016d2a4000,0x000000016d2b0000] with protection modes 0
+Event: 0.031 Protecting memory [0x000000016d4b0000,0x000000016d4bc000] with protection modes 0
+Event: 0.032 Protecting memory [0x000000016d8c8000,0x000000016d8d4000] with protection modes 0
+Event: 0.034 Protecting memory [0x000000016dad4000,0x000000016dae0000] with protection modes 0
+
+Nmethod flushes (0 events):
+No events
+
+Events (10 events):
+Event: 0.022 Thread 0x0000000145808c00 Thread added: 0x0000000145808c00
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x000000014581de00
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x000000014500ea00
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x0000000145822400
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x000000013501a000
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x000000013501b400
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x00000001450a2c00
+Event: 0.031 Thread 0x0000000145808c00 Thread added: 0x00000001450a3600
+Event: 0.032 Thread 0x0000000145808c00 Thread added: 0x000000014581f200
+Event: 0.034 Thread 0x0000000145808c00 Thread added: 0x000000014585d800
+
+
+Dynamic libraries:
+0x00000001047dc000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libjli.dylib
+0x00000001ae2d2000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices
+0x000000019a9ed000 	/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics
+0x0000000196f6d000 	/System/Library/Frameworks/CoreText.framework/Versions/A/CoreText
+0x00000001a02b1000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+0x000000019b11e000 	/System/Library/Frameworks/ColorSync.framework/Versions/A/ColorSync
+0x00000001a6516000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS
+0x00000001aa111000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices
+0x000000019b2d4000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices
+0x00000001a4dcf000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore
+0x00000001a68d3000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD
+0x00000001a68ca000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSyncLegacy.framework/Versions/A/ColorSyncLegacy
+0x00000001a64e8000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis
+0x00000001a26ec000 	/usr/lib/libSystem.B.dylib
+0x000000019a4c6000 	/System/Library/PrivateFrameworks/SkyLight.framework/Versions/A/SkyLight
+0x000000019bba9000 	/System/Library/PrivateFrameworks/ProtocolBuffer.framework/Versions/A/ProtocolBuffer
+0x00000001a26f1000 	/System/Library/PrivateFrameworks/SoftLinking.framework/Versions/A/SoftLinking
+0x0000000197cc3000 	/usr/lib/libicucore.A.dylib
+0x000000019d09a000 	/System/Library/PrivateFrameworks/CoreAnalytics.framework/Versions/A/CoreAnalytics
+0x000000019fc81000 	/System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib
+0x00000001aa3bd000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate
+0x000000019f867000 	/System/Library/Frameworks/IOSurface.framework/Versions/A/IOSurface
+0x000000019dd3f000 	/usr/lib/libxml2.2.dylib
+0x000000019a02a000 	/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork
+0x00000001944fe000 	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+0x0000000195aef000 	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation
+0x00000001a2636000 	/usr/lib/libz.1.dylib
+0x0000000194094000 	/usr/lib/libobjc.A.dylib
+0x00000001943a2000 	/usr/lib/libc++.1.dylib
+0x00000001978be000 	/System/Library/Frameworks/Security.framework/Versions/A/Security
+0x00000002424be000 	/System/Library/PrivateFrameworks/CollectionsInternal.framework/Versions/A/CollectionsInternal
+0x00000001a5c5b000 	/usr/lib/swift/libswiftCore.dylib
+0x00000001bd3fc000 	/usr/lib/swift/libswiftCoreFoundation.dylib
+0x00000001ba765000 	/usr/lib/swift/libswiftDarwin.dylib
+0x00000001abc0a000 	/usr/lib/swift/libswiftDispatch.dylib
+0x00000001bd457000 	/usr/lib/swift/libswiftIOKit.dylib
+0x00000001ae88c000 	/usr/lib/swift/libswiftObjectiveC.dylib
+0x00000001bd40e000 	/usr/lib/swift/libswiftXPC.dylib
+0x000000027cbd8000 	/usr/lib/swift/libswift_Builtin_float.dylib
+0x000000027cdcd000 	/usr/lib/swift/libswift_errno.dylib
+0x000000027cdcf000 	/usr/lib/swift/libswift_math.dylib
+0x000000027cdd2000 	/usr/lib/swift/libswift_signal.dylib
+0x000000027cdd3000 	/usr/lib/swift/libswift_stdio.dylib
+0x000000027cdd4000 	/usr/lib/swift/libswift_time.dylib
+0x000000027cdd5000 	/usr/lib/swift/libswiftsys_time.dylib
+0x000000027cdd6000 	/usr/lib/swift/libswiftunistd.dylib
+0x000000019befa000 	/System/Library/PrivateFrameworks/RunningBoardServices.framework/Versions/A/RunningBoardServices
+0x000000019a411000 	/usr/lib/libMobileGestalt.dylib
+0x000000019a4a3000 	/System/Library/PrivateFrameworks/TCC.framework/Versions/A/TCC
+0x00000001b15b7000 	/System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/Versions/A/IOSurfaceAccelerator
+0x00000001a4782000 	/System/Library/PrivateFrameworks/WatchdogClient.framework/Versions/A/WatchdogClient
+0x00000001a291a000 	/usr/lib/libcompression.dylib
+0x000000019d0cb000 	/usr/lib/libDiagnosticMessagesClient.dylib
+0x0000000195752000 	/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration
+0x0000000196a94000 	/System/Library/Frameworks/CoreDisplay.framework/Versions/A/CoreDisplay
+0x00000001a17ab000 	/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/Versions/A/IOMobileFramebuffer
+0x000000019fb25000 	/System/Library/Frameworks/CoreMedia.framework/Versions/A/CoreMedia
+0x000000019f880000 	/System/Library/PrivateFrameworks/IOAccelerator.framework/Versions/A/IOAccelerator
+0x000000019830e000 	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+0x000000019f88a000 	/System/Library/Frameworks/Metal.framework/Versions/A/Metal
+0x000000019de29000 	/System/Library/Frameworks/CoreVideo.framework/Versions/A/CoreVideo
+0x00000001a2912000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/MetalPerformanceShaders
+0x00000001a4784000 	/System/Library/PrivateFrameworks/MultitouchSupport.framework/Versions/A/MultitouchSupport
+0x000000019d5d2000 	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore
+0x00000001a1ad7000 	/usr/lib/libbsm.0.dylib
+0x00000002616ac000 	/System/Library/PrivateFrameworks/ProDisplayLibrary.framework/Versions/A/ProDisplayLibrary
+0x00000001a47ca000 	/System/Library/Frameworks/VideoToolbox.framework/Versions/A/VideoToolbox
+0x00000001c9fc7000 	/usr/lib/swift/libswiftMetal.dylib
+0x00000001d8f6c000 	/usr/lib/swift/libswiftOSLog.dylib
+0x00000001cf369000 	/usr/lib/swift/libswiftQuartzCore.dylib
+0x00000001d39c4000 	/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib
+0x00000001ae890000 	/usr/lib/swift/libswiftos.dylib
+0x00000001c0cb0000 	/usr/lib/swift/libswiftsimd.dylib
+0x000000019deca000 	/System/Library/PrivateFrameworks/UserManagement.framework/Versions/A/UserManagement
+0x000000019be15000 	/System/Library/PrivateFrameworks/BaseBoard.framework/Versions/A/BaseBoard
+0x000000019dcb9000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/FSEvents
+0x0000000197f9a000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
+0x000000019d12e000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata
+0x00000001a21ce000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices
+0x00000001a283b000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit
+0x000000019bf63000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
+0x0000000194a3d000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices
+0x00000001a3c52000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices
+0x000000019dcc7000 	/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SharedFileList.framework/Versions/A/SharedFileList
+0x00000001a28d1000 	/usr/lib/libapple_nghttp2.dylib
+0x000000019bbc4000 	/usr/lib/libsqlite3.dylib
+0x00000001a6909000 	/System/Library/Frameworks/GSS.framework/Versions/A/GSS
+0x00000001a4ee6000 	/System/Library/PrivateFrameworks/InternationalSupport.framework/Versions/A/InternationalSupport
+0x000000019a40f000 	/usr/lib/libenergytrace.dylib
+0x000000019bff1000 	/System/Library/Frameworks/Network.framework/Versions/A/Network
+0x000000019828d000 	/System/Library/PrivateFrameworks/CoreServicesInternal.framework/Versions/A/CoreServicesInternal
+0x00000001a26b9000 	/usr/lib/liboah.dylib
+0x00000001a26ee000 	/usr/lib/libfakelink.dylib
+0x000000019442f000 	/usr/lib/libc++abi.dylib
+0x000000027bae2000 	/usr/lib/libRosetta.dylib
+0x000000019dcf5000 	/System/Library/PrivateFrameworks/CoreAutoLayout.framework/Versions/A/CoreAutoLayout
+0x000000019d1b9000 	/System/Library/Frameworks/DiskArbitration.framework/Versions/A/DiskArbitration
+0x00000001a2743000 	/usr/lib/libarchive.2.dylib
+0x00000001a0ab3000 	/usr/lib/liblangid.dylib
+0x00000001a800c000 	/System/Library/Frameworks/Combine.framework/Versions/A/Combine
+0x000000026236e000 	/System/Library/PrivateFrameworks/ReflectionInternal.framework/Versions/A/ReflectionInternal
+0x0000000263045000 	/System/Library/PrivateFrameworks/RuntimeInternal.framework/Versions/A/RuntimeInternal
+0x000000027cb69000 	/usr/lib/swift/libswiftSystem.dylib
+0x000000027cbdb000 	/usr/lib/swift/libswift_Concurrency.dylib
+0x000000027cd3a000 	/usr/lib/swift/libswift_StringProcessing.dylib
+0x00000001a26e6000 	/usr/lib/system/libcache.dylib
+0x00000001a26a1000 	/usr/lib/system/libcommonCrypto.dylib
+0x00000001a26cc000 	/usr/lib/system/libcompiler_rt.dylib
+0x00000001a26c1000 	/usr/lib/system/libcopyfile.dylib
+0x00000001941ef000 	/usr/lib/system/libcorecrypto.dylib
+0x00000001942d6000 	/usr/lib/system/libdispatch.dylib
+0x0000000194496000 	/usr/lib/system/libdyld.dylib
+0x00000001a26dc000 	/usr/lib/system/libkeymgr.dylib
+0x00000001a2684000 	/usr/lib/system/libmacho.dylib
+0x00000001a1ab0000 	/usr/lib/system/libquarantine.dylib
+0x00000001a26d9000 	/usr/lib/system/libremovefile.dylib
+0x000000019a48b000 	/usr/lib/system/libsystem_asl.dylib
+0x0000000194184000 	/usr/lib/system/libsystem_blocks.dylib
+0x0000000194320000 	/usr/lib/system/libsystem_c.dylib
+0x00000001a26d0000 	/usr/lib/system/libsystem_collections.dylib
+0x00000001a0aa0000 	/usr/lib/system/libsystem_configuration.dylib
+0x000000019f836000 	/usr/lib/system/libsystem_containermanager.dylib
+0x00000001a21c6000 	/usr/lib/system/libsystem_coreservices.dylib
+0x0000000197f8f000 	/usr/lib/system/libsystem_darwin.dylib
+0x000000027cf0d000 	/usr/lib/system/libsystem_darwindirectory.dylib
+0x00000001a26dd000 	/usr/lib/system/libsystem_dnssd.dylib
+0x000000027cf11000 	/usr/lib/system/libsystem_eligibility.dylib
+0x000000019431d000 	/usr/lib/system/libsystem_featureflags.dylib
+0x00000001944ce000 	/usr/lib/system/libsystem_info.dylib
+0x00000001a2645000 	/usr/lib/system/libsystem_m.dylib
+0x000000019428e000 	/usr/lib/system/libsystem_malloc.dylib
+0x000000019a3f4000 	/usr/lib/system/libsystem_networkextension.dylib
+0x00000001983f1000 	/usr/lib/system/libsystem_notify.dylib
+0x00000001a0aa5000 	/usr/lib/system/libsystem_sandbox.dylib
+0x000000027cf19000 	/usr/lib/system/libsystem_sanitizers.dylib
+0x00000001a26d5000 	/usr/lib/system/libsystem_secinit.dylib
+0x000000019444d000 	/usr/lib/system/libsystem_kernel.dylib
+0x00000001944c6000 	/usr/lib/system/libsystem_platform.dylib
+0x0000000194489000 	/usr/lib/system/libsystem_pthread.dylib
+0x000000019bfe8000 	/usr/lib/system/libsystem_symptoms.dylib
+0x00000001941d3000 	/usr/lib/system/libsystem_trace.dylib
+0x00000001a26af000 	/usr/lib/system/libunwind.dylib
+0x0000000194188000 	/usr/lib/system/libxpc.dylib
+0x00000001a1a76000 	/System/Library/PrivateFrameworks/BackgroundTaskManagement.framework/Versions/A/BackgroundTaskManagement
+0x000000023e325000 	/System/Library/PrivateFrameworks/AppleKeyStore.framework/Versions/A/AppleKeyStore
+0x000000027b93a000 	/usr/lib/libCoreEntitlements.dylib
+0x0000000259313000 	/System/Library/PrivateFrameworks/MessageSecurity.framework/Versions/A/MessageSecurity
+0x00000001a21ad000 	/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression
+0x00000001a1abf000 	/usr/lib/libcoretls.dylib
+0x00000001a3cc8000 	/usr/lib/libcoretls_cfhelpers.dylib
+0x00000001a2914000 	/usr/lib/libpam.2.dylib
+0x00000001a3d3c000 	/usr/lib/libxar.1.dylib
+0x00000001a3cca000 	/System/Library/PrivateFrameworks/APFS.framework/Versions/A/APFS
+0x000000026c5d1000 	/System/Library/PrivateFrameworks/SwiftASN1Internal.framework/Versions/A/SwiftASN1Internal
+0x00000001a3d4b000 	/usr/lib/libutil.dylib
+0x00000001a2688000 	/usr/lib/system/libkxld.dylib
+0x00000001a0aae000 	/System/Library/PrivateFrameworks/AppleSystemInfo.framework/Versions/A/AppleSystemInfo
+0x00000001bd2e7000 	/System/Library/PrivateFrameworks/LoggingSupport.framework/Versions/A/LoggingSupport
+0x00000001ab0cb000 	/System/Library/PrivateFrameworks/PowerLog.framework/Versions/A/PowerLog
+0x00000001fae71000 	/System/Library/Frameworks/SwiftData.framework/Versions/A/SwiftData
+0x0000000199aa1000 	/System/Library/Frameworks/UniformTypeIdentifiers.framework/Versions/A/UniformTypeIdentifiers
+0x0000000199f58000 	/usr/lib/libboringssl.dylib
+0x000000019bfd7000 	/usr/lib/libdns_services.dylib
+0x00000001bc496000 	/usr/lib/libquic.dylib
+0x00000001a5bea000 	/usr/lib/libusrtcp.dylib
+0x00000001e0de1000 	/System/Library/PrivateFrameworks/InternalSwiftProtobuf.framework/Versions/A/InternalSwiftProtobuf
+0x000000027cac6000 	/usr/lib/swift/libswiftDistributed.dylib
+0x000000027caf2000 	/usr/lib/swift/libswiftObservation.dylib
+0x000000027cb5f000 	/usr/lib/swift/libswiftSynchronization.dylib
+0x000000019a029000 	/usr/lib/libnetwork.dylib
+0x00000001cdf9d000 	/System/Library/PrivateFrameworks/OSAnalytics.framework/Versions/A/OSAnalytics
+0x00000001a28ac000 	/System/Library/PrivateFrameworks/AppleSauce.framework/Versions/A/AppleSauce
+0x00000001ac3a0000 	/System/Library/PrivateFrameworks/CoreSymbolication.framework/Versions/A/CoreSymbolication
+0x00000001dcaaa000 	/System/Library/PrivateFrameworks/Symbolication.framework/Versions/A/Symbolication
+0x00000001ac37c000 	/System/Library/PrivateFrameworks/DebugSymbols.framework/Versions/A/DebugSymbols
+0x000000027b805000 	/usr/lib/libAppleArchive.dylib
+0x00000001a21b9000 	/usr/lib/libbz2.1.0.dylib
+0x00000001a3ca9000 	/usr/lib/liblzma.5.dylib
+0x00000001bd370000 	/System/Library/PrivateFrameworks/MallocStackLogging.framework/Versions/A/MallocStackLogging
+0x00000001a3e97000 	/System/Library/PrivateFrameworks/CrashReporterSupport.framework/Versions/A/CrashReporterSupport
+0x0000000195549000 	/System/Library/PrivateFrameworks/Lexicon.framework/Versions/A/Lexicon
+0x0000000251652000 	/System/Library/PrivateFrameworks/IO80211.framework/Versions/A/IO80211
+0x00000001abea2000 	/System/Library/PrivateFrameworks/FrontBoardServices.framework/Versions/A/FrontBoardServices
+0x00000001a19e7000 	/System/Library/Frameworks/SecurityFoundation.framework/Versions/A/SecurityFoundation
+0x00000001a1b49000 	/usr/lib/libgermantok.dylib
+0x00000001a0bd2000 	/System/Library/PrivateFrameworks/LinguisticData.framework/Versions/A/LinguisticData
+0x00000001abf6f000 	/System/Library/PrivateFrameworks/BoardServices.framework/Versions/A/BoardServices
+0x00000001a19d8000 	/System/Library/PrivateFrameworks/AssertionServices.framework/Versions/A/AssertionServices
+0x00000001adbbf000 	/System/Library/PrivateFrameworks/BackBoardServices.framework/Versions/A/BackBoardServices
+0x00000001a464b000 	/System/Library/PrivateFrameworks/AppleJPEG.framework/Versions/A/AppleJPEG
+0x00000001a40ec000 	/usr/lib/libexpat.1.dylib
+0x00000001a4ca5000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libPng.dylib
+0x00000001a4cd0000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libTIFF.dylib
+0x00000001a4dba000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libGIF.dylib
+0x00000001a4691000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libJP2.dylib
+0x00000001a3dfd000 	/usr/lib/libate.dylib
+0x00000001a4d61000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libJPEG.dylib
+0x00000001a4d58000 	/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libRadiance.dylib
+0x000000019d1c2000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vImage.framework/Versions/A/vImage
+0x00000001aa0ec000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/vecLib
+0x00000001a3d83000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libvMisc.dylib
+0x0000000194eb5000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+0x00000001f496d000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL
+0x000000024d3e6000 	/System/Library/PrivateFrameworks/GPUCompiler.framework/Versions/32023/Libraries/libllvm-flatbuffers.dylib
+0x00000002487e2000 	/System/Library/PrivateFrameworks/FramePacing.framework/Versions/A/FramePacing
+0x00000001f495f000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libCoreFSCache.dylib
+0x0000000249357000 	/System/Library/PrivateFrameworks/GPUCompiler.framework/Versions/32023/Libraries/libGPUCompilerUtils.dylib
+0x00000001f49bd000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
+0x00000001f4981000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGFXShared.dylib
+0x00000001f4b49000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
+0x00000001f498a000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLImage.dylib
+0x00000001f497e000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libCVMSPluginSupport.dylib
+0x00000001f4967000 	/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libCoreVMClient.dylib
+0x00000001a0635000 	/System/Library/Frameworks/CoreImage.framework/Versions/A/CoreImage
+0x00000001af9cf000 	/System/Library/PrivateFrameworks/ASEProcessing.framework/Versions/A/ASEProcessing
+0x0000000260819000 	/System/Library/PrivateFrameworks/PhotosensitivityProcessing.framework/Versions/A/PhotosensitivityProcessing
+0x00000001a42c4000 	/System/Library/PrivateFrameworks/GraphVisualizer.framework/Versions/A/GraphVisualizer
+0x00000001a1778000 	/System/Library/PrivateFrameworks/CoreEmoji.framework/Versions/A/CoreEmoji
+0x0000000248717000 	/System/Library/PrivateFrameworks/FontServices.framework/Versions/A/FontServices
+0x00000001a42d0000 	/System/Library/PrivateFrameworks/OTSVG.framework/Versions/A/OTSVG
+0x000000019d9a6000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/Resources/libFontRegistry.dylib
+0x00000001a19bb000 	/System/Library/PrivateFrameworks/MobileKeyBag.framework/Versions/A/MobileKeyBag
+0x00000001a0aac000 	/System/Library/PrivateFrameworks/AggregateDictionary.framework/Versions/A/AggregateDictionary
+0x000000027bec7000 	/usr/lib/libhvf.dylib
+0x000000025d5b0000 	/System/Library/PrivateFrameworks/ParsingInternal.framework/Versions/A/ParsingInternal
+0x000000027cb0f000 	/usr/lib/swift/libswiftRegexBuilder.dylib
+0x000000027cc97000 	/usr/lib/swift/libswift_RegexParser.dylib
+0x0000000248718000 	/System/Library/PrivateFrameworks/FontServices.framework/libXTFontStaticRegistryData.dylib
+0x00000001a09f0000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSCore.framework/Versions/A/MPSCore
+0x00000001a2118000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSImage.framework/Versions/A/MPSImage
+0x00000001a1b61000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSNeuralNetwork.framework/Versions/A/MPSNeuralNetwork
+0x00000001a1f98000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSMatrix.framework/Versions/A/MPSMatrix
+0x00000001a1dad000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSRayIntersector.framework/Versions/A/MPSRayIntersector
+0x00000001a1fca000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSNDArray.framework/Versions/A/MPSNDArray
+0x00000001f825f000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSFunctions.framework/Versions/A/MPSFunctions
+0x00000001f8241000 	/System/Library/Frameworks/MetalPerformanceShaders.framework/Versions/A/Frameworks/MPSBenchmarkLoop.framework/Versions/A/MPSBenchmarkLoop
+0x0000000194d30000 	/System/Library/PrivateFrameworks/MetalTools.framework/Versions/A/MetalTools
+0x00000001c2059000 	/System/Library/PrivateFrameworks/IOAccelMemoryInfo.framework/Versions/A/IOAccelMemoryInfo
+0x00000001cf75e000 	/System/Library/PrivateFrameworks/kperf.framework/Versions/A/kperf
+0x00000001bd3d7000 	/System/Library/PrivateFrameworks/GPURawCounter.framework/Versions/A/GPURawCounter
+0x00000001a1686000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libvDSP.dylib
+0x00000001a29f0000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libLAPACK.dylib
+0x00000001a1b4c000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libLinearAlgebra.dylib
+0x00000001a28eb000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libSparseBLAS.dylib
+0x00000001a29eb000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libQuadrature.dylib
+0x00000001a0bd9000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBNNS.dylib
+0x0000000195656000 	/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libSparse.dylib
+0x0000000256702000 	/System/Library/PrivateFrameworks/MIL.framework/Versions/A/MIL
+0x00000001ac01c000 	/System/Library/PrivateFrameworks/GraphicsServices.framework/Versions/A/GraphicsServices
+0x00000001a2728000 	/usr/lib/libiconv.2.dylib
+0x00000001a2683000 	/usr/lib/libcharset.1.dylib
+0x00000001a183c000 	/System/Library/PrivateFrameworks/CoreUtils.framework/Versions/A/CoreUtils
+0x00000001f658e000 	/System/Library/Frameworks/ExtensionFoundation.framework/Versions/A/ExtensionFoundation
+0x00000001bd3db000 	/usr/lib/swift/libswiftCoreAudio.dylib
+0x0000000245f2f000 	/System/Library/PrivateFrameworks/CoreUtilsExtras.framework/Versions/A/CoreUtilsExtras
+0x00000001a3feb000 	/System/Library/PrivateFrameworks/PlugInKit.framework/Versions/A/PlugInKit
+0x000000019dc8c000 	/System/Library/Frameworks/OpenDirectory.framework/Versions/A/OpenDirectory
+0x000000019dc9a000 	/System/Library/Frameworks/OpenDirectory.framework/Versions/A/Frameworks/CFOpenDirectory.framework/Versions/A/CFOpenDirectory
+0x000000019718c000 	/System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio
+0x00000001a4311000 	/System/Library/PrivateFrameworks/AppServerSupport.framework/Versions/A/AppServerSupport
+0x00000001a68dc000 	/System/Library/PrivateFrameworks/perfdata.framework/Versions/A/perfdata
+0x0000000196bb5000 	/System/Library/PrivateFrameworks/AudioToolboxCore.framework/Versions/A/AudioToolboxCore
+0x000000019fafd000 	/System/Library/PrivateFrameworks/caulk.framework/Versions/A/caulk
+0x00000001a64cf000 	/usr/lib/libAudioStatistics.dylib
+0x00000001bc58f000 	/System/Library/PrivateFrameworks/SystemPolicy.framework/Versions/A/SystemPolicy
+0x00000001a677d000 	/usr/lib/libSMC.dylib
+0x00000001b0ad9000 	/System/Library/Frameworks/CoreMIDI.framework/Versions/A/CoreMIDI
+0x00000001a4c6f000 	/usr/lib/libAudioToolboxUtility.dylib
+0x00000001a68ea000 	/usr/lib/libperfcheck.dylib
+0x000000023eea3000 	/System/Library/PrivateFrameworks/AudioAnalytics.framework/Versions/A/AudioAnalytics
+0x00000001e811a000 	/System/Library/PrivateFrameworks/FeatureFlags.framework/Versions/A/FeatureFlags
+0x00000001e0ba8000 	/System/Library/Frameworks/OSLog.framework/Versions/A/OSLog
+0x00000001bd3a2000 	/usr/lib/libmis.dylib
+0x000000019b74e000 	/System/Library/Frameworks/CoreData.framework/Versions/A/CoreData
+0x00000001a4107000 	/usr/lib/libheimdal-asn1.dylib
+0x000000027bb45000 	/usr/lib/libTLE.dylib
+0x00000001add85000 	/System/Library/PrivateFrameworks/DiskImages.framework/Versions/A/DiskImages
+0x00000001ba28e000 	/System/Library/Frameworks/NetFS.framework/Versions/A/NetFS
+0x00000001a415e000 	/System/Library/PrivateFrameworks/IconServices.framework/Versions/A/IconServices
+0x00000001f5eb9000 	/System/Library/Frameworks/CoreTransferable.framework/Versions/A/CoreTransferable
+0x00000001a4111000 	/System/Library/PrivateFrameworks/IconFoundation.framework/Versions/A/IconFoundation
+0x000000019d9f8000 	/System/Library/PrivateFrameworks/CoreUI.framework/Versions/A/CoreUI
+0x00000001a4e46000 	/System/Library/PrivateFrameworks/TextureIO.framework/Versions/A/TextureIO
+0x00000001a0276000 	/System/Library/PrivateFrameworks/CoreSVG.framework/Versions/A/CoreSVG
+0x00000001d39d3000 	/usr/lib/swift/libswiftAccelerate.dylib
+0x00000001a62c6000 	/System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox
+0x00000001a6471000 	/System/Library/PrivateFrameworks/AudioSession.framework/Versions/A/AudioSession
+0x00000001a41f1000 	/System/Library/PrivateFrameworks/MediaExperience.framework/Versions/A/MediaExperience
+0x00000001a627f000 	/System/Library/PrivateFrameworks/AudioSession.framework/libSessionUtility.dylib
+0x00000001a4dc0000 	/System/Library/PrivateFrameworks/CMCaptureCore.framework/Versions/A/CMCaptureCore
+0x00000001a431b000 	/usr/lib/libspindump.dylib
+0x00000001ac4ad000 	/System/Library/PrivateFrameworks/CoreTime.framework/Versions/A/CoreTime
+0x00000001b6d7f000 	/usr/lib/libAccessibility.dylib
+0x00000001aa40d000 	/System/Library/Frameworks/MediaAccessibility.framework/Versions/A/MediaAccessibility
+0x00000002728d7000 	/System/Library/PrivateFrameworks/VideoToolboxParavirtualizationSupport.framework/Versions/A/VideoToolboxParavirtualizationSupport
+0x00000001a40a3000 	/System/Library/PrivateFrameworks/AppleVA.framework/Versions/A/AppleVA
+0x00000001aafd4000 	/System/Library/Frameworks/CoreBluetooth.framework/Versions/A/CoreBluetooth
+0x00000001a6ace000 	/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/Versions/A/CorePhoneNumbers
+0x00000001f4ee5000 	/System/Library/Frameworks/AVFAudio.framework/Versions/A/AVFAudio
+0x00000001a3e8e000 	/usr/lib/libIOReport.dylib
+0x000000023eab3000 	/System/Library/PrivateFrameworks/AppleMobileFileIntegrity.framework/Versions/A/AppleMobileFileIntegrity
+0x00000001f19bb000 	/System/Library/PrivateFrameworks/ConfigProfileHelper.framework/Versions/A/ConfigProfileHelper
+0x00000001a1ae9000 	/usr/lib/libmecab.dylib
+0x0000000254f8b000 	/System/Library/PrivateFrameworks/IsolatedCoreAudioClient.framework/Versions/A/IsolatedCoreAudioClient
+0x00000001a7d74000 	/System/Library/Frameworks/IOBluetooth.framework/Versions/A/IOBluetooth
+0x000000026f095000 	/System/Library/PrivateFrameworks/Tightbeam.framework/Versions/A/Tightbeam
+0x0000000242f7c000 	/System/Library/PrivateFrameworks/CoreAudioOrchestration.framework/Versions/A/CoreAudioOrchestration
+0x00000001d4096000 	/System/Library/PrivateFrameworks/AFKUser.framework/Versions/A/AFKUser
+0x00000001ae7e4000 	/System/Library/Frameworks/AudioUnit.framework/Versions/A/AudioUnit
+0x00000001a4d53000 	/System/Library/PrivateFrameworks/GPUWrangler.framework/Versions/A/GPUWrangler
+0x00000001a4d33000 	/System/Library/PrivateFrameworks/IOPresentment.framework/Versions/A/IOPresentment
+0x00000001a4d5b000 	/System/Library/PrivateFrameworks/DSExternalDisplay.framework/Versions/A/DSExternalDisplay
+0x00000001957e6000 	/usr/lib/libCRFSuite.dylib
+0x00000001a0ab5000 	/System/Library/PrivateFrameworks/CoreNLP.framework/Versions/A/CoreNLP
+0x00000001a28a3000 	/usr/lib/libThaiTokenizer.dylib
+0x00000001bd456000 	/usr/lib/swift/libswiftCoreImage.dylib
+0x00000001ab1bc000 	/System/Library/PrivateFrameworks/MediaKit.framework/Versions/A/MediaKit
+0x00000001ab107000 	/System/Library/Frameworks/DiscRecording.framework/Versions/A/DiscRecording
+0x00000001a51ee000 	/System/Library/PrivateFrameworks/DataDetectorsCore.framework/Versions/A/DataDetectorsCore
+0x00000001c0d59000 	/System/Library/PrivateFrameworks/TextInput.framework/Versions/A/TextInput
+0x00000001998ef000 	/System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/UIFoundation
+0x00000001a68bd000 	/System/Library/PrivateFrameworks/NetAuth.framework/Versions/A/NetAuth
+0x000000019de8a000 	/System/Library/PrivateFrameworks/login.framework/Versions/A/Frameworks/loginsupport.framework/Versions/A/loginsupport
+0x00000001adf43000 	/usr/lib/libcurl.4.dylib
+0x000000027bd79000 	/usr/lib/libcrypto.46.dylib
+0x000000027c8a3000 	/usr/lib/libssl.48.dylib
+0x00000001adc1b000 	/System/Library/Frameworks/LDAP.framework/Versions/A/LDAP
+0x00000001a68f8000 	/System/Library/Frameworks/Kerberos.framework/Versions/A/Kerberos
+0x00000001adc57000 	/System/Library/PrivateFrameworks/TrustEvaluationAgent.framework/Versions/A/TrustEvaluationAgent
+0x00000001a657b000 	/usr/lib/libsasl2.2.dylib
+0x00000001a655e000 	/usr/lib/libresolv.9.dylib
+0x00000001a4322000 	/System/Library/PrivateFrameworks/Heimdal.framework/Versions/A/Heimdal
+0x00000001ae7e3000 	/System/Library/Frameworks/Kerberos.framework/Versions/A/Libraries/libHeimdalProxy.dylib
+0x00000001a695b000 	/System/Library/PrivateFrameworks/CommonAuth.framework/Versions/A/CommonAuth
+0x00000001a1ab3000 	/usr/lib/libCheckFix.dylib
+0x000000019d0cd000 	/System/Library/PrivateFrameworks/MetadataUtilities.framework/Versions/A/MetadataUtilities
+0x0000000251f36000 	/System/Library/PrivateFrameworks/InstalledContentLibrary.framework/Versions/A/InstalledContentLibrary
+0x00000001982cd000 	/System/Library/PrivateFrameworks/CoreServicesStore.framework/Versions/A/CoreServicesStore
+0x000000019dcf1000 	/usr/lib/libapp_launch_measurement.dylib
+0x00000001cf868000 	/System/Library/PrivateFrameworks/MobileSystemServices.framework/Versions/A/MobileSystemServices
+0x00000001a3d4f000 	/usr/lib/libxslt.1.dylib
+0x00000001e0faf000 	/System/Library/PrivateFrameworks/HIDDisplay.framework/Versions/A/HIDDisplay
+0x00000001b5f9d000 	/System/Library/PrivateFrameworks/HID.framework/Versions/A/HID
+0x00000001a4d8c000 	/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATSUI.framework/Versions/A/ATSUI
+0x00000001a685e000 	/usr/lib/libcups.2.dylib
+0x00000001b6cc3000 	/System/Library/PrivateFrameworks/AXCoreUtilities.framework/Versions/A/AXCoreUtilities
+0x00000001c59f9000 	/System/Library/PrivateFrameworks/AttributeGraph.framework/Versions/A/AttributeGraph
+0x000000027b783000 	/usr/lib/libAXSafeCategoryBundle.dylib
+0x00000001b0cac000 	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa
+0x000000019845e000 	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit
+0x000000024249a000 	/System/Library/PrivateFrameworks/CollectionViewCore.framework/Versions/A/CollectionViewCore
+0x00000001a0270000 	/System/Library/PrivateFrameworks/XCTTargetBootstrap.framework/Versions/A/XCTTargetBootstrap
+0x00000001a523d000 	/System/Library/PrivateFrameworks/UserActivity.framework/Versions/A/UserActivity
+0x0000000270e22000 	/System/Library/PrivateFrameworks/UIIntelligenceSupport.framework/Versions/A/UIIntelligenceSupport
+0x00000001fafac000 	/System/Library/Frameworks/SwiftUICore.framework/Versions/A/SwiftUICore
+0x0000000275ea8000 	/System/Library/PrivateFrameworks/WritingTools.framework/Versions/A/WritingTools
+0x0000000274eec000 	/System/Library/PrivateFrameworks/WindowManagement.framework/Versions/A/WindowManagement
+0x00000001a025b000 	/System/Library/PrivateFrameworks/DFRFoundation.framework/Versions/A/DFRFoundation
+0x000000019ff54000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox
+0x00000001a9d1a000 	/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SpeechRecognition.framework/Versions/A/SpeechRecognition
+0x00000001b52fd000 	/System/Library/PrivateFrameworks/RenderBox.framework/Versions/A/RenderBox
+0x000000019dc82000 	/System/Library/PrivateFrameworks/PerformanceAnalysis.framework/Versions/A/PerformanceAnalysis
+0x00000001aa092000 	/System/Library/Frameworks/Accessibility.framework/Versions/A/Accessibility
+0x00000001f643e000 	/System/Library/Frameworks/DataDetection.framework/Versions/A/DataDetection
+0x00000001f6441000 	/System/Library/Frameworks/DeveloperToolsSupport.framework/Versions/A/DeveloperToolsSupport
+0x00000001fbb6f000 	/System/Library/Frameworks/Symbols.framework/Versions/A/Symbols
+0x000000027cac5000 	/usr/lib/swift/libswiftDataDetection.dylib
+0x00000001ba764000 	/usr/lib/swift/libswiftCoreGraphics.dylib
+0x00000001aaa3c000 	/usr/lib/swift/libswiftFoundation.dylib
+0x00000001f1445000 	/usr/lib/swift/libswiftSwiftOnoneSupport.dylib
+0x00000001dd25b000 	/System/Library/PrivateFrameworks/CoreMaterial.framework/Versions/A/CoreMaterial
+0x000000026313c000 	/System/Library/PrivateFrameworks/SFSymbols.framework/Versions/A/SFSymbols
+0x00000001a9d07000 	/System/Library/PrivateFrameworks/SpeechRecognitionCore.framework/Versions/A/SpeechRecognitionCore
+0x0000000105e5c000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/server/libjvm.dylib
+0x0000000104850000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libjimage.dylib
+0x00000001048d4000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libjava.dylib
+0x0000000104db4000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libnio.dylib
+0x0000000104dd4000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libnet.dylib
+0x0000000104f28000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libzip.dylib
+0x0000000104b64000 	/Users/testuser/.sdkman/candidates/java/25-sapmchn/lib/libsyslookup.dylib
+
+JVMTI agents: none
+
+
+VM Arguments:
+java_command: org.example.CrashPanamaRaise
+java_class_path (initial): target/examples.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+    ccstr AOTCache                                 =                                           {product} {default}
+    ccstr AOTCacheOutput                           =                                           {product} {default}
+     bool AOTClassLinking                          = false                                     {product} {default}
+    ccstr AOTConfiguration                         =                                           {product} {default}
+    ccstr AOTMode                                  =                                           {product} {default}
+      int ActiveProcessorCount                     = -1                                        {product} {default}
+    uintx AdaptiveSizeDecrementScaleFactor         = 4                                         {product} {default}
+    uintx AdaptiveSizeMajorGCDecayTimeScale        = 10                                        {product} {default}
+    uintx AdaptiveSizePolicyInitializingSteps      = 20                                        {product} {default}
+    uintx AdaptiveSizePolicyOutputInterval         = 0                                         {product} {default}
+     uint AdaptiveSizePolicyWeight                 = 10                                        {product} {default}
+     uint AdaptiveSizeThroughPutPolicy             = 0                                         {product} {default}
+     uint AdaptiveTimeWeight                       = 25                                        {product} {default}
+     bool AggressiveHeap                           = false                                     {product} {default}
+     bool AlignVector                              = false                                  {C2 product} {default}
+    ccstr AllocateHeapAt                           =                                           {product} {default}
+      int AllocateInstancePrefetchLines            = 1                                         {product} {default}
+      int AllocatePrefetchDistance                 = 384                                       {product} {default}
+     intx AllocatePrefetchInstr                    = 0                                         {product} {default}
+      int AllocatePrefetchLines                    = 3                                         {product} {default}
+      int AllocatePrefetchStepSize                 = 128                                       {product} {default}
+      int AllocatePrefetchStyle                    = 1                                         {product} {default}
+     bool AllowParallelDefineClass                 = false                                     {product} {default}
+     bool AllowRedefinitionToAddDeleteMethods      = false                                     {product} {default}
+     bool AllowUserSignalHandlers                  = false                                     {product} {default}
+     bool AllowVectorizeOnDemand                   = true                                   {C2 product} {default}
+     bool AlwaysActAsServerClassMachine            = false                                     {product} {default}
+     bool AlwaysCompileLoopMethods                 = false                                     {product} {default}
+     bool AlwaysPreTouch                           = false                                     {product} {default}
+     bool AlwaysRestoreFPU                         = false                                     {product} {default}
+     bool AlwaysTenure                             = false                                     {product} {default}
+    ccstr ArchiveClassesAtExit                     =                                           {product} {default}
+     intx ArrayCopyLoadStoreMaxElem                = 8                                      {C2 product} {default}
+   size_t AsyncLogBufferSize                       = 2097152                                   {product} {default}
+     intx AutoBoxCacheMax                          = 128                                    {C2 product} {default}
+     bool AutoCreateSharedArchive                  = false                                     {product} {default}
+     bool AvoidUnalignedAccesses                   = false                                {ARCH product} {default}
+     intx BCEATraceLevel                           = 0                                         {product} {default}
+     bool BackgroundCompilation                    = true                                   {pd product} {default}
+     bool BlockLayoutByFrequency                   = true                                   {C2 product} {default}
+     intx BlockLayoutMinDiamondPercentage          = 20                                     {C2 product} {default}
+     bool BlockLayoutRotateLoops                   = true                                   {C2 product} {default}
+     intx BlockZeroingLowLimit                     = 256                                  {ARCH product} {default}
+     intx C1InlineStackLimit                       = 5                                      {C1 product} {default}
+     intx C1MaxInlineLevel                         = 9                                      {C1 product} {default}
+     intx C1MaxInlineSize                          = 35                                     {C1 product} {default}
+     intx C1MaxRecursiveInlineLevel                = 1                                      {C1 product} {default}
+     intx C1MaxTrivialSize                         = 6                                      {C1 product} {default}
+     bool C1OptimizeVirtualCallProfiling           = true                                   {C1 product} {default}
+     bool C1ProfileBranches                        = true                                   {C1 product} {default}
+     bool C1ProfileCalls                           = true                                   {C1 product} {default}
+     bool C1ProfileCheckcasts                      = true                                   {C1 product} {default}
+     bool C1ProfileInlinedCalls                    = true                                   {C1 product} {default}
+     bool C1ProfileVirtualCalls                    = true                                   {C1 product} {default}
+     bool C1UpdateMethodData                       = true                                   {C1 product} {default}
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     bool CICompilerCountPerCPU                    = true                                      {product} {default}
+     bool CITime                                   = false                                     {product} {default}
+     bool CheckJNICalls                            = false                                     {product} {default}
+     bool ClassUnloading                           = true                                      {product} {default}
+     bool ClassUnloadingWithConcurrentMark         = true                                      {product} {default}
+     bool ClipInlining                             = true                                      {product} {default}
+    uintx CodeCacheExpansionSize                   = 65536                                  {pd product} {default}
+     bool CompactStrings                           = true                                   {pd product} {default}
+    ccstr CompilationMode                          = default                                   {product} {default}
+ccstrlist CompileCommand                           =                                           {product} {default}
+    ccstr CompileCommandFile                       =                                           {product} {default}
+ccstrlist CompileOnly                              =                                           {product} {default}
+     intx CompileThreshold                         = 10000                                  {pd product} {default}
+   double CompileThresholdScaling                  = 1.000000                                  {product} {default}
+      int CompilerThreadPriority                   = -1                                        {product} {default}
+     intx CompilerThreadStackSize                  = 2048                                   {pd product} {default}
+   size_t CompressedClassSpaceSize                 = 1073741824                                {product} {default}
+     uint ConcGCThreads                            = 3                                         {product} {ergonomic}
+     intx ConditionalMoveLimit                     = 3                                   {C2 pd product} {default}
+      int ContendedPaddingWidth                    = 128                                       {product} {default}
+     bool CrashOnOutOfMemoryError                  = false                                     {product} {default}
+     bool CreateCoredumpOnCrash                    = true                                      {product} {default}
+     bool DTraceAllocProbes                        = false                                     {product} {default}
+     bool DTraceMethodProbes                       = false                                     {product} {default}
+     bool DTraceMonitorProbes                      = false                                     {product} {default}
+     bool DisableAttachMechanism                   = false                                     {product} {default}
+     bool DisableExplicitGC                        = false                                     {product} {default}
+     bool DisplayVMOutputToStderr                  = false                                     {product} {default}
+     bool DisplayVMOutputToStdout                  = false                                     {product} {default}
+     bool DoEscapeAnalysis                         = true                                   {C2 product} {default}
+     bool DontCompileHugeMethods                   = true                                      {product} {default}
+    ccstr DumpLoadedClassList                      =                                           {product} {default}
+     bool DumpReplayDataOnError                    = true                                      {product} {default}
+     bool DumpVitalsAtExit                         = false                                     {product} {default}
+     bool EagerXrunInit                            = false                                     {product} {default}
+     intx EliminateAllocationArraySizeLimit        = 64                                     {C2 product} {default}
+     bool EliminateAllocations                     = true                                   {C2 product} {default}
+     bool EliminateAutoBox                         = true                                   {C2 product} {default}
+     bool EliminateLocks                           = true                                   {C2 product} {default}
+     bool EliminateNestedLocks                     = true                                   {C2 product} {default}
+     bool EnableContended                          = true                                      {product} {default}
+     bool EnableDynamicAgentLoading                = true                                      {product} {default}
+     bool EnableVitals                             = true                                      {product} {default}
+   size_t ErgoHeapSizeLimit                        = 0                                         {product} {default}
+    ccstr ErrorFile                                =                                           {product} {default}
+     bool ErrorFileToStderr                        = false                                     {product} {default}
+     bool ErrorFileToStdout                        = false                                     {product} {default}
+ uint64_t ErrorLogTimeout                          = 120                                       {product} {default}
+   double EscapeAnalysisTimeout                    = 20.000000                              {C2 product} {default}
+     bool EstimateArgEscape                        = true                                      {product} {default}
+     bool ExecutingUnitTests                       = false                                     {product} {default}
+     bool ExitOnOutOfMemoryError                   = false                                     {product} {default}
+     bool ExitVMOnOutOfMemoryError                 = false                                     {product} {default}
+     bool ExplicitGCInvokesConcurrent              = false                                     {product} {default}
+     bool ExtensiveErrorReports                    = true                                      {product} {default}
+    ccstr ExtraSharedClassListFile                 =                                           {product} {default}
+     bool FlightRecorder                           = false                                     {product} {default}
+    ccstr FlightRecorderOptions                    =                                           {product} {default}
+     bool ForceTimeHighResolution                  = false                                     {product} {default}
+     intx FreqInlineSize                           = 325                                 {C2 pd product} {default}
+     uint FullGCHeapDumpLimit                      = 0                                      {manageable} {default}
+   double G1ConcMarkStepDurationMillis             = 10.000000                                 {product} {default}
+     uint G1ConcRefinementThreads                  = 10                                        {product} {ergonomic}
+     uint G1ConfidencePercent                      = 50                                        {product} {default}
+   size_t G1HeapRegionSize                         = 8388608                                   {product} {ergonomic}
+     uint G1HeapWastePercent                       = 5                                         {product} {default}
+    uintx G1MixedGCCountTarget                     = 8                                         {product} {default}
+    uintx G1PeriodicGCInterval                     = 0                                      {manageable} {default}
+     bool G1PeriodicGCInvokesConcurrent            = true                                      {product} {default}
+   double G1PeriodicGCSystemLoadThreshold          = 0.000000                               {manageable} {default}
+     uint G1RSetUpdatingPauseTimePercent           = 10                                        {product} {default}
+     uint G1RefProcDrainInterval                   = 1000                                      {product} {default}
+     uint G1ReservePercent                         = 10                                        {product} {default}
+     uint G1SATBBufferEnqueueingThresholdPercent   = 60                                        {product} {default}
+   size_t G1SATBBufferSize                         = 1024                                      {product} {default}
+   size_t G1UpdateBufferSize                       = 256                                       {product} {default}
+     bool G1UseAdaptiveIHOP                        = true                                      {product} {default}
+     uint GCCardSizeInBytes                        = 512                                       {product} {default}
+     uint GCDrainStackTargetSize                   = 64                                        {product} {default}
+     uint GCHeapFreeLimit                          = 2                                         {product} {default}
+    uintx GCPauseIntervalMillis                    = 201                                       {product} {default}
+     uint GCTimeLimit                              = 98                                        {product} {default}
+     uint GCTimeRatio                              = 12                                        {product} {default}
+   size_t HeapBaseMinAddress                       = 2147483648                             {pd product} {default}
+     bool HeapDumpAfterFullGC                      = false                                  {manageable} {default}
+     bool HeapDumpBeforeFullGC                     = false                                  {manageable} {default}
+      int HeapDumpGzipLevel                        = 0                                      {manageable} {default}
+     bool HeapDumpOnOutOfMemoryError               = false                                  {manageable} {default}
+    ccstr HeapDumpPath                             =                                        {manageable} {default}
+    uintx HeapMaximumCompactionInterval            = 20                                        {product} {default}
+    uintx HeapSearchSteps                          = 3                                         {product} {default}
+   size_t HeapSizePerGCThread                      = 43620760                                  {product} {default}
+     bool IgnoreEmptyClassPaths                    = false                                     {product} {default}
+     bool IgnoreUnrecognizedVMOptions              = false                                     {product} {default}
+    uintx IncreaseFirstTierCompileThresholdAt      = 50                                        {product} {default}
+     bool IncrementalInline                        = true                                   {C2 product} {default}
+    uintx InitialCodeCacheSize                     = 2555904                                {pd product} {default}
+   size_t InitialHeapSize                          = 805306368                                 {product} {ergonomic}
+   double InitialRAMPercentage                     = 1.562500                                  {product} {default}
+    uintx InitialSurvivorRatio                     = 8                                         {product} {default}
+     uint InitialTenuringThreshold                 = 7                                         {product} {default}
+     uint InitiatingHeapOccupancyPercent           = 45                                        {product} {default}
+     bool Inline                                   = true                                      {product} {default}
+    ccstr InlineDataFile                           =                                           {product} {default}
+     intx InlineSmallCode                          = 2500                                {C2 pd product} {default}
+     bool InlineSynchronizedMethods                = true                                   {C1 product} {default}
+     intx InteriorEntryAlignment                   = 16                                  {C2 pd product} {default}
+     intx InterpreterProfilePercentage             = 33                                        {product} {default}
+     bool JavaMonitorsInStackTrace                 = true                                      {product} {default}
+      int JavaPriority10_To_OSPriority             = -1                                        {product} {default}
+      int JavaPriority1_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority2_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority3_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority4_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority5_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority6_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority7_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority8_To_OSPriority              = -1                                        {product} {default}
+      int JavaPriority9_To_OSPriority              = -1                                        {product} {default}
+   size_t LargePageHeapSizeThreshold               = 134217728                                 {product} {default}
+   size_t LargePageSizeInBytes                     = 0                                         {product} {default}
+     intx LiveNodeCountInliningCutoff              = 40000                                  {C2 product} {default}
+      int LockingMode                              = 2                                         {product} {default}
+    ccstr LogClassLoadingCauseFor                  =                                           {product} {default}
+     intx LoopMaxUnroll                            = 16                                     {C2 product} {default}
+     intx LoopOptsCount                            = 43                                     {C2 product} {default}
+     intx LoopPercentProfileLimit                  = 10                                  {C2 pd product} {default}
+    uintx LoopStripMiningIter                      = 1000                                   {C2 product} {default}
+    uintx LoopStripMiningIterShortLoop             = 100                                    {C2 product} {default}
+     intx LoopUnrollLimit                          = 60                                  {C2 pd product} {default}
+     intx LoopUnrollMin                            = 4                                      {C2 product} {default}
+     bool LoopUnswitching                          = true                                   {C2 product} {default}
+     bool MallocTraceAtStartup                     = false                                     {product} {default}
+     bool MallocTraceDetailedStats                 = false                                     {product} {default}
+    uintx MallocTraceDumpCount                     = 0                                         {product} {default}
+    ccstr MallocTraceDumpDelay                     = 1h                                        {product} {default}
+    ccstr MallocTraceDumpFilter                    =                                           {product} {default}
+     bool MallocTraceDumpHideDumpAllocs            = true                                      {product} {default}
+     bool MallocTraceDumpInternalStats             = false                                     {product} {default}
+    ccstr MallocTraceDumpInterval                  = 1h                                        {product} {default}
+    uintx MallocTraceDumpMaxEntries                = 10                                        {product} {default}
+     bool MallocTraceDumpOnError                   = false                                     {product} {default}
+    ccstr MallocTraceDumpOutput                    = stderr                                    {product} {default}
+    uintx MallocTraceDumpPercentage                = 0                                         {product} {default}
+     bool MallocTraceDumpSortByCount               = false                                     {product} {default}
+    ccstr MallocTraceEnableDelay                   = 0s                                        {product} {default}
+     bool MallocTraceExitIfFail                    = true                                      {product} {default}
+    uintx MallocTraceOnlyNth                       = 1                                         {product} {default}
+    uintx MallocTraceRainyDayFund                  = 1048576                                   {product} {default}
+    uintx MallocTraceStackDepth                    = 12                                        {product} {default}
+     bool MallocTraceTrackFree                     = true                                      {product} {default}
+    ccstr MallocTraceUnwindLibName                 = libunwind.so.8                            {product} {default}
+     bool MallocTraceUseBacktrace                  = true                                      {product} {default}
+     bool ManagementServer                         = false                                     {product} {default}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MarkStackSizeMax                         = 536870912                                 {product} {ergonomic}
+     uint MarkSweepAlwaysCompactCount              = 4                                         {product} {default}
+     uint MarkSweepDeadRatio                       = 5                                         {product} {default}
+     intx MaxBCEAEstimateLevel                     = 5                                         {product} {default}
+     intx MaxBCEAEstimateSize                      = 150                                       {product} {default}
+ uint64_t MaxDirectMemorySize                      = 0                                         {product} {default}
+     bool MaxFDLimit                               = true                                      {product} {default}
+    uintx MaxGCPauseMillis                         = 200                                       {product} {default}
+    uintx MaxHeapFreeRatio                         = 70                                     {manageable} {default}
+   size_t MaxHeapSize                              = 12884901888                               {product} {ergonomic}
+     intx MaxInlineLevel                           = 15                                     {C2 product} {default}
+     intx MaxInlineSize                            = 35                                     {C2 product} {default}
+     intx MaxJNILocalCapacity                      = 65536                                     {product} {default}
+      int MaxJavaStackTraceDepth                   = 1024                                      {product} {default}
+     intx MaxJumpTableSize                         = 65000                                  {C2 product} {default}
+     intx MaxJumpTableSparseness                   = 5                                      {C2 product} {default}
+     intx MaxLabelRootDepth                        = 1100                                   {C2 product} {default}
+     intx MaxLoopPad                               = 15                                     {C2 product} {default}
+   size_t MaxMetaspaceExpansion                    = 5439488                                   {product} {default}
+     uint MaxMetaspaceFreeRatio                    = 70                                        {product} {default}
+   size_t MaxMetaspaceSize                         = 18446744073709551615                      {product} {default}
+   size_t MaxNewSize                               = 7725907968                                {product} {ergonomic}
+     intx MaxNodeLimit                             = 80000                                  {C2 product} {default}
+ uint64_t MaxRAM                                   = 137438953472                           {pd product} {default}
+   double MaxRAMPercentage                         = 25.000000                                 {product} {default}
+     intx MaxRecursiveInlineLevel                  = 1                                      {C2 product} {default}
+     uint MaxTenuringThreshold                     = 15                                        {product} {default}
+     intx MaxTrivialSize                           = 6                                      {C2 product} {default}
+     intx MaxVectorSize                            = 16                                     {C2 product} {default}
+   size_t MetaspaceSize                            = 22020096                                  {product} {default}
+     bool MethodFlushing                           = true                                      {product} {default}
+   size_t MinHeapDeltaBytes                        = 8388608                                   {product} {ergonomic}
+    uintx MinHeapFreeRatio                         = 40                                     {manageable} {default}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+     intx MinJumpTableSize                         = 10                                  {C2 pd product} {default}
+   size_t MinMetaspaceExpansion                    = 327680                                    {product} {default}
+     uint MinMetaspaceFreeRatio                    = 40                                        {product} {default}
+   double MinRAMPercentage                         = 50.000000                                 {product} {default}
+    uintx MinSurvivorRatio                         = 3                                         {product} {default}
+   size_t MinTLABSize                              = 2048                                      {product} {default}
+     intx MultiArrayExpandLimit                    = 6                                      {C2 product} {default}
+    uintx NUMAChunkResizeWeight                    = 20                                        {product} {default}
+   size_t NUMAInterleaveGranularity                = 2097152                                   {product} {default}
+   size_t NUMASpaceResizeRate                      = 1073741824                                {product} {default}
+     bool NUMAStats                                = false                                     {product} {default}
+    ccstr NativeMemoryTracking                     = off                                       {product} {default}
+     bool NeverActAsServerClassMachine             = false                                  {pd product} {default}
+     bool NeverTenure                              = false                                     {product} {default}
+    uintx NewRatio                                 = 2                                         {product} {default}
+   size_t NewSize                                  = 1363144                                   {product} {default}
+   size_t NewSizeThreadIncrease                    = 5320                                   {pd product} {default}
+     intx NmethodSweepActivity                     = 4                                         {product} {default}
+     intx NodeLimitFudgeFactor                     = 2000                                   {C2 product} {default}
+    uintx NonNMethodCodeHeapSize                   = 5832704                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122929152                              {pd product} {ergonomic}
+     intx NumberOfLoopInstrToAlign                 = 4                                      {C2 product} {default}
+      int ObjectAlignmentInBytes                   = 8                              {product lp64_product} {default}
+   size_t OldPLABSize                              = 1024                                      {product} {default}
+     bool OmitStackTraceInFastThrow                = true                                      {product} {default}
+ccstrlist OnError                                  =                                           {product} {default}
+ccstrlist OnOutOfMemoryError                       =                                           {product} {default}
+     intx OnStackReplacePercentage                 = 140                                    {pd product} {default}
+     bool OptimizeFill                             = true                                   {C2 product} {default}
+     bool OptimizePtrCompare                       = true                                   {C2 product} {default}
+     bool OptimizeStringConcat                     = true                                   {C2 product} {default}
+     bool OptoBundling                             = false                               {C2 pd product} {default}
+     intx OptoLoopAlignment                        = 16                                     {pd product} {default}
+     bool OptoRegScheduling                        = false                               {C2 pd product} {default}
+     bool OptoScheduling                           = true                                {C2 pd product} {default}
+     uint PLABWeight                               = 75                                        {product} {default}
+     bool PSChunkLargeArrays                       = true                                      {product} {default}
+      int ParGCArrayScanChunk                      = 50                                        {product} {default}
+     uint ParallelGCBufferWastePct                 = 10                                        {product} {default}
+     uint ParallelGCThreads                        = 10                                        {product} {default}
+     bool ParallelRefProcBalancingEnabled          = true                                      {product} {default}
+     bool ParallelRefProcEnabled                   = true                                      {product} {default}
+     bool PartialPeelAtUnsignedTests               = true                                   {C2 product} {default}
+     bool PartialPeelLoop                          = true                                   {C2 product} {default}
+     intx PartialPeelNewPhiDelta                   = 0                                      {C2 product} {default}
+     uint PausePadding                             = 1                                         {product} {default}
+     intx PerBytecodeRecompilationCutoff           = 200                                       {product} {default}
+     intx PerBytecodeTrapLimit                     = 4                                         {product} {default}
+     intx PerMethodRecompilationCutoff             = 400                                       {product} {default}
+     intx PerMethodTrapLimit                       = 100                                       {product} {default}
+     bool PerfAllowAtExitRegistration              = false                                     {product} {default}
+     bool PerfBypassFileSystemCheck                = false                                     {product} {default}
+      int PerfDataMemorySize                       = 32768                                     {product} {default}
+    ccstr PerfDataSaveFile                         =                                           {product} {default}
+     bool PerfDataSaveToFile                       = false                                     {product} {default}
+     bool PerfDisableSharedMem                     = false                                     {product} {default}
+      int PerfMaxStringConstLength                 = 1024                                      {product} {default}
+   size_t PreTouchParallelChunkSize                = 1073741824                             {pd product} {default}
+     bool PreferInterpreterNativeStubs             = false                                  {pd product} {default}
+     intx PrefetchCopyIntervalInBytes              = 384                                       {product} {default}
+     intx PrefetchScanIntervalInBytes              = 384                                       {product} {default}
+     bool PreserveFramePointer                     = false                                  {pd product} {default}
+   size_t PretenureSizeThreshold                   = 0                                         {product} {default}
+     bool PrintClassHistogram                      = false                                  {manageable} {default}
+     bool PrintCodeCache                           = false                                     {product} {default}
+     bool PrintCodeCacheOnCompilation              = false                                     {product} {default}
+     bool PrintCommandLineFlags                    = false                                     {product} {default}
+     bool PrintCompilation                         = false                                     {product} {default}
+     bool PrintConcurrentLocks                     = false                                  {manageable} {default}
+     bool PrintExtendedThreadInfo                  = true                                      {product} {default}
+     bool PrintFlagsFinal                          = false                                     {product} {default}
+     bool PrintFlagsInitial                        = false                                     {product} {default}
+     bool PrintFlagsRanges                         = false                                     {product} {default}
+     bool PrintGC                                  = false                                     {product} {default}
+     bool PrintGCDetails                           = false                                     {product} {default}
+     bool PrintHeapAtSIGBREAK                      = true                                      {product} {default}
+     bool PrintSharedArchiveAndExit                = false                                     {product} {default}
+     bool PrintStringTableStatistics               = false                                     {product} {default}
+     bool PrintTieredEvents                        = false                                     {product} {default}
+     bool PrintVMOptions                           = false                                     {product} {default}
+     bool PrintVitalsAtExit                        = false                                     {product} {default}
+     bool PrintWarnings                            = true                                      {product} {default}
+     bool ProfileExceptionHandlers                 = true                                      {product} {default}
+     bool ProfileInterpreter                       = true                                   {pd product} {default}
+     intx ProfileMaturityPercentage                = 20                                        {product} {default}
+    uintx ProfiledCodeHeapSize                     = 122896384                              {pd product} {ergonomic}
+     uint PromotedPadding                          = 3                                         {product} {default}
+    uintx QueuedAllocationWarningCount             = 0                                         {product} {default}
+     bool RangeCheckElimination                    = true                                      {product} {default}
+     bool ReassociateInvariants                    = true                                   {C2 product} {default}
+     bool RecordDynamicDumpInfo                    = false                                     {product} {default}
+     bool ReduceBulkZeroing                        = true                                   {C2 product} {default}
+     bool ReduceFieldZeroing                       = true                                   {C2 product} {default}
+     bool ReduceInitialCardMarks                   = true                                   {C2 product} {default}
+     bool ReduceSignalUsage                        = false                                     {product} {default}
+     bool RelaxAccessControlCheck                  = false                                     {product} {default}
+    ccstr ReplayDataFile                           =                                           {product} {default}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool ResizePLAB                               = true                                      {product} {default}
+     bool ResizeTLAB                               = true                                      {product} {default}
+     bool RestoreMXCSROnJNICalls                   = false                                     {product} {default}
+     bool RestrictContended                        = true                                      {product} {default}
+     bool RestrictReservedStack                    = true                                      {product} {default}
+     bool RewriteBytecodes                         = true                                   {pd product} {default}
+     bool RewriteFrequentPairs                     = true                                   {pd product} {default}
+     bool SafepointTimeout                         = false                                     {product} {default}
+   double SafepointTimeoutDelay                    = 10000.000000                              {product} {default}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   double SelfDestructTimer                        = 0.000000                                  {product} {default}
+    ccstr SharedArchiveConfigFile                  =                                           {product} {default}
+    ccstr SharedArchiveFile                        =                                           {product} {default}
+   size_t SharedBaseAddress                        = 70368744177664                            {product} {default}
+    ccstr SharedClassListFile                      =                                           {product} {default}
+     uint SharedSymbolTableBucketSize              = 4                                         {product} {default}
+    ccstr ShenandoahGCHeuristics                   = adaptive                                  {product} {default}
+    ccstr ShenandoahGCMode                         = satb                                      {product} {default}
+     bool ShowCodeDetailsInExceptionMessages       = true                                   {manageable} {default}
+     bool ShowMessageBoxOnError                    = false                                     {product} {default}
+     bool ShrinkHeapInSteps                        = true                                      {product} {default}
+   size_t SoftMaxHeapSize                          = 12884901888                            {manageable} {ergonomic}
+     intx SoftRefLRUPolicyMSPerMB                  = 1000                                      {product} {default}
+      int SoftwarePrefetchHintDistance             = 384                                  {ARCH product} {default}
+     bool SplitIfBlocks                            = true                                   {C2 product} {default}
+     intx StackRedPages                            = 1                                      {pd product} {default}
+     intx StackReservedPages                       = 1                                      {pd product} {default}
+     intx StackShadowPages                         = 20                                     {pd product} {default}
+     bool StackTraceInThrowable                    = true                                      {product} {default}
+     intx StackYellowPages                         = 2                                      {pd product} {default}
+    uintx StartAggressiveSweepingAt                = 10                                        {product} {default}
+     bool StartAttachListener                      = false                                     {product} {default}
+    ccstr StartFlightRecording                     =                                           {product} {default}
+     bool StoreVitalsExtremas                      = true                                      {product} {default}
+     uint StringDeduplicationAgeThreshold          = 3                                         {product} {default}
+    uintx StringTableSize                          = 65536                                     {product} {default}
+     bool SuperWordLoopUnrollAnalysis              = true                                {C2 pd product} {default}
+     bool SuperWordReductions                      = true                                   {C2 product} {default}
+     bool SuppressFatalErrorMessage                = false                                     {product} {default}
+     uint SurvivorPadding                          = 3                                         {product} {default}
+    uintx SurvivorRatio                            = 8                                         {product} {default}
+   double SweeperThreshold                         = 15.000000                                 {product} {default}
+    uintx TLABAllocationWeight                     = 35                                        {product} {default}
+    uintx TLABRefillWasteFraction                  = 64                                        {product} {default}
+   size_t TLABSize                                 = 0                                         {product} {default}
+    uintx TLABWasteIncrement                       = 4                                         {product} {default}
+    uintx TLABWasteTargetPercent                   = 1                                         {product} {default}
+     uint TargetPLABWastePct                       = 10                                        {product} {default}
+     uint TargetSurvivorRatio                      = 50                                        {product} {default}
+     uint TenuredGenerationSizeIncrement           = 20                                        {product} {default}
+     uint TenuredGenerationSizeSupplement          = 80                                        {product} {default}
+    uintx TenuredGenerationSizeSupplementDecay     = 2                                         {product} {default}
+      int ThreadPriorityPolicy                     = 0                                         {product} {default}
+     bool ThreadPriorityVerbose                    = false                                     {product} {default}
+     intx ThreadStackSize                          = 2048                                   {pd product} {default}
+     uint ThresholdTolerance                       = 10                                        {product} {default}
+     intx Tier0BackedgeNotifyFreqLog               = 10                                        {product} {default}
+     intx Tier0InvokeNotifyFreqLog                 = 7                                         {product} {default}
+     intx Tier0ProfilingStartPercentage            = 200                                       {product} {default}
+     intx Tier23InlineeNotifyFreqLog               = 20                                        {product} {default}
+     intx Tier2BackEdgeThreshold                   = 0                                         {product} {default}
+     intx Tier2BackedgeNotifyFreqLog               = 14                                        {product} {default}
+     intx Tier2CompileThreshold                    = 0                                         {product} {default}
+     intx Tier2InvokeNotifyFreqLog                 = 11                                        {product} {default}
+     intx Tier3BackEdgeThreshold                   = 60000                                     {product} {default}
+     intx Tier3BackedgeNotifyFreqLog               = 13                                        {product} {default}
+     intx Tier3CompileThreshold                    = 2000                                      {product} {default}
+     intx Tier3DelayOff                            = 2                                         {product} {default}
+     intx Tier3DelayOn                             = 5                                         {product} {default}
+     intx Tier3InvocationThreshold                 = 200                                       {product} {default}
+     intx Tier3InvokeNotifyFreqLog                 = 10                                        {product} {default}
+     intx Tier3LoadFeedback                        = 5                                         {product} {default}
+     intx Tier3MinInvocationThreshold              = 100                                       {product} {default}
+     intx Tier4BackEdgeThreshold                   = 40000                                     {product} {default}
+     intx Tier4CompileThreshold                    = 15000                                     {product} {default}
+     intx Tier4InvocationThreshold                 = 5000                                      {product} {default}
+     intx Tier4LoadFeedback                        = 3                                         {product} {default}
+     intx Tier4MinInvocationThreshold              = 600                                       {product} {default}
+     bool TieredCompilation                        = true                                   {pd product} {default}
+     intx TieredCompileTaskTimeout                 = 50                                        {product} {default}
+     intx TieredRateUpdateMaxTime                  = 25                                        {product} {default}
+     intx TieredRateUpdateMinTime                  = 1                                         {product} {default}
+     intx TieredStopAtLevel                        = 4                                         {product} {default}
+    ccstr TraceJVMTI                               =                                           {product} {default}
+     bool TraceTraps                               = false                                {ARCH product} {default}
+     intx TrackedInitializationLimit               = 50                                     {C2 product} {default}
+     bool TrapBasedNullChecks                      = false                                  {pd product} {default}
+     bool TrapBasedRangeChecks                     = false                               {C2 pd product} {default}
+     uint TrimNativeHeapInterval                   = 0                                         {product} {default}
+      int TypeProfileArgsLimit                     = 2                                         {product} {default}
+     uint TypeProfileLevel                         = 111                                    {pd product} {default}
+     intx TypeProfileMajorReceiverPercent          = 90                                     {C2 product} {default}
+      int TypeProfileParmsLimit                    = 2                                         {product} {default}
+     intx TypeProfileSubTypeCheckCommonThreshold   = 50                                     {C2 product} {default}
+     intx TypeProfileWidth                         = 2                                         {product} {default}
+      int UnguardOnExecutionViolation              = 0                                         {product} {default}
+     bool UseAES                                   = true                                      {product} {default}
+     bool UseAdaptiveGenerationSizePolicyAtMajorCollection  = true                             {product} {default}
+     bool UseAdaptiveGenerationSizePolicyAtMinorCollection  = true                             {product} {default}
+     bool UseAdaptiveNUMAChunkSizing               = true                                      {product} {default}
+     bool UseAdaptiveSizeDecayMajorGCCost          = true                                      {product} {default}
+     bool UseAdaptiveSizePolicy                    = true                                      {product} {default}
+     bool UseAdaptiveSizePolicyFootprintGoal       = true                                      {product} {default}
+     bool UseAdaptiveSizePolicyWithSystemGC        = false                                     {product} {default}
+     bool UseBASE64Intrinsics                      = true                                      {product} {default}
+     bool UseBimorphicInlining                     = true                                   {C2 product} {default}
+     bool UseBlockZeroing                          = true                                 {ARCH product} {default}
+    ccstr UseBranchProtection                      = none                                 {ARCH product} {default}
+     bool UseCMoveUnconditionally                  = false                                  {C2 product} {default}
+     bool UseCRC32                                 = true                                 {ARCH product} {default}
+     bool UseCodeCacheFlushing                     = true                                      {product} {default}
+     bool UseCompactObjectHeaders                  = true                           {product lp64_product} {default}
+     bool UseCompiler                              = true                                      {product} {default}
+     bool UseCompressedClassPointers               = true                           {product lp64_product} {default}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseCondCardMark                          = false                                     {product} {default}
+     bool UseCountedLoopSafepoints                 = true                                   {C2 product} {default}
+     bool UseCryptoPmullForCRC32                   = false                                {ARCH product} {default}
+     bool UseDivMod                                = true                                   {C2 product} {default}
+     bool UseDynamicNumberOfCompilerThreads        = true                                      {product} {default}
+     bool UseDynamicNumberOfGCThreads              = true                                      {product} {default}
+     bool UseFMA                                   = true                                      {product} {default}
+     bool UseFPUForSpilling                        = false                                  {C2 product} {default}
+     bool UseFastJNIAccessors                      = true                                      {product} {default}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseGCOverheadLimit                       = true                                      {product} {default}
+     bool UseInlineCaches                          = true                                      {product} {default}
+     bool UseInterpreter                           = true                                      {product} {default}
+     bool UseJumpTables                            = true                                   {C2 product} {default}
+     bool UseLSE                                   = true                                 {ARCH product} {default}
+     bool UseLargePages                            = false                                  {pd product} {default}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {default}
+     bool UseLoopCounter                           = true                                      {product} {default}
+     bool UseLoopInvariantCodeMotion               = true                                   {C1 product} {default}
+     bool UseLoopPredicate                         = true                                   {C2 product} {default}
+     bool UseMallocHooks                           = false                                     {product} {default}
+     bool UseMaximumCompactionOnSystemGC           = true                                      {product} {default}
+     bool UseNUMA                                  = false                                     {product} {ergonomic}
+     bool UseNUMAInterleaving                      = false                                     {product} {ergonomic}
+     bool UseOnStackReplacement                    = true                                   {pd product} {default}
+     bool UseOnlyInlinedBimorphic                  = true                                   {C2 product} {default}
+     bool UsePSAdaptiveSurvivorSizePolicy          = true                                      {product} {default}
+     bool UseParallelGC                            = false                                     {product} {default}
+     bool UsePerfData                              = true                                      {product} {default}
+     bool UsePopCountInstruction                   = true                                      {product} {default}
+     bool UseProfiledLoopPredicate                 = true                                   {C2 product} {default}
+     bool UseSHA                                   = true                                      {product} {default}
+     bool UseSIMDForArrayEquals                    = true                                 {ARCH product} {default}
+     bool UseSIMDForBigIntegerShiftIntrinsics      = true                                 {ARCH product} {default}
+     bool UseSIMDForMemoryOps                      = false                                {ARCH product} {default}
+     bool UseSIMDForSHA3Intrinsic                  = true                                 {ARCH product} {default}
+     uint UseSVE                                   = 0                                    {ARCH product} {default}
+     bool UseSerialGC                              = false                                     {product} {default}
+     bool UseShenandoahGC                          = false                                     {product} {default}
+     bool UseSignalChaining                        = true                                      {product} {default}
+     bool UseSimpleArrayEquals                     = false                                {ARCH product} {default}
+     bool UseStringDeduplication                   = false                                     {product} {default}
+     bool UseSubwordForMaxVector                   = true                                   {C2 product} {default}
+     bool UseSuperWord                             = true                                   {C2 product} {default}
+     bool UseSystemMemoryBarrier                   = false                                     {product} {default}
+     bool UseTLAB                                  = true                                      {product} {default}
+     bool UseThreadPriorities                      = true                                   {pd product} {default}
+     bool UseTypeProfile                           = true                                      {product} {default}
+     bool UseTypeSpeculation                       = true                                   {C2 product} {default}
+     bool UseVectorCmov                            = false                                  {C2 product} {default}
+     bool UseXMMForArrayCopy                       = false                                     {product} {default}
+     bool UseZGC                                   = false                                     {product} {default}
+     intx UserThreadWaitAttemptsAtExit             = 30                                        {product} {default}
+      int VMThreadPriority                         = -1                                        {product} {default}
+     intx VMThreadStackSize                        = 2048                                   {pd product} {default}
+     intx ValueMapInitialSize                      = 11                                     {C1 product} {default}
+     intx ValueMapMaxLoopSize                      = 8                                      {C1 product} {default}
+     intx ValueSearchLimit                         = 1000                                   {C2 product} {default}
+     bool VerifySharedSpaces                       = false                                     {product} {default}
+    ccstr VitalsFile                               =                                           {product} {default}
+    uintx VitalsLongTermSampleIntervalMinutes      = 60                                        {product} {default}
+    uintx VitalsLongTermTableDays                  = 14                                        {product} {default}
+    uintx VitalsSampleInterval                     = 10                                        {product} {default}
+    uintx VitalsShortTermTableHours                = 1                                         {product} {default}
+     uint YoungGenerationSizeIncrement             = 20                                        {product} {default}
+     uint YoungGenerationSizeSupplement            = 80                                        {product} {default}
+    uintx YoungGenerationSizeSupplementDecay       = 8                                         {product} {default}
+   size_t YoungPLABSize                            = 4096                                      {product} {default}
+   double ZAllocationSpikeTolerance                = 2.000000                                  {product} {default}
+   double ZCollectionInterval                      = 0.000000                                  {product} {default}
+   double ZCollectionIntervalMajor                 = -1.000000                                 {product} {default}
+   double ZCollectionIntervalMinor                 = -1.000000                                 {product} {default}
+     bool ZCollectionIntervalOnly                  = false                                     {product} {default}
+   double ZFragmentationLimit                      = 5.000000                                  {product} {default}
+     bool ZProactive                               = true                                      {product} {default}
+     bool ZUncommit                                = true                                      {product} {default}
+    uintx ZUncommitDelay                           = 300                                       {product} {default}
+   double ZYoungCompactionLimit                    = 25.000000                                 {product} {default}
+     bool ZeroTLAB                                 = false                                     {product} {default}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags foldmultilines=false
+ #1: stderr all=off uptime,level,tags foldmultilines=false
+
+Release file:
+<release file has not been read>
+Environment Variables:
+JAVA_HOME=/Users/testuser/.sdkman/candidates/java/current
+PATH=/Users/testuser/.antigravity/antigravity/bin:/Users/testuser/.jbang/bin:/Users/testuser/.yarn/bin:/Users/testuser/.config/yarn/global/node_modules/.bin:/Users/testuser/bin/Azul\ Mission\ Control.app/Contents/MacOS/:/Users/testuser/.sdkman/candidates/pomchecker/current/bin:/Users/testuser/.sdkman/candidates/mvnd/current/bin:/Users/testuser/.sdkman/candidates/maven/current/bin:/Users/testuser/.sdkman/candidates/jreleaser/current/bin:/Users/testuser/.sdkman/candidates/jbang/current/bin:/Users/testuser/.sdkman/candidates/java/current/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Applications/Privileges.app/Contents/MacOS:/Library/TeX/texbin:/Users/testuser/Library/Application Support/JetBrains/Toolbox/scripts:/Users/testuser/go/bin:/Users/testuser/.lmstudio/bin
+SHELL=/bin/zsh
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
+LC_CTYPE=UTF-8
+TERM=xterm-256color
+TMPDIR=/var/folders/4c/yz9tjkbx3k980r1ftjqp_xrh0000gn/T/
+
+Active Locale:
+LC_ALL=en_US.UTF-8
+LC_COLLATE=en_US.UTF-8
+LC_CTYPE=en_US.UTF-8
+LC_MESSAGES=en_US.UTF-8
+LC_MONETARY=en_US.UTF-8
+LC_NUMERIC=en_US.UTF-8
+LC_TIME=en_US.UTF-8
+
+Signal Handlers:
+   SIGSEGV: crash_handler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_ONSTACK|SA_RESTART|SA_SIGINFO, unblocked
+    SIGBUS: crash_handler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, unblocked
+    SIGFPE: crash_handler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, unblocked
+   SIGPIPE: javaSignalHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGXFSZ: javaSignalHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+    SIGILL: crash_handler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, unblocked
+   SIGUSR2: SR_handler in libjvm.dylib, mask=00000000000000000000000000000000, flags=SA_RESTART|SA_SIGINFO, blocked
+    SIGHUP: UserHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+    SIGINT: UserHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGTERM: UserHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGQUIT: UserHandler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGTRAP: crash_handler in libjvm.dylib, mask=11100110000111110111111111111111, flags=SA_RESTART|SA_SIGINFO, unblocked
+
+
+Compilation memory statistics disabled.
+
+Periodic native trim disabled
+
+Vitals:
+
+-------------jvm--------------
+       heap-comm: Java Heap Size, committed
+       heap-used: Java Heap Size, used
+       meta-comm: Meta Space Size (class+nonclass), committed
+       meta-used: Meta Space Size (class+nonclass), used
+        meta-csc: Class Space Size, committed [cs]
+        meta-csu: Class Space Size, used [cs]
+       meta-gctr: GC threshold
+            code: Code cache, committed
+         nmt-mlc: Memory malloced by hotspot [nmt]
+         nmt-map: Memory mapped by hotspot [nmt]
+          nmt-gc: NMT "gc" (GC-overhead, malloc and mmap) [nmt]
+         nmt-oth: NMT "other" (typically DBB or Unsafe.allocateMemory) [nmt]
+         nmt-ovh: NMT overhead [nmt]
+        jthr-num: Number of java threads
+         jthr-nd: Number of non-demon java threads
+         jthr-cr: Threads created [delta]
+         jthr-st: Total reserved size of java thread stacks [nmt] [linux]
+        cldg-num: Classloader Data
+       cldg-anon: Anonymous CLD
+         cls-num: Classes (instance + array)
+          cls-ld: Class loaded [delta]
+         cls-uld: Classes unloaded [delta]
+
+  [delta]: values refer to the previous measurement.
+    [nmt]: only shown if NMT is available and activated
+     [cs]: only shown on 64-bit if class space is active
+  [linux]: only on Linux
+(Vitals version 220600, pid: 2829)
+
+Now:
+                      ---------------------------------jvm----------------------------------
+                      --heap--- ----------meta----------      --jthr--- --cldg-- ----cls----
+                      comm used comm used csc  csu  gctr code num nd cr num anon num  ld uld 
+2025-12-23 13:00:35               2m   2m 256k 213k  21m       10  1     44   41 1292        
+
+Last 60 minutes:
+                      --------------------------------jvm--------------------------------
+                      --heap--- ---------meta---------      --jthr--- --cldg-- ---cls----
+                      comm used comm used csc csu gctr code num nd cr num anon num ld uld 
+2025-12-23 13:00:35   776m   3m 128k  55k 64k  2k  21m   7m   8  1      3    0 467        
+
+
+---------------  S Y S T E M  ---------------
+
+OS:
+uname: Darwin 24.6.0 Darwin Kernel Version 24.6.0: Wed Oct 15 21:12:15 PDT 2025; root:xnu-11417.140.69.703.14~1/RELEASE_ARM64_T6041 arm64
+OS uptime: 8 days 1:48 hours
+rlimit (soft/hard): STACK 8176k/65520k , CORE 0k/infinity , NPROC 8000/12000 , NOFILE 1048576/infinity , AS infinity/infinity , CPU infinity/infinity , DATA infinity/infinity , FSIZE infinity/infinity , MEMLOCK infinity/infinity , RSS infinity/infinity
+load average: 3.45 3.21 3.05
+
+CPU: total 12 (initial active 12) 0x61:0x0:0x17d5b93a:0, fp, asimd, aes, pmull, sha1, sha256, crc32, lse, sha3, sha512
+machdep.cpu.brand_string:Apple M4 Pro
+hw.cachelinesize:128
+hw.l1icachesize:131072
+hw.l1dcachesize:65536
+hw.l2cachesize:4194304
+
+Memory: 16k page, physical 50331648k(71248k free), swap 4194304k(1763968k free)
+
+vm_info: OpenJDK 64-Bit Server VM (25+36-LTS) for bsd-aarch64 JRE (25+36-LTS), built on 2025-09-15T12:55:24Z with clang Apple LLVM 15.0.0 (clang-1500.3.9.4)
+
+END.
