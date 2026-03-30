@@ -59,7 +59,7 @@ Files.writeString(Path.of("redacted.log"), redacted.toString());
 <dependency>
     <groupId>me.bechberger</groupId>
     <artifactId>jhserr</artifactId>
-    <version>0.0.0</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
