@@ -90,7 +90,9 @@ jobs:
 
       - name: Prepare artifacts for Pages deployment
         run: |
-          # Check for symlinks and list files
+          # Remove the huge .wat file (340MB) - not needed for deployment
+          rm -f hserr-web/web/hserr.js.wat
+          # Check for symlinks
           find hserr-web/web -type l -delete
           ls -lhR hserr-web/web/
 
