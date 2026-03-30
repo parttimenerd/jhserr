@@ -88,6 +88,12 @@ jobs:
         run: |
           ls -lh hserr-web/web/hserr.js hserr-web/web/hserr.js.wasm
 
+      - name: Prepare artifacts for Pages deployment
+        run: |
+          # Check for symlinks and list files
+          find hserr-web/web -type l -delete
+          ls -lhR hserr-web/web/
+
       - name: Upload web artifacts
         uses: actions/upload-artifact@v4
         with:
