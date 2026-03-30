@@ -17,10 +17,10 @@ jobs:
         os: [ ubuntu-latest, macos-latest ]
         java: [ 17, 21 ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.java }}
           distribution: sapmachine
@@ -33,21 +33,21 @@ jobs:
         run: mvn -B package -DskipTests
 
       - name: Upload assembled JAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: jhserr-${{ matrix.os }}-jdk${{ matrix.java }}
           path: target/jhserr.jar
 
       - name: Upload executable JAR
         if: matrix.os == 'ubuntu-latest' && matrix.java == 17
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: jhserr-exec
           path: target/jhserr-exec.jar
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-results-${{ matrix.os }}-jdk${{ matrix.java }}
           path: target/surefire-reports/
@@ -59,7 +59,7 @@ jobs:
       pages: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up GraalVM 25
         uses: graalvm/setup-graalvm@v1
@@ -97,12 +97,9 @@ jobs:
           ls -lhR hserr-web/web/
 
       - name: Upload web artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: hserr-web
           path: hserr-web/web/
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: hserr-web
