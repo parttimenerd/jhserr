@@ -33,6 +33,7 @@ public class RedactionTransformer extends HsErrTransformer {
     /** Compiled patterns for all sensitivePathPrefixes (literal + glob), sorted longest-first. */
     private final List<Pattern> pathPatterns = new ArrayList<>();
     private final List<String> redactions = new ArrayList<>();
+    private boolean scanned = false;
 
     public RedactionTransformer() {
         this(new RedactionConfig());
@@ -71,6 +72,8 @@ public class RedactionTransformer extends HsErrTransformer {
     // ── Pass 1: scanning ─────────────────────────────────────────────────
 
     private void scan(HsErrReport report) {
+        if (scanned) return;
+        scanned = true;
         // Seed from config
         usernames.addAll(config.additionalUsernames());
         hostnames.addAll(config.additionalHostnames());
@@ -79,16 +82,21 @@ public class RedactionTransformer extends HsErrTransformer {
         Set<String> hostnameIgnoreSet = new HashSet<>(config.hostnameIgnoreList());
 
         if (report.header() != null) {
+            scanText(report.header().errorDetail());
+            scanText(report.header().assertDetail());
             scanText(report.header().jreVersion());
+            scanText(report.header().javaVm());
             scanText(report.header().problematicFrame());
             scanText(report.header().coreDumpLine());
-            scanText(report.header().errorDetail());
+            scanText(report.header().jfrFileLine());
+            for (String line : report.header().extraDetailLines()) scanText(line);
         }
         if (report.summary() != null) {
             if (config.redactHostnames() && report.summary().hostname() != null) {
                 hostnames.add(report.summary().hostname());
             }
             scanText(report.summary().commandLine());
+            scanText(report.summary().host());
         }
         scanItems(report.thread());
         scanItems(report.process());
@@ -217,6 +225,14 @@ public class RedactionTransformer extends HsErrTransformer {
             }
         } else if (item instanceof ThreadList tl) {
             for (ThreadEntry te : tl.entries()) scanText(te.line());
+        } else if (item instanceof RegisterMemoryMapping rmm) {
+            for (RegisterMemoryMapping.Entry entry : rmm.entries()) {
+                if (entry.location() instanceof me.bechberger.jhserr.model.location.LibraryLocation lib) {
+                    scanText(lib.libraryPath());
+                }
+            }
+        } else if (item instanceof ThreadInfo ti) {
+            scanText(ti.line());
         } else if (item instanceof SignalInfo si) {
             scanText(si.toString());
         } else if (item instanceof StackBoundsInfo sbi) {
@@ -235,7 +251,7 @@ public class RedactionTransformer extends HsErrTransformer {
         String after = unameLine.substring("uname:".length()).trim();
         String[] parts = after.split("\\s+", 3);
         if (parts.length >= 3) {
-            String os = parts[0]; // "Linux" or "Darwin"
+            // parts[0] is OS name ("Linux" or "Darwin")
             String second = parts[1]; // hostname or version number
             // If second token is NOT a version number (not starting with digit), it's a hostname
             if (!second.isEmpty() && !Character.isDigit(second.charAt(0))) {
@@ -278,6 +294,12 @@ public class RedactionTransformer extends HsErrTransformer {
         detail = redactText(detail);
         if (!detail.equals(header.errorDetail())) { b.errorDetail(detail); changed = true; }
 
+        String assertDet = header.assertDetail();
+        if (assertDet != null) {
+            String redacted = redactText(assertDet);
+            if (!redacted.equals(assertDet)) { b.assertDetail(redacted); changed = true; }
+        }
+
         String frame = header.problematicFrame();
         if (frame != null) {
             String redacted = redactText(frame);
@@ -294,6 +316,27 @@ public class RedactionTransformer extends HsErrTransformer {
         if (core != null) {
             String redacted = redactText(core);
             if (!redacted.equals(core)) { b.coreDumpLine(redacted); changed = true; }
+        }
+
+        String vm = header.javaVm();
+        if (vm != null) {
+            String redacted = redactText(vm);
+            if (!redacted.equals(vm)) { b.javaVm(redacted); changed = true; }
+        }
+
+        String jfr = header.jfrFileLine();
+        if (jfr != null) {
+            String redacted = redactText(jfr);
+            if (!redacted.equals(jfr)) { b.jfrFileLine(redacted); changed = true; }
+        }
+
+        if (!header.extraDetailLines().isEmpty()) {
+            List<String> redactedLines = header.extraDetailLines().stream()
+                    .map(this::redactText)
+                    .collect(Collectors.toList());
+            if (!redactedLines.equals(header.extraDetailLines())) {
+                b.extraDetailLines(redactedLines); changed = true;
+            }
         }
 
         return changed ? b.build() : header;
@@ -478,9 +521,18 @@ public class RedactionTransformer extends HsErrTransformer {
     protected @Nullable SectionItem transformVmMutexInfo(@NotNull VmMutexInfo info) {
         String newName = redactText(info.name());
         String newOwnerState = redactText(info.ownerState());
-        List<String> newLines = info.lines().stream().map(this::redactText).collect(Collectors.toList());
-        boolean changed = !newName.equals(info.name()) || !newOwnerState.equals(info.ownerState()) || !newLines.equals(info.lines());
-        return changed ? VmMutexInfo.fromLines(newName + newOwnerState, newLines) : info;
+        boolean changed = !newName.equals(info.name()) || !newOwnerState.equals(info.ownerState());
+        List<VmMutexInfo.Entry> newEntries = new ArrayList<>();
+        for (VmMutexInfo.Entry entry : info.entries()) {
+            String newDesc = redactText(entry.description());
+            if (!newDesc.equals(entry.description())) {
+                newEntries.add(new VmMutexInfo.Entry(entry.address(), newDesc, entry.spacesAfterAddress()));
+                changed = true;
+            } else {
+                newEntries.add(entry);
+            }
+        }
+        return changed ? new VmMutexInfo(newName, newOwnerState, newEntries) : info;
     }
 
     @Override
@@ -584,7 +636,50 @@ public class RedactionTransformer extends HsErrTransformer {
     // SignalInfo, StackBoundsInfo, MemoryInfo: structured fields don't contain PII,
     // so no transform override needed — identity transform suffices.
 
+    @Override
+    protected @Nullable SectionItem transformRegisterMemoryMapping(@NotNull RegisterMemoryMapping mapping) {
+        boolean changed = false;
+        List<RegisterMemoryMapping.Entry> newEntries = new ArrayList<>();
+        for (RegisterMemoryMapping.Entry entry : mapping.entries()) {
+            if (entry.location() instanceof me.bechberger.jhserr.model.location.LibraryLocation lib) {
+                String redactedPath = redactText(lib.libraryPath());
+                if (!redactedPath.equals(lib.libraryPath())) {
+                    var newLib = new me.bechberger.jhserr.model.location.LibraryLocation(
+                            lib.address(), lib.offset(), redactedPath, lib.baseAddress());
+                    newEntries.add(new RegisterMemoryMapping.Entry(entry.registerName(), entry.address(), newLib));
+                    changed = true;
+                    continue;
+                }
+            }
+            newEntries.add(entry);
+        }
+        return changed ? new RegisterMemoryMapping(newEntries) : mapping;
+    }
+
     // ── text redaction engine ────────────────────────────────────────────
+
+    /** Replace {@code needle} with {@code replacement} wherever it appears delimited by non-word characters. */
+    private static String replaceDelimited(String text, String needle, String replacement) {
+        int idx = 0;
+        StringBuilder sb = null;
+        while (idx <= text.length() - needle.length()) {
+            int found = text.indexOf(needle, idx);
+            if (found < 0) break;
+            boolean leftOk = found == 0 || !Character.isLetterOrDigit(text.charAt(found - 1));
+            int afterEnd = found + needle.length();
+            boolean rightOk = afterEnd == text.length() || !Character.isLetterOrDigit(text.charAt(afterEnd));
+            if (leftOk && rightOk) {
+                if (sb == null) sb = new StringBuilder(text.length());
+                sb.append(text, idx, found).append(replacement);
+                idx = afterEnd;
+            } else {
+                idx = found + 1;
+            }
+        }
+        if (sb == null) return text;
+        sb.append(text, idx, text.length());
+        return sb.toString();
+    }
 
     private String redactHostnames(String text) {
         String result = text;
@@ -603,9 +698,10 @@ public class RedactionTransformer extends HsErrTransformer {
             result = p.matcher(result).replaceAll(Matcher.quoteReplacement(config.pathPlaceholder()));
         }
 
-        // 2. Username replacement in paths
+        // 2. Username replacement
         if (config.redactUsernames()) {
             for (String username : usernames) {
+                // Path contexts: /username followed by delimiter or end-of-string
                 result = result.replace("/" + username + "/", "/" + config.userPlaceholder() + "/");
                 result = result.replace("/" + username + "\"", "/" + config.userPlaceholder() + "\"");
                 result = result.replace("/" + username + " ", "/" + config.userPlaceholder() + " ");
@@ -614,6 +710,8 @@ public class RedactionTransformer extends HsErrTransformer {
                 if (result.endsWith("/" + username)) {
                     result = result.substring(0, result.length() - username.length()) + config.userPlaceholder();
                 }
+                // General context: username delimited by non-word chars (e.g. "username", .username.)
+                result = replaceDelimited(result, username, config.userPlaceholder());
             }
         }
 

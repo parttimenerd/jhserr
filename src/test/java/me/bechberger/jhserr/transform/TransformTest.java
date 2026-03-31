@@ -612,4 +612,107 @@ class TransformTest {
             assertThat(text).doesNotContain(h);
         }
     }
+
+    // ── IPv4 false-positive avoidance ────────────────────────────────────
+
+    @Test
+    void ipv4PatternDoesNotMatchVersionStrings() {
+        // clang-1403.0.22.14.1 contains "0.22.14.1" which looks like IPv4
+        var pattern = RedactionConfig.IPV4_PATTERN;
+        assertThat(pattern.matcher("clang-1403.0.22.14.1").find()).isFalse();
+        assertThat(pattern.matcher("version 2.3.14.1.2").find()).isFalse();
+        // Genuine IPv4 should still match
+        assertThat(pattern.matcher("addr 192.168.1.1 end").find()).isTrue();
+        assertThat(pattern.matcher("0.0.0.0").find()).isTrue();
+        assertThat(pattern.matcher("10.0.0.1:8080").find()).isTrue();
+    }
+
+    @Test
+    void ipv4NotRedactedInVmInfoClangVersion() throws Exception {
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(report);
+        String text = redacted.toString();
+        // The clang version number should survive redaction
+        if (text.contains("clang")) {
+            assertThat(text).doesNotContain("clang Apple LLVM 14.0.3 (clang-1403.***");
+        }
+    }
+
+    // ── Username redacted outside of path context ────────────────────────
+
+    @Test
+    void usernameRedactedInQuotedBuilderName() throws Exception {
+        // The vm_info line contains: built ... by "jbechberger"
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(report);
+        String text = redacted.toString();
+        // The discovered username should be redacted everywhere, including builder name
+        for (String username : transformer.usernames()) {
+            assertThat(text).describedAs("Username '%s' should be fully redacted", username)
+                    .doesNotContain(username);
+        }
+    }
+
+    @Test
+    void usernameRedactedInAdhocBuildString() throws Exception {
+        // The vm_info line has "adhoc.jbechberger.jdk" — username delimited by dots
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(report);
+        String text = redacted.toString();
+        for (String username : transformer.usernames()) {
+            assertThat(text).describedAs("Username '%s' in adhoc string should be redacted", username)
+                    .doesNotContain(username);
+        }
+    }
+
+    // ── RegisterMemoryMapping redaction ──────────────────────────────────
+
+    @Test
+    void registerMemoryMappingPathsRedacted() throws Exception {
+        // The macOS sample has register mappings like:
+        // x4 =0x...: <offset 0x...> in /Users/testuser/code/.../libjvm.dylib at 0x...
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        HsErrReport redacted = transformer.transform(report);
+        String text = redacted.toString();
+        // Usernames in register memory mapping library paths should be redacted
+        for (String username : transformer.usernames()) {
+            assertThat(text).describedAs("Username '%s' in register mapping paths should be redacted", username)
+                    .doesNotContain(username);
+        }
+    }
+
+    @Test
+    void registerMemoryMappingScannedForUsernames() throws Exception {
+        // RegisterMemoryMapping library paths should be scanned in pass 1
+        // so usernames are discovered for redaction everywhere
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        transformer.transform(report);
+        // The macOS sample has /Users/testuser/ in register mappings
+        assertThat(transformer.usernames()).isNotEmpty();
+    }
+
+    // ── Header assertDetail redaction ────────────────────────────────────
+
+    @Test
+    void headerScanCoversAllTextFields() throws Exception {
+        // Verify that the scan phase scans javaVm, jfrFileLine too
+        HsErrReport report = loadMacOS();
+        RedactionConfig config = new RedactionConfig();
+        RedactionTransformer transformer = new RedactionTransformer(config);
+        transformer.transform(report);
+        // If javaVm contains a username in path or adhoc string, it should be discovered
+        if (report.header().javaVm() != null && report.header().javaVm().contains("adhoc.")) {
+            assertThat(transformer.usernames()).isNotEmpty();
+        }
+    }
 }

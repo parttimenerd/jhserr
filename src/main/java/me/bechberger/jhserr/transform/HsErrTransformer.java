@@ -126,6 +126,12 @@ public class HsErrTransformer {
         if (item instanceof VmInfo vi)                    return transformVmInfo(vi);
         if (item instanceof MetaspaceInfo mi)            return transformMetaspaceInfo(mi);
         if (item instanceof CodeCacheInfo ci)            return transformCodeCacheInfo(ci);
+        if (item instanceof RegisterMemoryMapping rmm)   return transformRegisterMemoryMapping(rmm);
+        if (item instanceof TopOfStack tos)              return transformTopOfStack(tos);
+        if (item instanceof PollingPageInfo p)           return transformPollingPageInfo(p);
+        if (item instanceof CdsInfo c)                   return transformCdsInfo(c);
+        if (item instanceof NarrowKlassInfo n)           return transformNarrowKlassInfo(n);
+        if (item instanceof CompressedClassSpaceInfo c)  return transformCompressedClassSpaceInfo(c);
         if (item instanceof NamedSection ns)              return transformNamedSection(ns);
         return item;
     }
@@ -262,6 +268,30 @@ public class HsErrTransformer {
     }
 
     protected @Nullable SectionItem transformCodeCacheInfo(@NotNull CodeCacheInfo info) {
+        return info;
+    }
+
+    protected @Nullable SectionItem transformRegisterMemoryMapping(@NotNull RegisterMemoryMapping mapping) {
+        return mapping;
+    }
+
+    protected @Nullable SectionItem transformTopOfStack(@NotNull TopOfStack topOfStack) {
+        return topOfStack;
+    }
+
+    protected @Nullable SectionItem transformPollingPageInfo(@NotNull PollingPageInfo info) {
+        return info;
+    }
+
+    protected @Nullable SectionItem transformCdsInfo(@NotNull CdsInfo info) {
+        return info;
+    }
+
+    protected @Nullable SectionItem transformNarrowKlassInfo(@NotNull NarrowKlassInfo info) {
+        return info;
+    }
+
+    protected @Nullable SectionItem transformCompressedClassSpaceInfo(@NotNull CompressedClassSpaceInfo info) {
         return info;
     }
 
