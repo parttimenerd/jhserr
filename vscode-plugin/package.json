@@ -19,7 +19,8 @@
     "vscode": "^1.70.0"
   },
   "activationEvents": [
-    "onLanguage:hserr"
+    "onLanguage:hserr",
+    "onStartupFinished"
   ],
   "categories": [
     "Programming Languages"
@@ -52,7 +53,7 @@
         ],
         "filenamePatterns": [
           "hs_err_pid*.log",
-          "hs_err*.log",
+          "hs*.log",
           "hserr*.log",
           "replay_pid*.log"
         ],

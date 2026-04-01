@@ -12,6 +12,8 @@ OUT_DIR="$2"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LIB_DIR="$SCRIPT_DIR/web/lib"
 
+mkdir -p "$LIB_DIR"
+
 # ── 1. reflect-config.json ──────────────────────────────────────────────
 
 mkdir -p "$OUT_DIR"
@@ -60,13 +62,16 @@ fi
 
 HLJS_VERSION="11.9.0"
 HLJS_BASE="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/${HLJS_VERSION}"
+CM_VERSION="5.65.18"
+CM_BASE="https://cdnjs.cloudflare.com/ajax/libs/codemirror/${CM_VERSION}"
 
 declare -A FILES=(
   ["highlight.min.js"]="${HLJS_BASE}/highlight.min.js"
   ["github-dark.min.css"]="${HLJS_BASE}/styles/github-dark.min.css"
+  ["codemirror.min.js"]="${CM_BASE}/codemirror.min.js"
+  ["codemirror.min.css"]="${CM_BASE}/codemirror.min.css"
+  ["cm-javascript.min.js"]="${CM_BASE}/mode/javascript/javascript.min.js"
 )
-
-mkdir -p "$LIB_DIR"
 
 for name in "${!FILES[@]}"; do
   dest="$LIB_DIR/$name"
@@ -76,6 +81,49 @@ for name in "${!FILES[@]}"; do
   echo "Downloading $name …"
   curl -fsSL -o "$dest" "${FILES[$name]}"
 done
+
+# Provide a lightweight CM5 hs_err mode when not committed in web/lib.
+CM5_MODE="$LIB_DIR/cm5-hserr.js"
+if [ ! -f "$CM5_MODE" ]; then
+  cat > "$CM5_MODE" <<'EOF'
+/* Minimal CodeMirror 5 mode for hs_err files */
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") {
+    mod(require("codemirror"));
+  } else if (typeof define == "function" && define.amd) {
+    define(["codemirror"], mod);
+  } else {
+    mod(CodeMirror);
+  }
+})(function(CodeMirror) {
+  "use strict";
+
+  CodeMirror.defineMode("hserr", function() {
+    return {
+      token: function(stream) {
+        if (stream.sol()) {
+          if (stream.match(/^#.*$/)) return "comment";
+          if (stream.match(/^-{10,}.*-{10,}$/)) return "header";
+          if (stream.match(/^Event:/)) return "tag";
+          if (stream.match(/^(?:Current thread|Stack:|siginfo:|Registers:|Native frames:|Java frames:)/)) {
+            return "keyword";
+          }
+        }
+        if (stream.match(/0x[0-9a-fA-F]+/)) return "number";
+        if (stream.match(/\b(?:SIG[A-Z]+|EXCEPTION_[A-Z_]+)\b/)) return "atom";
+        if (stream.match(/\b(?:JavaThread|VMThread|CompilerThread|GCTaskThread|WatcherThread)\b/)) return "type";
+        if (stream.match(/https?:\/\/[^\s]+/)) return "link";
+        stream.next();
+        return null;
+      }
+    };
+  });
+
+  CodeMirror.defineMIME("text/x-hserr", "hserr");
+});
+EOF
+  echo "Generated cm5-hserr.js"
+fi
 
 echo "Libraries ready in web/lib/"
 

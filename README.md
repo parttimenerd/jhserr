@@ -58,6 +58,9 @@ Files.writeString(Path.of("redacted.log"), redacted.toString());
 This repository includes a dedicated VS Code syntax highlighter plugin for
 hs_err files in `vscode-plugin`.
 
+**Install from VS Code Marketplace:**
+**https://marketplace.visualstudio.com/items?itemName=bechberger.hserr-syntax**
+
 - Extension folder: `vscode-plugin`
 - TextMate grammar source: `hserr-grammar/textmate/hserr.tmLanguage.json`
 - CodeMirror grammar source: `hserr-grammar/codemirror/hserr.ts`
@@ -353,4 +356,3 @@ This project is open to feature requests/suggestions, bug reports etc. via <a hr
 License
 -------
 MIT, Copyright 2026 SAP SE or an SAP affiliate company, Johannes Bechberger and contributors
-create hserr vs code highlither extension using shiki grammar

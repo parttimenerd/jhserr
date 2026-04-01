@@ -116,20 +116,20 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        working-directory: hserr-grammar
+        working-directory: vscode-plugin
         run: npm install
 
       - name: Compile TypeScript
-        working-directory: hserr-grammar
-        run: npx tsc -p ./
+        working-directory: vscode-plugin
+        run: npm run compile
 
       - name: Package VSIX
-        working-directory: hserr-grammar
-        run: npx @vscode/vsce package --out hserr-syntax.vsix
+        working-directory: vscode-plugin
+        run: npm run package
 
       - name: Upload VSIX
         uses: actions/upload-artifact@v6
         with:
           name: hserr-syntax-vsix
-          path: hserr-grammar/hserr-syntax.vsix
+          path: vscode-plugin/*.vsix
           if-no-files-found: error
