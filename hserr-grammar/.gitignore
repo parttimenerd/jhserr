@@ -10,8 +10,7 @@ dist/
 *.vsix
 .vscode-test/
 
-# Generated icon (produced by gen_icon.py)
-icon.png
+
 
 # macOS
 .DS_Store
