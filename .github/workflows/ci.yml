@@ -33,17 +33,11 @@ jobs:
         run: mvn -B package -DskipTests
 
       - name: Upload assembled JAR
-        uses: actions/upload-artifact@v6
-        with:
-          name: jhserr-${{ matrix.os }}-jdk${{ matrix.java }}
-          path: target/jhserr.jar
-
-      - name: Upload executable JAR
         if: matrix.os == 'ubuntu-latest' && matrix.java == 17
         uses: actions/upload-artifact@v6
         with:
-          name: jhserr-exec
-          path: target/jhserr-exec.jar
+          name: jhserr
+          path: target/jhserr.jar
 
       - name: Upload test results
         if: failure()
