@@ -61,18 +61,18 @@
                 </configuration>
             </plugin>
 
-            <!-- Generate reflect-config.json from the jhserr jar -->
+            <!-- Prepare web resources (reflect-config, CM6 bundle, libraries, grammars) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <id>gen-reflect-config</id>
+                        <id>prepare-web-resources</id>
                         <phase>generate-resources</phase>
                         <goals><goal>exec</goal></goals>
                         <configuration>
-                            <executable>${project.basedir}/generate-reflect-config.sh</executable>
+                            <executable>${project.basedir}/prepare-web-resources.sh</executable>
                             <arguments>
                                 <argument>${settings.localRepository}/me/bechberger/jhserr/${jhserr.version}/jhserr-${jhserr.version}.jar</argument>
                                 <argument>${project.build.directory}</argument>

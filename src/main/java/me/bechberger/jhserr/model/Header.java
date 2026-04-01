@@ -1,14 +1,12 @@
 package me.bechberger.jhserr.model;
 import me.bechberger.jhserr.HsErrVisitor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,7 +60,7 @@ public class Header {
     /** JFR file info (without "# " prefix), e.g. "JFR recording file will be written. ..." */
     private final @Nullable String jfrFileLine;
 
-    /** Bug report URL, e.g. "https://bugreport.java.com/bugreport/crash.jsp" */
+    /** Bug report URL, e.g. "<a href="https://bugreport.java.com/bugreport/crash.jsp">...</a>" */
     private final @Nullable String bugReportUrl;
 
     /** True when the crash was in native code (adds 2 lines after URL) */
@@ -164,7 +162,7 @@ public class Header {
             sb.append("# See problematic frame for where to report the bug.\n");
         }
         sb.append("#\n");
-        for (int i = 0; i < trailingBlankLines; i++) sb.append('\n');
+        sb.append("\n".repeat(Math.max(0, trailingBlankLines)));
         return sb.toString();
     }
 

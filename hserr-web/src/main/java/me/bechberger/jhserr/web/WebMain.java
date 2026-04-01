@@ -125,7 +125,7 @@ public class WebMain {
             currentReport = HsErrParser.parse(content);
 
             // Source tab
-            setProperty(SOURCE_OUTPUT, "value", content);
+               setSourceEditorValue(content);
 
             // JSON tab
             String json = HsErrJson.toJson(currentReport);
@@ -139,7 +139,7 @@ public class WebMain {
             showTab("source");
         } catch (Exception ex) {
             setStatus("Parse error: " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
-            setProperty(SOURCE_OUTPUT, "value", originalText != null ? originalText : "");
+               setSourceEditorValue(originalText != null ? originalText : "");
             setTextContent(JSON_OUTPUT, "");
             setTextContent(REDACTED_OUTPUT, "");
             setTextContent(DIFF_OUTPUT, "");
@@ -322,7 +322,7 @@ public class WebMain {
     }
 
     private static void onSourceInput() {
-        String content = getStringProperty(SOURCE_OUTPUT, "value");
+           String content = getSourceEditorValue();
         if (content == null || content.isEmpty()) return;
         // Show a name hint when text is pasted directly
         if (originalText == null || originalText.isEmpty()) {
@@ -494,6 +494,14 @@ public class WebMain {
     @JS.Coerce
     @JS("if (window.cmConfigEditor) { window.cmConfigEditor.setValue(value); } else { document.getElementById('config-area').value = value; }")
     private static native void setConfigValue(String value);
+
+    @JS.Coerce
+    @JS("return window.cmSourceEditor ? window.cmSourceEditor.getValue() : document.getElementById('source-output').value;")
+    private static native String getSourceEditorValue();
+
+    @JS.Coerce
+    @JS("if (window.cmSourceEditor) { window._cmSourceSuppressChange = true; window.cmSourceEditor.setValue(value); window._cmSourceSuppressChange = false; } else { document.getElementById('source-output').value = value; }")
+    private static native void setSourceEditorValue(String value);
 
     @JS.Coerce
     @JS("return arr[idx];")

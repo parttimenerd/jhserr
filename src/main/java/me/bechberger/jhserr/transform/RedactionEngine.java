@@ -14,7 +14,6 @@ import java.util.regex.*;
  *   <li>Hostnames (from Summary host line and uname)</li>
  *   <li>Usernames (from file paths like /Users/USERNAME/ or /home/USERNAME/)</li>
  *   <li>Environment variables that may contain secrets</li>
- *   <li>PIDs and thread IDs</li>
  *   <li>IP addresses</li>
  * </ul>
  *
@@ -56,9 +55,6 @@ public class RedactionEngine implements HsErrVisitor {
         scanForUsernames(header.jreVersion());
         scanForUsernames(header.problematicFrame());
         scanForUsernames(header.coreDumpLine());
-        if (header.pid() != null) {
-            findings.add("PID found: " + header.pid());
-        }
     }
 
     @Override

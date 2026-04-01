@@ -181,7 +181,6 @@ public class HsErrParser {
                     String next = current().replaceFirst("^#\\s?", "").strip();
                     if (next.startsWith("See problematic frame")) advance();
                 }
-                continue;
             }
         }
 
@@ -279,11 +278,6 @@ public class HsErrParser {
                 continue;
             }
             // Other single-line sub-sections
-            if (l.startsWith("Current CompileTask:")
-                || l.startsWith("Retrying")) {
-                items.add(new NamedSection(advance(), List.of()));
-                continue;
-            }
             // Everything else: standalone line
             items.add(new NamedSection(advance(), List.of()));
         }

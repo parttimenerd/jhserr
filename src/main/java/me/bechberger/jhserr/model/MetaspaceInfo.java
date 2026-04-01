@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Parsed Metaspace configuration.
  * Handles multiple variants: simple summary, class+non-class, generational.
- *
+ * <p>
  * Formats:
  * - Simple: Metaspace: used 818K, committed 1024K, reserved 1114112K
  * - Class+NonClass:

@@ -1,12 +1,9 @@
 package me.bechberger.jhserr.parser;
 
 import me.bechberger.jhserr.HsErrReport;
-import me.bechberger.jhserr.model.*;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;

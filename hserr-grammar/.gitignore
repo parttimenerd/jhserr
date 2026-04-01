@@ -1,0 +1,17 @@
+# Node / npm
+node_modules/
+package-lock.json
+
+# Build outputs
+out/
+dist/
+
+# Extension packaging (now lives in ../vscode-plugin)
+*.vsix
+.vscode-test/
+
+# Generated icon (produced by gen_icon.py)
+icon.png
+
+# macOS
+.DS_Store

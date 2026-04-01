@@ -103,3 +103,33 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+
+  vscode-extension:
+    name: Package VS Code Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        working-directory: hserr-grammar
+        run: npm install
+
+      - name: Compile TypeScript
+        working-directory: hserr-grammar
+        run: npx tsc -p ./
+
+      - name: Package VSIX
+        working-directory: hserr-grammar
+        run: npx @vscode/vsce package --out hserr-syntax.vsix
+
+      - name: Upload VSIX
+        uses: actions/upload-artifact@v6
+        with:
+          name: hserr-syntax-vsix
+          path: hserr-grammar/hserr-syntax.vsix
+          if-no-files-found: error

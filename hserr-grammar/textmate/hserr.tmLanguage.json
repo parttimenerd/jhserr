@@ -1,0 +1,1662 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "HotSpot Error Report",
+  "scopeName": "source.hserr",
+  "fileTypes": ["log"],
+  "firstLineMatch": "^#\\s*$",
+  "patterns": [
+    { "include": "#header" },
+    { "include": "#summary" },
+    { "include": "#thread_section" },
+    { "include": "#process_section" },
+    { "include": "#system_section" },
+    { "include": "#end_marker" }
+  ],
+  "repository": {
+
+    "global_patterns": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.address.hserr",
+          "match": "(?<!\\w)0x[0-9a-fA-F]{2,}(?!\\w)"
+        },
+        {
+          "name": "constant.numeric.size.hserr",
+          "match": "\\b\\d+(?:[kKmMgG](?:[bB])?|[bB])\\b"
+        },
+        {
+          "name": "constant.numeric.float.hserr",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.hserr",
+          "match": "(?<!\\.)\\b\\d+\\b(?![.KMGkmgxX])"
+        },
+        {
+          "name": "string.quoted.double.hserr",
+          "match": "\"[^\"]*\""
+        },
+        {
+          "name": "constant.language.boolean.hserr",
+          "match": "\\b(?:true|false)\\b"
+        },
+        {
+          "name": "entity.name.type.thread.hserr",
+          "match": "\\b(?:JavaThread|VMThread|CompilerThread|GCTaskThread|WatcherThread|ConcurrentGCThread|WorkerThread|CodeCacheSweeperThread|ServiceThread|NotificationThread|StringDedupThread|ParallelCompileThread|PeriodicalTaskThread|JfrRecorderThread|JfrThreadSampler|AttachListenerThread|TrimThread|ZMarkStackExpandThread)\\b"
+        },
+        {
+          "name": "constant.language.state.hserr",
+          "match": "\\b(?:_thread_in_vm|_thread_in_native|_thread_in_Java|_thread_blocked|_thread_new|_thread_uninitialized|_thread_suspended|_thread_in_conc_gc|_thread_in_native_trans|_thread_in_vm_trans)\\b"
+        },
+        {
+          "name": "constant.language.signal.hserr",
+          "match": "\\b(?:SIG\\w+|EXCEPTION_\\w+)\\b"
+        }
+      ]
+    },
+
+    "header": {
+      "begin": "^(?=#)",
+      "end": "(?=^-{10,}\\s+S U M M A R Y|^-{10,}\\s+T H R E A D)",
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.hserr",
+          "match": "^(#)(.*)",
+          "captures": {
+            "1": { "name": "punctuation.definition.comment.hserr" },
+            "2": {
+              "patterns": [
+                {
+                  "name": "constant.language.signal.hserr",
+                  "match": "\\b(?:SIGSEGV|SIGBUS|SIGFPE|SIGILL|SIGTRAP|SIGABRT|SIGTERM|SIGINT|SIGHUP|SIGQUIT|SIGPOLL|SIGKILL|SIGUSR1|SIGUSR2|SIGALRM|SIGCHLD|SIGCONT|SIGSTOP|SIGTSTP|SIGTTIN|SIGTTOU|SIGXCPU|SIGXFSZ|SIGPROF|EXCEPTION_ACCESS_VIOLATION|EXCEPTION_STACK_OVERFLOW|EXCEPTION_IN_PAGE_ERROR|EXCEPTION_INVALID_HANDLE|EXCEPTION_ARRAY_BOUNDS_EXCEEDED|EXCEPTION_FLT_DENORMAL_OPERAND|EXCEPTION_FLT_DIVIDE_BY_ZERO|EXCEPTION_FLT_INEXACT_RESULT|EXCEPTION_FLT_INVALID_OPERATION|EXCEPTION_FLT_OVERFLOW|EXCEPTION_FLT_UNDERFLOW|EXCEPTION_INT_DIVIDE_BY_ZERO|EXCEPTION_INT_OVERFLOW|EXCEPTION_DATATYPE_MISALIGNMENT)\\b"
+                },
+                {
+                  "name": "constant.language.error-type.hserr",
+                  "match": "(?:Internal Error|Out of Memory|OutOfMemory|StackOverflow)"
+                },
+                {
+                  "name": "constant.language.error-type.hserr",
+                  "match": "\\b(?:\\w+(?:Error|Exception|Failure|Violation|Overflow|Abort|Fault|Panic|Crash|Halt))\\b"
+                },
+                {
+                  "name": "keyword.operator.frame-type.hserr",
+                  "match": "(?<=# )[VvCJjA]  "
+                },
+                {
+                  "name": "constant.numeric.hex.address.hserr",
+                  "match": "(?<!\\w)0x[0-9a-fA-F]{2,}(?!\\w)"
+                },
+                {
+                  "match": "\\b(pid|tid)=(\\d+)",
+                  "captures": {
+                    "1": { "name": "entity.name.tag.hserr" },
+                    "2": { "name": "constant.numeric.integer.hserr" }
+                  }
+                },
+                {
+                  "match": "\\[([\\w.-]+(?:\\.(?:so|dylib|dll))?)\\+(0x[0-9a-fA-F]+)\\]",
+                  "captures": {
+                    "1": { "name": "entity.name.library.hserr" },
+                    "2": { "name": "constant.numeric.hex.address.hserr" }
+                  }
+                },
+                {
+                  "match": "\\(([^)]+\\.(?:cpp|hpp|c|h|java):\\d+)\\)",
+                  "captures": {
+                    "1": { "name": "string.unquoted.path.hserr" }
+                  }
+                },
+                {
+                  "comment": "assert/guarantee(...) failed: message — guarantee support, 3-level nesting, hex in message",
+                  "begin": "(assert|guarantee)(\\((?:[^()]|\\((?:[^()]|\\([^()]*\\))*\\))*\\))\\s+(failed:\\s*)",
+                  "end": "$",
+                  "beginCaptures": {
+                    "1": { "name": "keyword.other.assert.hserr" },
+                    "2": { "name": "string.unquoted.assert-expr.hserr" },
+                    "3": { "name": "invalid.illegal.assert-failed.hserr" }
+                  },
+                  "patterns": [
+                    { "include": "#global_patterns" }
+                  ]
+                },
+                {
+                  "comment": "bare assert/guarantee keyword not followed by known pattern",
+                  "name": "keyword.other.assert.hserr",
+                  "match": "\\b(?:assert|guarantee)\\b"
+                },
+                {
+                  "comment": "fatal error: message — with hex/address highlighting in message",
+                  "begin": "((?:fatal )?[Ee]rror:\\s*)",
+                  "end": "$",
+                  "beginCaptures": {
+                    "1": { "name": "invalid.illegal.fatal-error.hserr" }
+                  },
+                  "patterns": [
+                    { "include": "#global_patterns" }
+                  ]
+                },
+                {
+                  "comment": "Native function+offset in problematic frame: Symbol+0xoff",
+                  "match": "(?<=\\]  )([\\w:~<>]+(?:\\([^)]*\\))*(?:\\s+const)?)(?:(\\+)(0x[0-9a-fA-F]+))?",
+                  "captures": {
+                    "1": { "name": "entity.name.function.cpp.hserr" },
+                    "2": { "name": "keyword.operator.hserr" },
+                    "3": { "name": "constant.numeric.hex.address.hserr" }
+                  }
+                },
+                {
+                  "comment": "JRE/JVM version label and value with Java version extraction",
+                  "match": "(JRE version:|Java VM:)\\s+(.+?)\\((\\d+(?:\\.\\d+)*(?:\\+\\d+)?(?:-\\d+)?)[),](.+|$)",
+                  "captures": {
+                    "1": { "name": "entity.name.tag.hserr" },
+                    "2": { "name": "string.unquoted.version.hserr" },
+                    "3": { "name": "constant.numeric.version.hserr" },
+                    "4": { "name": "string.unquoted.version.hserr" }
+                  }
+                },
+                {
+                  "comment": "Build type in version lines",
+                  "match": "(?<=\\()(fastdebug|release|slowdebug)(?=\\s+build|\\))",
+                  "captures": {
+                    "1": { "name": "storage.type.build.hserr" }
+                  }
+                },
+                {
+                  "comment": "Java version fallback for lines without parentheses",
+                  "match": "(JRE version:|Java VM:)\\s+(.*)",
+                  "captures": {
+                    "1": { "name": "entity.name.tag.hserr" },
+                    "2": { "name": "string.unquoted.version.hserr" }
+                  }
+                },
+                {
+                  "name": "entity.name.tag.hserr",
+                  "match": "Problematic frame:"
+                },
+                {
+                  "name": "markup.underline.link.hserr",
+                  "match": "https?://[^\\s]+"
+                },
+                {
+                  "name": "entity.name.type.thread.hserr",
+                  "match": "\\b(?:JavaThread|VMThread|CompilerThread|GCTaskThread|WatcherThread|ConcurrentGCThread|WorkerThread|CodeCacheSweeperThread|ServiceThread|NotificationThread|StringDedupThread|ParallelCompileThread|PeriodicalTaskThread|JfrRecorderThread|JfrThreadSampler|AttachListenerThread|TrimThread|ZMarkStackExpandThread)\\b"
+                },
+                {
+                  "name": "constant.numeric.integer.hserr",
+                  "match": "\\b\\d+\\b"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+
+    "summary": {
+      "begin": "^(-{10,}\\s+S U M M A R Y\\s+-{10,})$",
+      "end": "(?=^-{10,}\\s+T H R E A D|^-{10,}\\s+P R O C E S S)",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.1.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(Command Line:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": {
+              "patterns": [
+                {
+                  "match": "(-D[\\w.$-]+)(=)([^\\s]+)",
+                  "captures": {
+                    "1": { "name": "entity.name.tag.hserr" },
+                    "2": { "name": "keyword.operator.hserr" },
+                    "3": { "name": "string.unquoted.path.hserr" }
+                  }
+                },
+                {
+                  "name": "keyword.operator.hserr",
+                  "match": "\\b(?:-XX:[^\\s]+|-X[a-zA-Z][^\\s]*|-J-XX:[^\\s]+|-J-X[^\\s]*)\\b"
+                },
+                {
+                  "name": "keyword.other.assert.hserr",
+                  "match": "\\b(?:-ea|-esa|-da|-dsa|-J-ea|-J-esa|-J-da|-J-dsa)\\b"
+                },
+                {
+                  "name": "entity.name.type.class.hserr",
+                  "match": "\\b(?:[a-zA-Z_$][\\w$]*\\.)+[A-Za-z_$][\\w$]*\\b"
+                },
+                {
+                  "name": "string.unquoted.path.hserr",
+                  "match": "(?:^|\\s)(/[\\w./:@+-]+)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "^(Host:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": {
+              "patterns": [
+                {
+                  "name": "entity.name.type.cpu.hserr",
+                  "match": "\\b(?:AArch64|arm64|x86_64|amd64|x64|x86|ppc64le|ppc64|s390x|riscv64)\\b"
+                },
+                {
+                  "name": "constant.numeric.integer.hserr",
+                  "match": "\\b\\d+\\b"
+                },
+                {
+                  "name": "constant.numeric.size.hserr",
+                  "match": "\\b\\d+[KMGTP](?:B)?\\b"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "^(Time:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "thread_section": {
+      "begin": "^(-{10,}\\s+T H R E A D\\s+-{10,})$",
+      "end": "(?=^-{10,}\\s+P R O C E S S)",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.1.hserr" }
+      },
+      "patterns": [
+        { "include": "#error_during_error" },
+        { "include": "#current_thread" },
+        { "include": "#frame_list" },
+        { "include": "#registers_block" },
+        { "include": "#register_memory_mapping" },
+        { "include": "#siginfo" },
+        { "include": "#stack_bounds" },
+        { "include": "#memory_dump_line" },
+        { "include": "#top_of_stack" },
+        { "include": "#instructions" },
+        { "include": "#stack_slot_mapping" },
+        { "include": "#lock_stack" },
+        { "include": "#current_compile_task" },
+        { "include": "#compiled_method" },
+        { "include": "#code_blob" },
+        { "include": "#generic_subsection" },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "current_thread": {
+      "match": "^(Current thread)\\s+(\\()(0x[0-9a-fA-F]+)(\\)):\\s*\\s+(\\S+)\\s+(\"[^\"]*\")(?:\\s+(daemon))?(?:\\s+(\\[)([^\\]]*)(\\]))?",
+      "captures": {
+        "1": { "name": "entity.name.tag.hserr" },
+        "2": { "name": "punctuation.bracket.hserr" },
+        "3": { "name": "constant.numeric.hex.address.hserr" },
+        "4": { "name": "punctuation.bracket.hserr" },
+        "5": { "name": "entity.name.type.thread.hserr" },
+        "6": { "name": "string.quoted.double.thread-name.hserr" },
+        "7": { "name": "keyword.other.daemon.hserr" },
+        "8": { "name": "punctuation.bracket.hserr" },
+        "9": { "name": "constant.language.state.hserr" },
+        "10": { "name": "punctuation.bracket.hserr" }
+      }
+    },
+
+    "frame_list": {
+      "begin": "^((?:Native|Java) frames:(?:\\s*\\([^)]*\\))?.*)",
+      "end": "(?=^(?:Stack|siginfo|Register|Top of Stack|Instructions|Lock stack|Current Compile|Decoder|[a-z][a-z ]*:))",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#frame_line" },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "frame_line": {
+      "patterns": [
+        {
+          "comment": "VM frame with qualified C++ symbol: Class::method(...)+0xoff",
+          "name": "meta.frame.vm.hserr",
+          "match": "^(V)  (\\[)([\\w.-]+)(?:\\.(?:so|dylib|dll))?(\\+)(0x[0-9a-fA-F]+)(\\])\\s+((?:[\\w$~<>]+::)*[\\w$~<>]+)(::)([\\w$~<>]+(?:\\([^)]*\\))?(?:\\s+const)?)(?:(\\+)(0x[0-9a-fA-F]+))?(?:\\s+(\\()([^)]+\\.(?:cpp|hpp|c|h):\\d+)(\\)))?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "punctuation.bracket.hserr" },
+            "3": { "name": "entity.name.library.hserr" },
+            "4": { "name": "keyword.operator.hserr" },
+            "5": { "name": "constant.numeric.hex.address.hserr" },
+            "6": { "name": "punctuation.bracket.hserr" },
+            "7": { "name": "entity.name.type.class.hserr" },
+            "8": { "name": "keyword.operator.hserr" },
+            "9": { "name": "entity.name.function.cpp.hserr" },
+            "10": { "name": "keyword.operator.hserr" },
+            "11": { "name": "constant.numeric.hex.address.hserr" },
+            "12": { "name": "punctuation.bracket.hserr" },
+            "13": { "name": "string.unquoted.path.hserr" },
+            "14": { "name": "punctuation.bracket.hserr" }
+          }
+        },
+        {
+          "comment": "VM frame: V  [lib+0xoff]  Symbol+0xoff  (src:line)",
+          "name": "meta.frame.vm.hserr",
+          "match": "^(V)  (\\[)([\\w.-]+)(?:\\.(?:so|dylib|dll))?(\\+)(0x[0-9a-fA-F]+)(\\])\\s+(.+?)(?:(\\+)(0x[0-9a-fA-F]+))?(?:\\s+(\\()([^)]+\\.(?:cpp|hpp|c|h):\\d+)(\\)))?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "punctuation.bracket.hserr" },
+            "3": { "name": "entity.name.library.hserr" },
+            "4": { "name": "keyword.operator.hserr" },
+            "5": { "name": "constant.numeric.hex.address.hserr" },
+            "6": { "name": "punctuation.bracket.hserr" },
+            "7": { "name": "entity.name.function.cpp.hserr" },
+            "8": { "name": "keyword.operator.hserr" },
+            "9": { "name": "constant.numeric.hex.address.hserr" },
+            "10": { "name": "punctuation.bracket.hserr" },
+            "11": { "name": "string.unquoted.path.hserr" },
+            "12": { "name": "punctuation.bracket.hserr" }
+          }
+        },
+        {
+          "comment": "Native C frame with qualified C++ symbol: Class::method+0xoff",
+          "name": "meta.frame.native.hserr",
+          "match": "^(C)  (\\[)([\\w.-]+(?:\\.(?:so|dylib|dll)(?:\\.\\d+)*)?)(\\+)(0x[0-9a-fA-F]+)(\\])\\s+((?:[\\w$~<>]+::)+)([\\w$~<>]+(?:\\([^)]*\\))?(?:\\s+const)?)(?:(\\+)(0x[0-9a-fA-F]+))?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "punctuation.bracket.hserr" },
+            "3": { "name": "entity.name.library.hserr" },
+            "4": { "name": "keyword.operator.hserr" },
+            "5": { "name": "constant.numeric.hex.address.hserr" },
+            "6": { "name": "punctuation.bracket.hserr" },
+            "7": { "name": "entity.name.type.class.hserr" },
+            "8": { "name": "entity.name.function.cpp.hserr" },
+            "9": { "name": "keyword.operator.hserr" },
+            "10": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Native C frame: C  [lib+0xoff]  symbol+0xoff",
+          "name": "meta.frame.native.hserr",
+          "match": "^(C)  (\\[)([\\w.-]+(?:\\.(?:so|dylib|dll)(?:\\.\\d+)*)?)(\\+)(0x[0-9a-fA-F]+)(\\])(?:\\s+(.*))?",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "punctuation.bracket.hserr" },
+            "3": { "name": "entity.name.library.hserr" },
+            "4": { "name": "keyword.operator.hserr" },
+            "5": { "name": "constant.numeric.hex.address.hserr" },
+            "6": { "name": "punctuation.bracket.hserr" },
+            "7": { "name": "entity.name.function.cpp.hserr" }
+          }
+        },
+        {
+          "comment": "Stub frame: v  ~StubName addr (optional address, stub name may have spaces)",
+          "name": "meta.frame.stub.hserr",
+          "match": "^(v)  (~\\S+(?:::\\S+)?(?:\\s+\\S+)*?(?:\\s+\\([^)]+\\))?)(?:\\s+(0x[0-9a-fA-F]+))?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "entity.name.function.stub.hserr" },
+            "3": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Compiled Java: J 313 c2 class.method(sig)ret module@ver (N bytes) @ addr [addr+off]",
+          "name": "meta.frame.compiled-java.hserr",
+          "match": "^(J)\\s+(\\d+)(?:\\s+(c[12]))?\\s+((?:[\\w$]+(?:\\+0x[0-9a-fA-F]+)?\\.)*[\\w$]+(?:\\+0x[0-9a-fA-F]+)?)\\.([\\w$]+)(\\([^)]*\\)\\S+)(?:\\s+\\S+@\\S+)?(?:\\s+\\((\\d+) bytes\\))?(?:\\s+@\\s+(0x[0-9a-fA-F]+))?(?:\\s+\\[(0x[0-9a-fA-F]+)(?:\\+(0x[0-9a-fA-F]+))?\\])?",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "keyword.other.tier.hserr" },
+            "4": { "name": "entity.name.type.class.hserr" },
+            "5": { "name": "entity.name.function.java.hserr" },
+            "6": { "name": "entity.name.type.signature.hserr" },
+            "7": { "name": "constant.numeric.integer.hserr" },
+            "8": { "name": "constant.numeric.hex.address.hserr" },
+            "9": { "name": "constant.numeric.hex.address.hserr" },
+            "10": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Interpreted Java: j  class.method(sig)ret+offset module@version",
+          "name": "meta.frame.interpreted-java.hserr",
+          "match": "^(j)\\s+((?:[\\w$]+(?:\\+0x[0-9a-fA-F]+)?\\.)*[\\w$]+(?:\\+0x[0-9a-fA-F]+)?)\\.([\\w$]+)(\\([^)]*\\)\\S+)(?:\\+(\\d+))?(?:\\s+(\\S+@\\S+))?",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" },
+            "2": { "name": "entity.name.type.class.hserr" },
+            "3": { "name": "entity.name.function.java.hserr" },
+            "4": { "name": "entity.name.type.signature.hserr" },
+            "5": { "name": "constant.numeric.integer.hserr" },
+            "6": { "name": "entity.name.namespace.module.hserr" }
+          }
+        },
+        {
+          "comment": "Java frame without explicit J/j prefix",
+          "name": "meta.frame.java.hserr",
+          "match": "^\\s*((?:[\\w$]+(?:\\+0x[0-9a-fA-F]+)?\\.)*[\\w$]+(?:\\+0x[0-9a-fA-F]+)?)\\.([\\w$]+)(\\([^)]*\\)\\S+)(?:\\+(\\d+))?(?:\\s+(\\S+@\\S+))?\\s*$",
+          "captures": {
+            "1": { "name": "entity.name.type.class.hserr" },
+            "2": { "name": "entity.name.function.java.hserr" },
+            "3": { "name": "entity.name.type.signature.hserr" },
+            "4": { "name": "constant.numeric.integer.hserr" },
+            "5": { "name": "entity.name.namespace.module.hserr" }
+          }
+        },
+        {
+          "comment": "Generic fallback frame type",
+          "name": "meta.frame.generic.hserr",
+          "match": "^([VvCJjA])\\s+(.*)",
+          "captures": {
+            "1": { "name": "keyword.operator.frame-type.hserr" }
+          }
+        }
+      ]
+    },
+
+    "siginfo": {
+      "match": "^(siginfo:)\\s+(si_signo:\\s*)(\\d+)(?:\\s+(\\()(\\w+)(\\)))?\\s*,\\s*(si_code:\\s*)(\\d+)(?:\\s+(\\()(\\w+)(\\)))?(?:\\s*,\\s*(si_addr:\\s*)(0x[0-9a-fA-F]+))?(?:\\s*,\\s*(si_errno:\\s*)(\\d+))?(?:\\s*,\\s*(si_band:\\s*)(\\d+))?",
+      "captures": {
+        "1": { "name": "entity.name.tag.hserr" },
+        "2": { "name": "entity.name.tag.hserr" },
+        "3": { "name": "constant.numeric.integer.hserr" },
+        "4": { "name": "punctuation.bracket.hserr" },
+        "5": { "name": "constant.language.signal.hserr" },
+        "6": { "name": "punctuation.bracket.hserr" },
+        "7": { "name": "entity.name.tag.hserr" },
+        "8": { "name": "constant.numeric.integer.hserr" },
+        "9": { "name": "punctuation.bracket.hserr" },
+        "10": { "name": "constant.language.hserr" },
+        "11": { "name": "punctuation.bracket.hserr" },
+        "12": { "name": "entity.name.tag.hserr" },
+        "13": { "name": "constant.numeric.hex.address.hserr" },
+        "14": { "name": "entity.name.tag.hserr" },
+        "15": { "name": "constant.numeric.integer.hserr" },
+        "16": { "name": "entity.name.tag.hserr" },
+        "17": { "name": "constant.numeric.integer.hserr" }
+      }
+    },
+
+    "stack_bounds": {
+      "match": "^(Stack:)\\s+\\[(0x[0-9a-fA-F]+),(0x[0-9a-fA-F]+)[^\\]]*\\](?:[^,]*,)?(?:\\s*(sp)\\s*=\\s*(0x[0-9a-fA-F]+))?(?:[^,]*,)?(?:\\s*(free space)\\s*=\\s*(\\d+(?:[kKmMgG](?:[bB])?|[bB])?))?",
+      "captures": {
+        "1": { "name": "entity.name.tag.hserr" },
+        "2": { "name": "constant.numeric.hex.address.hserr" },
+        "3": { "name": "constant.numeric.hex.address.hserr" },
+        "4": { "name": "entity.name.tag.hserr" },
+        "5": { "name": "constant.numeric.hex.address.hserr" },
+        "6": { "name": "entity.name.tag.hserr" },
+        "7": { "name": "constant.numeric.size.hserr" }
+      }
+    },
+
+    "memory_dump_line": {
+      "comment": "Generic memory dump line: address: words with optional ASCII trailer",
+      "match": "^\\s*(?:=>\\s*)?(0x[0-9a-fA-F]+):\\s+([0-9a-fA-F]{4,16}(?:\\s+[0-9a-fA-F]{4,16})+)(?:\\s+(.+))?$",
+      "captures": {
+        "1": { "name": "constant.numeric.hex.address.hserr" },
+        "2": { "name": "comment.block.hexdump.hserr" },
+        "3": { "name": "comment.block.hexdump.hserr" }
+      }
+    },
+
+    "registers_block": {
+      "begin": "^(Registers:)\\s*$",
+      "end": "(?=^(?:[a-z]|Stack|siginfo|Register to memory|Top of Stack|Instructions))",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Register assignment: REG=0xVALUE across all architectures",
+          "match": "(?i)((?:R|E)?(?:AX|BX|CX|DX|SI|DI|BP|SP|IP)|R(?:8|9|10|11|12|13|14|15)[DWB]?|(?:XMM|YMM|ZMM)\\d+|ST\\d|EFLAGS|RFLAGS|CSGSFS|ERR|TRAPNO|FSBASE|GSBASE|CS|DS|SS|FS|GS|ES|x\\d{1,2}|[xf]p|sp|pc|lr|msr|pstate|cpsr|[vf]\\d{1,2}|r\\d{1,2}|cr\\d|ctr|xer|fpscr|psw|(?:fr|f)\\d{1,2})\\s*=\\s*(0x[0-9a-fA-F]+)",
+          "captures": {
+            "1": { "name": "variable.language.register.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "register_memory_mapping": {
+      "begin": "^(Register to memory mapping:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "(?i)^((?:R|E)?(?:AX|BX|CX|DX|SI|DI|BP|SP|IP)|R(?:8|9|10|11|12|13|14|15)[DWB]?|(?:XMM|YMM|ZMM)\\d+|ST\\d|EFLAGS|RFLAGS|CSGSFS|ERR|TRAPNO|FSBASE|GSBASE|CS|DS|SS|FS|GS|ES|x\\d{1,2}|[xf]p|sp|pc|lr|msr|pstate|cpsr|[vf]\\d{1,2}|r\\d{1,2}|cr\\d|ctr|xer|fpscr|psw|(?:fr|f)\\d{1,2})\\s*=\\s*(0x[0-9a-fA-F]+)",
+          "captures": {
+            "1": { "name": "variable.language.register.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "name": "string.unquoted.path.hserr",
+          "match": "(?<=in )\\S+"
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "top_of_stack": {
+      "begin": "^(Top of Stack:)\\s+\\(sp=(0x[0-9a-fA-F]+)\\)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" },
+        "2": { "name": "constant.numeric.hex.address.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Top-of-stack dump line: address, words, optional ASCII trailer",
+          "match": "^\\s*(0x[0-9a-fA-F]+):\\s+([0-9a-fA-F]{8,16}(?:\\s+[0-9a-fA-F]{8,16})+)(?:\\s+(.+))?$",
+          "captures": {
+            "1": { "name": "constant.numeric.hex.address.hserr" },
+            "2": { "name": "comment.block.hexdump.hserr" },
+            "3": { "name": "comment.block.hexdump.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "instructions": {
+      "begin": "^(Instructions:)\\s+\\(pc=(0x[0-9a-fA-F]+)\\)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" },
+        "2": { "name": "constant.numeric.hex.address.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Current PC indicator arrow",
+          "match": "^(=>)",
+          "captures": {
+            "1": { "name": "keyword.operator.hserr" }
+          }
+        },
+        {
+          "comment": "Hex address at start of each dump line",
+          "name": "constant.numeric.hex.address.hserr",
+          "match": "(?<!\\w)0x[0-9a-fA-F]+(?!\\w)"
+        },
+        {
+          "comment": "Hex bytes in the dump — styled as plain text (no number highlight)",
+          "name": "comment.block.hexdump.hserr",
+          "match": "(?<=:\\s{3}| )(?:[0-9a-fA-F]{2} )+[0-9a-fA-F]{2}"
+        },
+        {
+          "comment": "Hex words in the dump — 4/8/16 nybble groups with optional pipes",
+          "name": "comment.block.hexdump.hserr",
+          "match": "(?<=:\\s+)(?:[0-9a-fA-F]{4,16}(?:\\s+\\|\\s+|\\s+))+[0-9a-fA-F]{4,16}"
+        }
+      ]
+    },
+
+    "stack_slot_mapping": {
+      "begin": "^(Stack slot to memory mapping:)\\s*$",
+      "end": "(?=^\\S)",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "lock_stack": {
+      "begin": "^(Lock stack of current Java thread.*:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "current_compile_task": {
+      "begin": "^(Current CompileTask:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "name": "keyword.other.tier.hserr",
+          "match": "\\b(c[12])\\b"
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "error_during_error": {
+      "match": "^(\\[error occurred during error reporting \\()(.+?)(\\), id )(0x[0-9a-fA-F]+)(,?\\s*)(.*)(\\])",
+      "captures": {
+        "1": { "name": "invalid.deprecated.error-during-error.hserr" },
+        "2": { "name": "invalid.deprecated.error-during-error.hserr" },
+        "3": { "name": "invalid.deprecated.error-during-error.hserr" },
+        "4": { "name": "constant.numeric.hex.address.hserr" },
+        "5": { "name": "invalid.deprecated.error-during-error.hserr" },
+        "6": { "name": "invalid.deprecated.error-during-error.hserr" },
+        "7": { "name": "invalid.deprecated.error-during-error.hserr" }
+      }
+    },
+
+    "compiled_method": {
+      "begin": "^(Compiled method .*)",
+      "end": "^(\\[/MachCode\\])",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "endCaptures": {
+        "1": { "name": "markup.heading.3.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Bracket section markers: [Entry Point], [Verified Entry Point], [MachCode], [Stub Code], [Exception Handler], etc.",
+          "match": "^(\\[(?:Entry Point|Verified Entry Point|MachCode|Stub Code|Exception Handler|Deopt Handler Code|Deopt Handler Entry Point|Instructions begin|Constants|Constant Pool(?:\\s+\\(empty\\))?|Runtime Stub|Exception Handler Stub)\\])",
+          "captures": {
+            "1": { "name": "markup.heading.3.hserr" }
+          }
+        },
+        {
+          "comment": "CodeBlob header line",
+          "match": "^(\\[CodeBlob \\(0x[0-9a-fA-F]+\\)\\])",
+          "captures": {
+            "1": { "name": "markup.heading.3.hserr" }
+          }
+        },
+        {
+          "comment": "Assembly annotation: ;   {runtime_call ...} or ;   {oop(...)}",
+          "match": "^\\s*(;)\\s+(.*)",
+          "captures": {
+            "1": { "name": "punctuation.definition.comment.hserr" },
+            "2": { "name": "comment.block.metadata.hserr" }
+          }
+        },
+        {
+          "comment": "Comment lines starting with #",
+          "match": "^\\s*(#)\\s+(.*)",
+          "captures": {
+            "1": { "name": "punctuation.definition.comment.hserr" },
+            "2": { "name": "comment.line.hserr" }
+          }
+        },
+        {
+          "comment": "Current PC indicator arrow",
+          "match": "^(=>)",
+          "captures": {
+            "1": { "name": "keyword.operator.hserr" }
+          }
+        },
+        {
+          "comment": "Hex address at start of dump line or standalone",
+          "name": "constant.numeric.hex.address.hserr",
+          "match": "(?<!\\w)0x[0-9a-fA-F]+(?!\\w)"
+        },
+        {
+          "comment": "Hex dump words after address with optional ASCII trailer",
+          "match": "^\\s*(?:=>\\s*)?(0x[0-9a-fA-F]+):\\s+([0-9a-fA-F]{4,16}(?:\\s+[0-9a-fA-F]{4,16})+)(?:\\s+(.+))?$",
+          "captures": {
+            "1": { "name": "constant.numeric.hex.address.hserr" },
+            "2": { "name": "comment.block.hexdump.hserr" },
+            "3": { "name": "comment.block.hexdump.hserr" }
+          }
+        },
+        {
+          "comment": "Code layout lines: total/relocation/main code/stub code/oops/metadata/scopes data/etc.",
+          "match": "^\\s+(total in heap|relocation|main code|stub code|oops|metadata|scopes data|scopes pcs|dependencies|handler table|nul chk table|Compiled method)\\s+(\\[.*\\])\\s*=\\s*(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "comment.block.hserr" },
+            "3": { "name": "constant.numeric.integer.hserr" }
+          }
+        }
+      ]
+    },
+
+    "code_blob": {
+      "begin": "^(-{80})$",
+      "end": "^(-{80})$",
+      "beginCaptures": {
+        "1": { "name": "comment.line.separator.hserr" }
+      },
+      "endCaptures": {
+        "1": { "name": "comment.line.separator.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Assembly dump line: address: hex dump | hex dump ... with optional metadata/comments",
+          "match": "^\\s*(=>)?\\s*(0x[0-9a-fA-F]+):\\s*(.+?)(?:\\s*\\{([^}]*)\\})?\\s*$",
+          "captures": {
+            "1": { "name": "keyword.operator.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" },
+            "3": { "name": "comment.block.hexdump.hserr" },
+            "4": { "name": "comment.block.metadata.hserr" }
+          }
+        },
+        {
+          "comment": "Assembly metadata/annotation lines",
+          "match": "^\\s*;\\s+(.+)$",
+          "captures": {
+            "1": { "name": "comment.block.metadata.hserr" }
+          }
+        },
+        {
+          "comment": "Hex addresses and values that should NOT be colored as numbers",
+          "match": "(?<!\\w)0x[0-9a-fA-F]{2,}(?!\\w)",
+          "name": "constant.numeric.hex.address.hserr"
+        }
+      ]
+    },
+
+    "generic_subsection": {
+      "match": "^(\\S[^:]*:)\\s*$",
+      "captures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      }
+    },
+
+    "process_section": {
+      "begin": "^(-{10,}\\s+P R O C E S S\\s+-{10,})$",
+      "end": "(?=^-{10,}\\s+S Y S T E M)",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.1.hserr" }
+      },
+      "patterns": [
+        { "include": "#error_during_error" },
+        { "include": "#thread_list" },
+        { "include": "#threads_smr" },
+        { "include": "#threads_with_active_compile" },
+        { "include": "#event_log" },
+        { "include": "#dynamic_libraries" },
+        { "include": "#vm_arguments" },
+        { "include": "#global_flags" },
+        { "include": "#environment_variables" },
+        { "include": "#signal_handlers" },
+        { "include": "#heap_block" },
+        { "include": "#heap_regions" },
+        { "include": "#card_table" },
+        { "include": "#marking_bits" },
+        { "include": "#metaspace" },
+        { "include": "#code_cache" },
+        { "include": "#gc_precious_log" },
+        { "include": "#nmt_report" },
+        { "include": "#compiler_memory" },
+        { "include": "#internal_statistics" },
+        { "include": "#logging_config" },
+        { "include": "#release_file" },
+        { "include": "#active_locale" },
+        { "include": "#vm_mutex" },
+        { "include": "#jfr_settings" },
+        { "include": "#process_single_line_items" },
+        { "include": "#process_generic_subsection" },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "thread_list": {
+      "begin": "^((?:Java|Other) Threads:.*)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(=>)?\\s*(0x[0-9a-fA-F]+)\\s+(\\S+)\\s+(\"[^\"]*\")\\s*(daemon)?(?:\\s*(?:\\([^)]*\\))?)?(?:\\s*(\\[)([^\\]]*)(\\]))?",
+          "captures": {
+            "1": { "name": "keyword.operator.current-thread.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" },
+            "3": { "name": "entity.name.type.thread.hserr" },
+            "4": { "name": "string.quoted.double.hserr" },
+            "5": { "name": "keyword.other.daemon.hserr" },
+            "6": { "name": "punctuation.bracket.hserr" },
+            "7": { "name": "constant.language.state.hserr" },
+            "8": { "name": "punctuation.bracket.hserr" }
+          }
+        },
+        {
+          "match": "^(Total:)\\s+(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "threads_smr": {
+      "begin": "^(Threads class SMR info:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "threads_with_active_compile": {
+      "begin": "^(Threads with active compile tasks:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(Total:)\\s+(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "event_log": {
+      "begin": "^(.*?\\(\\d+ events?\\):)\\s*$",
+      "end": "(?=^(?=[^ \\t]|$)(?![E]vent:|No events|\\{|\\}))",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Compilation event: nmethod install with optional % marker and code range",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(nmethod)\\s+(\\d+%?)\\s+(0x[0-9a-fA-F]+)\\s+(code)\\s+\\[(0x[0-9a-fA-F]+),\\s*(0x[0-9a-fA-F]+)\\]",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "keyword.other.nmethod.hserr" },
+            "6": { "name": "constant.numeric.integer.hserr" },
+            "7": { "name": "constant.numeric.hex.address.hserr" },
+            "8": { "name": "entity.name.tag.hserr" },
+            "9": { "name": "constant.numeric.hex.address.hserr" },
+            "10": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Compilation event: compile task with optional %, b/s markers, and optional @ bci",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(\\d+)\\s*(%?)\\s*([!bns ]*)\\s+((?:[\\w$]+\\.)*[\\w$]+)(::)([\\w$<>]+)(?:\\s+@\\s+(\\d+))?\\s+(\\(\\d+ bytes\\))",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "constant.numeric.integer.hserr" },
+            "6": { "name": "keyword.operator.hserr" },
+            "7": { "name": "keyword.other.tier.hserr" },
+            "8": { "name": "entity.name.type.class.hserr" },
+            "9": { "name": "keyword.operator.hserr" },
+            "10": { "name": "entity.name.function.java.hserr" },
+            "11": { "name": "constant.numeric.integer.hserr" },
+            "12": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "comment": "Class loading events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Loading class)\\s+([\\w/$]+)(\\s+done)?$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "entity.name.type.class.hserr" },
+            "5": { "name": "keyword.other.completed.hserr" }
+          }
+        },
+        {
+          "comment": "Internal exception event line",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Exception)\\s+<a\\s+'([^']+)'\\{(0x[0-9a-fA-F]+)\\}:\\s+'([^']+)'>\\s+\\((0x[0-9a-fA-F]+)\\)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "invalid.illegal.exception.hserr" },
+            "6": { "name": "entity.name.type.class.hserr" },
+            "7": { "name": "constant.numeric.hex.address.hserr" },
+            "8": { "name": "entity.name.function.java.hserr" },
+            "9": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Internal exception event line (without detail message)",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Exception)\\s+<a\\s+'([^']+)'\\{(0x[0-9a-fA-F]+)\\}>\\s+\\((0x[0-9a-fA-F]+)\\)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "invalid.illegal.exception.hserr" },
+            "6": { "name": "entity.name.type.class.hserr" },
+            "7": { "name": "constant.numeric.hex.address.hserr" },
+            "8": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "Exception throw location continuation",
+          "match": "^(thrown)\\s+\\[([^,\\]]+),\\s*(line)\\s+(\\d+)\\]$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "string.unquoted.path.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "comment": "VM operation events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Executing)\\s+((?:non-)?safepoint)\\s+(VM operation:)\\s+(.+?)(\\s+done)?$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "keyword.other.vm-state.hserr" },
+            "5": { "name": "entity.name.tag.hserr" },
+            "6": { "name": "entity.name.function.cpp.hserr" },
+            "7": { "name": "keyword.other.completed.hserr" }
+          }
+        },
+        {
+          "comment": "VM operation events (no safepoint qualifier)",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Executing)\\s+(VM operation:)\\s+(.+?)(\\s+done)?$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "entity.name.tag.hserr" },
+            "5": { "name": "entity.name.function.cpp.hserr" },
+            "6": { "name": "keyword.other.completed.hserr" }
+          }
+        },
+        {
+          "comment": "Shared library load events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+((?:Attempting to load|Loaded) shared library)\\s+(\\S+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "string.unquoted.path.hserr" }
+          }
+        },
+        {
+          "comment": "Memory protection events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Protecting memory)\\s+\\[(0x[0-9a-fA-F]+),(0x[0-9a-fA-F]+)\\]\\s+(with protection modes)\\s+(\\d+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "constant.numeric.hex.address.hserr" },
+            "6": { "name": "entity.name.tag.hserr" },
+            "7": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "comment": "nmethod flushing events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(flushing nmethod)\\s+(0x[0-9a-fA-F]+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "keyword.other.nmethod.hserr" },
+            "6": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "GC cancellation events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Cancelling GC:)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "entity.name.tag.hserr" },
+            "6": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "comment": "Thread/JVMTI lifecycle events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+((?:Thread added:|Thread exited:|JVMTI - enter).+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "comment": "Unloading class events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Unloading class)\\s+(0x[0-9a-fA-F]+)\\s+'([^']+)'$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "entity.name.tag.hserr" },
+            "6": { "name": "constant.numeric.hex.address.hserr" },
+            "7": { "name": "entity.name.type.class.hserr" }
+          }
+        },
+        {
+          "comment": "Uncommon trap detail lines",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Uncommon trap:)\\s+(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "entity.name.tag.hserr" },
+            "6": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "comment": "Deoptimization pack/unpack events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(DEOPT\\s+(?:PACKING|UNPACKING))\\s+(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "keyword.other.vm-state.hserr" },
+            "6": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "comment": "Implicit null exception events",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(Implicit null exception at)\\s+(0x[0-9a-fA-F]+)\\s+(to)\\s+(0x[0-9a-fA-F]+)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "invalid.illegal.exception.hserr" },
+            "6": { "name": "constant.numeric.hex.address.hserr" },
+            "7": { "name": "entity.name.tag.hserr" },
+            "8": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "comment": "GC phase and control/concurrent event lines",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+((?:GC heap before|GC heap after|Concurrent [^\\n]*|Pause [^\\n]*|Control thread transition [^\\n]*))(\\s+done)?$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "keyword.other.completed.hserr" }
+          }
+        },
+        {
+          "comment": "Heap/metaspace braces event starter",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(\\{(?:heap|metaspace)\\s+(?:Before|After)\\s+GC\\s+invocations=.*)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "comment": "Generic thread event line",
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)\\s+(Thread)\\s+(0x[0-9a-fA-F]+)\\s+(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.hex.address.hserr" },
+            "5": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "match": "^(Event:)\\s+(\\d+(?:\\.\\d+)?)(\\s+)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.timestamp.hserr" }
+          }
+        },
+        {
+          "name": "comment.line.hserr",
+          "match": "^No events$"
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "dynamic_libraries": {
+      "begin": "^(Dynamic libraries:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "macOS: addr\\tpath",
+          "match": "^(0x[0-9a-fA-F]+)\\t(.+)",
+          "captures": {
+            "1": { "name": "constant.numeric.hex.address.hserr" },
+            "2": { "name": "string.unquoted.path.hserr" }
+          }
+        },
+        {
+          "comment": "Linux /proc/self/maps: addr_range perms offset dev inode [path]",
+          "match": "^([0-9a-fA-F]+-[0-9a-fA-F]+)\\s+([r-][w-][x-][ps-])\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s*(.*)",
+          "captures": {
+            "1": { "name": "constant.numeric.hex.address.hserr" },
+            "2": { "name": "keyword.other.permissions.hserr" },
+            "3": { "name": "constant.numeric.hex.address.hserr" },
+            "4": { "name": "constant.numeric.hserr" },
+            "5": { "name": "constant.numeric.integer.hserr" },
+            "6": { "name": "string.unquoted.path.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "vm_arguments": {
+      "begin": "^(VM Arguments:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(jvm_args|java_command|java_class_path \\(initial\\)|Launcher Type):(.+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "string.unquoted.path.hserr" }
+          }
+        }
+      ]
+    },
+
+    "global_flags": {
+      "begin": "^(\\[Global flags\\])\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^\\s*(bool|int|uint|intx|uintx|uint64_t|size_t|double|ccstr|ccstrlist)\\s+(\\S+)\\s*=\\s*(\\S+)\\s*(\\{[^}]+\\})\\s*(\\{[^}]+\\})",
+          "captures": {
+            "1": { "name": "storage.type.flag.hserr" },
+            "2": { "name": "variable.other.flag.hserr" },
+            "3": { "name": "constant.other.hserr" },
+            "4": { "name": "entity.name.type.attribute.hserr" },
+            "5": { "name": "entity.name.type.attribute.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "environment_variables": {
+      "begin": "^(Environment Variables:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^([A-Z_][A-Z0-9_]*)=(.*)",
+          "captures": {
+            "1": { "name": "variable.other.env.hserr" },
+            "2": { "name": "string.unquoted.path.hserr" }
+          }
+        }
+      ]
+    },
+
+    "signal_handlers": {
+      "begin": "^(Signal Handlers:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^\\s+((?:SIG|EXCEPTION_)[A-Z_]+)(:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.function.handler.hserr" },
+            "2": { "name": "punctuation.separator.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "heap_block": {
+      "begin": "^(Heap:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "name": "entity.name.type.gc.hserr",
+          "match": "\\b(?:garbage-first heap|Shenandoah Heap|ZHeap|PSYoungGen|PSOldGen|ParOldGen|def new generation|tenured generation)\\b"
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "heap_regions": {
+      "begin": "^(Heap Regions:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "card_table": {
+      "match": "^(Card table byte_map:)\\s+(.*)",
+      "captures": {
+        "1": { "name": "entity.name.tag.hserr" }
+      }
+    },
+
+    "marking_bits": {
+      "begin": "^(Marking Bits:)\\s+(.*)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "metaspace": {
+      "begin": "^(Metaspace\\b.*)",
+      "end": "(?=^(?!Metaspace|\\s|Usage:|Virtual space:|Chunk freelists:|MaxMetaspaceSize:|CompressedClassSpaceSize:|Initial GC|Current GC|CDS:|Narrow klass|Encoding Range:|Klass Range:|Klass ID Range:|Protection zone:|UseCompressedClassPointers|Internal statistics:)(?:\\S))",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "\\b(used|committed|reserved)\\s+(\\d+)([KMG])",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "constant.numeric.size.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "code_cache": {
+      "begin": "^(Code(?:Heap|Cache)\\b.*)",
+      "end": "(?=^(?!\\s*(?:Code|bounds|total_blobs|nmethods|adapters|full_count|Compilation)))",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "(size|used|max_used|free)=(\\d+)([KMG]?[Bb]?)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "constant.numeric.size.hserr" }
+          }
+        },
+        {
+          "match": "(total_blobs|nmethods|adapters|full_count)=(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "match": "^(Compilation:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "gc_precious_log": {
+      "begin": "^(GC Precious Log:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "nmt_report": {
+      "begin": "^(Native Memory Tracking:)\\s*$",
+      "end": "(?=^[^ \\t(-])",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "comment": "Category: -  Name (reserved=NKB, committed=NKB)",
+          "match": "^-\\s+(.+?)\\s+\\(reserved=(\\d+)([KMG]?B),\\s+committed=(\\d+)([KMG]?B)\\)",
+          "captures": {
+            "1": { "name": "entity.name.type.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "constant.numeric.size.hserr" },
+            "4": { "name": "constant.numeric.integer.hserr" },
+            "5": { "name": "constant.numeric.size.hserr" }
+          }
+        },
+        {
+          "comment": "Total: reserved=NKB, committed=NKB",
+          "match": "^(Total:)\\s+reserved=(\\d+)([KMG]?B),\\s+committed=(\\d+)([KMG]?B)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "constant.numeric.size.hserr" },
+            "4": { "name": "constant.numeric.integer.hserr" },
+            "5": { "name": "constant.numeric.size.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "compiler_memory": {
+      "begin": "^(Compiler Memory Statistic.*)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "internal_statistics": {
+      "begin": "^(Internal statistics:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "logging_config": {
+      "begin": "^(Logging:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "release_file": {
+      "begin": "^(Release file:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(\\w+)=(\"[^\"]*\")",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "string.quoted.double.hserr" }
+          }
+        }
+      ]
+    },
+
+    "active_locale": {
+      "begin": "^(Active Locale:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(LC_\\w+)=(.*)",
+          "captures": {
+            "1": { "name": "variable.other.env.hserr" },
+            "2": { "name": "string.unquoted.hserr" }
+          }
+        }
+      ]
+    },
+
+    "vm_mutex": {
+      "begin": "^(VM Mutex/Monitor.*)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "jfr_settings": {
+      "begin": "^(JFR settings:)\\s*$",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "process_single_line_items": {
+      "patterns": [
+        {
+          "match": "^(uid)\\s+:\\s+(\\d+)\\s+(euid)\\s+:\\s+(\\d+)\\s+(gid)\\s+:\\s+(\\d+)\\s+(egid)\\s+:\\s+(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "entity.name.tag.hserr" },
+            "4": { "name": "constant.numeric.integer.hserr" },
+            "5": { "name": "entity.name.tag.hserr" },
+            "6": { "name": "constant.numeric.integer.hserr" },
+            "7": { "name": "entity.name.tag.hserr" },
+            "8": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "match": "^(umask:)\\s+(\\d+)\\s+(\\([^)]+\\))",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" },
+            "3": { "name": "string.unquoted.hserr" }
+          }
+        },
+        {
+          "match": "^(VM state:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.language.vm-state.hserr" }
+          }
+        },
+        {
+          "match": "^(Heap address:)\\s+(0x[0-9a-fA-F]+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "match": "^(Compilation:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(CDS archive.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Polling page:)\\s+(0x[0-9a-fA-F]+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.hex.address.hserr" }
+          }
+        },
+        {
+          "match": "^(JVMTI agents:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Preinit state:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Periodic native trim)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Encoding Range:|Klass Range:|Klass ID Range:|Protection zone:|MallocLimit:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Decoder state:)\\s+(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(VM Error Count:)\\s+(\\d+)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" },
+            "2": { "name": "constant.numeric.integer.hserr" }
+          }
+        },
+        {
+          "match": "^(Current thread is native thread)\\s*$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "match": "^(Sigstack overflow)\\s*$",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        }
+      ]
+    },
+
+    "process_generic_subsection": {
+      "match": "^(\\S[^:]*:)\\s*$",
+      "captures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      }
+    },
+
+    "system_section": {
+      "begin": "^(-{10,}\\s+S Y S T E M\\s+-{10,})$",
+      "end": "(?=^END\\.)",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.1.hserr" }
+      },
+      "patterns": [
+        { "include": "#os_info" },
+        { "include": "#cpu_info" },
+        { "include": "#memory_info" },
+        { "include": "#vm_info" },
+        { "include": "#system_generic_subsection" },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "os_info": {
+      "begin": "^(OS:)\\s*$",
+      "end": "(?=^CPU:|^-{10,})",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        {
+          "match": "^(uname:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        {
+          "name": "entity.name.tag.hserr",
+          "match": "(rlimit)"
+        },
+        {
+          "match": "^(load average:)(.*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.hserr" }
+          }
+        },
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "cpu_info": {
+      "begin": "^(CPU:)\\s*(.*)",
+      "end": "^$",
+      "beginCaptures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      },
+      "patterns": [
+        { "include": "#global_patterns" }
+      ]
+    },
+
+    "memory_info": {
+      "match": "^(Memory:)\\s+(.*)",
+      "captures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      }
+    },
+
+    "vm_info": {
+      "match": "^(vm_info:)\\s+(.*)",
+      "captures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      }
+    },
+
+    "system_generic_subsection": {
+      "match": "^(\\S[^:]*:)\\s*$",
+      "captures": {
+        "1": { "name": "markup.heading.2.hserr" }
+      }
+    },
+
+    "end_marker": {
+      "match": "^(END\\.)\\s*$",
+      "captures": {
+        "1": { "name": "keyword.control.end.hserr" }
+      }
+    }
+  }
+}

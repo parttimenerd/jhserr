@@ -50,6 +50,34 @@ Files.writeString(Path.of("redacted.log"), redacted.toString());
   via `HsErrJson`. Supports round-trip JSON ↔ model.
 - **CLI tool**: Two commands — `redact` for stripping sensitive data,
   `json` for converting between text and JSON (with `to`, `from`, `schema` subcommands).
+- **Syntax highlighting grammars**: Ready-to-use grammars for TextMate/VS Code,
+  highlight.js, and CodeMirror — all generated from a single YAML spec.
+
+## VS Code Highlighter Plugin
+
+This repository includes a dedicated VS Code syntax highlighter plugin for
+hs_err files in `vscode-plugin`.
+
+- Extension folder: `vscode-plugin`
+- TextMate grammar source: `hserr-grammar/textmate/hserr.tmLanguage.json`
+- CodeMirror grammar source: `hserr-grammar/codemirror/hserr.ts`
+
+The extension copies the TextMate grammar from `hserr-grammar` at build/package time.
+
+Build/package locally:
+
+```bash
+cd vscode-plugin
+npm install
+npm run compile
+npx @vscode/vsce package
+```
+
+Install the generated VSIX:
+
+```bash
+code --install-extension hserr-syntax-*.vsix
+```
 
 ## Installation
 
@@ -205,7 +233,6 @@ Categories (all enabled by default unless noted):
 |---|---|---|
 | `redactUsernames` | on | Usernames found in paths (`/Users/X/`, `/home/X/`) |
 | `redactHostnames` | on | Hostnames from summary and uname |
-| `redactPids` | on | PIDs and thread IDs |
 | `redactEnvVars` | on | Environment variable values (except safe list) |
 | `redactPaths` | on | Sensitive path prefixes (supports globs: `*`, `**`, `?`) |
 | `redactIpAddresses` | on | IPv4 addresses |
@@ -253,7 +280,8 @@ A browser-based version of the parser built with [GraalVM Web Image](https://www
 (compiles Java to WASM). Drag & drop an hs_err file to parse, redact, and view a diff — all client-side.
 
 Features:
-- **4 tabs**: editable source, JSON with syntax highlighting, redacted view, line-level diff
+- **5 tabs**: editable source (with syntax highlighting), highlighted read-only view, JSON, redacted view, line-level diff
+- **hs_err syntax highlighting**: CodeMirror mode in the source editor, highlight.js in the highlighted tab
 - **Inline change highlighting**: the redacted tab marks only the changed substrings within each line
 - **CodeMirror JSON editor**: syntax-highlighted config editing with bracket matching
 - **Live config updates**: changes to the redaction config apply immediately (debounced)
@@ -287,6 +315,37 @@ PORT=3000 ./launch.sh  # use a custom port
 
 The web tool is automatically deployed to GitHub Pages on pushes to main.
 
+### Syntax Highlighting Grammars (`hserr-grammar/`)
+
+Ready-to-use syntax highlighting grammars for `hs_err_pid*.log` files, all derived from
+a single [YAML grammar spec](hserr-grammar/hserr.grammar.yaml).
+
+Available formats:
+
+| Format | File | Use with |
+|--------|------|----------|
+| **TextMate** | [`hserr.tmLanguage.json`](hserr-grammar/textmate/hserr.tmLanguage.json) | VS Code extensions, shiki, any TextMate-compatible editor |
+| **highlight.js** | [`hserr.js`](hserr-grammar/highlightjs/hserr.js) | Browser & Node.js via highlight.js |
+| **CodeMirror 6** | [`hserr.ts`](hserr-grammar/codemirror/hserr.ts) | CodeMirror 6 `StreamLanguage` |
+
+**Download from the web:**
+All grammar files are available at [parttimenerd.github.io/jhserr/grammars](https://parttimenerd.github.io/jhserr/grammars/).
+
+**Quick usage — highlight.js:**
+```html
+<script src="https://parttimenerd.github.io/jhserr/grammars/hserr.js"></script>
+<!-- auto-registers as hljs.getLanguage('hserr') if hljs is loaded -->
+```
+
+**Quick usage — VS Code extension:**
+```jsonc
+// package.json contributes.grammars
+{ "scopeName": "source.hserr", "path": "./hserr.tmLanguage.json" }
+```
+
+During the web build, these grammars are automatically copied to `hserr-web/web/grammars/`
+for deployment to GitHub Pages.
+
 Support, Feedback, Contributing
 -------------------------------
 This project is open to feature requests/suggestions, bug reports etc. via <a href="https://github.com/parttimenerd/jhserr/issues">GitHub issues</a>. Contribution and feedback are encouraged and always welcome.
@@ -294,3 +353,4 @@ This project is open to feature requests/suggestions, bug reports etc. via <a hr
 License
 -------
 MIT, Copyright 2026 SAP SE or an SAP affiliate company, Johannes Bechberger and contributors
+create hserr vs code highlither extension using shiki grammar

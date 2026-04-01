@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Parsed single code heap entry (e.g., "non-profiled nmethods", "profiled nmethods", "non-nmethods").
- *
+ * <p>
  * Format:
  * CodeHeap 'non-profiled nmethods': size=120032Kb used=21Kb max_used=21Kb free=120010Kb
  *   bounds [0x000000015afc4000, 0x000000015b234000, 0x00000001624fc000]

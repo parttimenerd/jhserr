@@ -276,19 +276,6 @@ public class RedactionTransformer extends HsErrTransformer {
         boolean changed = false;
 
         String detail = header.errorDetail();
-        if (config.redactPids() && header.pid() != null) {
-            detail = detail.replace("pid=" + header.pid(), "pid=" + config.pidPlaceholder());
-            b.pid(config.pidPlaceholder());
-            redactions.add("Redacted PID: " + header.pid());
-            changed = true;
-        }
-        if (config.redactPids() && header.tid() != null) {
-            detail = detail.replace("tid=" + header.tid(), "tid=" + config.tidPlaceholder());
-            b.tid(config.tidPlaceholder());
-            redactions.add("Redacted TID: " + header.tid());
-            changed = true;
-        }
-        if (changed) b.errorDetail(detail);
 
         // Redact text in header fields
         detail = redactText(detail);

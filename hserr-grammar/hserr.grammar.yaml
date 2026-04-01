@@ -1,0 +1,1604 @@
+# =============================================================================
+# Universal Grammar Specification for HotSpot Error Report (hs_err) Files
+# =============================================================================
+#
+# This YAML file is the single source of truth for syntax highlighting of
+# hs_err_pid*.log files produced by the HotSpot JVM on fatal errors.
+#
+# It can be used to manually derive:
+#   - TextMate / VS Code / shiki grammars
+#   - highlight.js language modules
+#   - CodeMirror StreamParser grammars
+#
+# Scope names follow TextMate conventions so they map directly to VS Code
+# colour themes (Dark+, Light+, Monokai, Solarized, etc.).
+# =============================================================================
+
+metadata:
+  name: hserr
+  displayName: "HotSpot Error Report"
+  scopeName: source.hserr
+  fileTypes:
+    - "hs_err_pid*.log"
+    - "hserr_example"
+    - "*.hserr"
+  firstLineMatch: "^#\\s*$"
+  # The very first line of every hs_err file is a lone "#"
+
+# ---------------------------------------------------------------------------
+# Keyword lists — reusable sets referenced by patterns below
+# ---------------------------------------------------------------------------
+keywords:
+
+  signals:
+    # POSIX signals
+    - SIGSEGV
+    - SIGBUS
+    - SIGFPE
+    - SIGILL
+    - SIGTRAP
+    - SIGABRT
+    - SIGTERM
+    - SIGINT
+    - SIGHUP
+    - SIGQUIT
+    - SIGPOLL
+    - SIGKILL
+    - SIGUSR1
+    - SIGUSR2
+    - SIGALRM
+    - SIGCHLD
+    - SIGCONT
+    - SIGSTOP
+    - SIGTSTP
+    - SIGTTIN
+    - SIGTTOU
+    - SIGXCPU
+    - SIGXFSZ
+    - SIGPROF
+    # Windows exceptions (NtStatus codes)
+    - EXCEPTION_ACCESS_VIOLATION
+    - EXCEPTION_STACK_OVERFLOW
+    - EXCEPTION_IN_PAGE_ERROR
+    - EXCEPTION_INVALID_HANDLE
+    - EXCEPTION_ARRAY_BOUNDS_EXCEEDED
+    - EXCEPTION_FLT_DENORMAL_OPERAND
+    - EXCEPTION_FLT_DIVIDE_BY_ZERO
+    - EXCEPTION_FLT_INEXACT_RESULT
+    - EXCEPTION_FLT_INVALID_OPERATION
+    - EXCEPTION_FLT_OVERFLOW
+    - EXCEPTION_FLT_UNDERFLOW
+    - EXCEPTION_INT_DIVIDE_BY_ZERO
+    - EXCEPTION_INT_OVERFLOW
+    - EXCEPTION_DATATYPE_MISALIGNMENT
+
+  error_types:
+    - Internal Error
+    - Out of Memory
+    - OutOfMemory
+    - StackOverflow
+    - Stack overflow
+    - Segmentation fault
+    - Bus error
+    - Illegal instruction
+    - Floating point exception
+    - Trap
+    - Abort
+    - Access violation
+    - GC overhead limit exceeded
+    - Unable to create new native thread
+    - OutOfMemoryError
+    - Java heap space
+    - Native memory allocation failed
+    - Metadata space
+    - Metaspace
+    - Compressed class space
+
+  thread_states:
+    # Java thread states
+    - _thread_in_vm
+    - _thread_in_native
+    - _thread_in_Java
+    - _thread_blocked
+    - _thread_new
+    - _thread_uninitialized
+    # Extended states
+    - _thread_suspended
+    - _thread_in_conc_gc
+    - _thread_in_native_trans
+    - _thread_in_vm_trans
+
+  vm_states:
+    - not at safepoint
+    - at safepoint
+    - synchronizing
+
+  thread_types:
+    # Primary VM threads
+    - JavaThread
+    - VMThread
+    - CompilerThread
+    - GCTaskThread
+    - WatcherThread
+    - ConcurrentGCThread
+    - WorkerThread
+    - CodeCacheSweeperThread
+    - ServiceThread
+    - NotificationThread
+    - StringDedupThread
+    # Additional thread types from modern HotSpot
+    - ParallelCompileThread
+    - PeriodicalTaskThread
+    - JfrRecorderThread
+    - AttachListenerThread
+    - TrimThread
+    - ZMarkStackExpandThread
+
+  frame_type_codes:
+    V: VM C++ code
+    v: VM generated stub/blob
+    C: native (JNI/agent)
+    J: compiled Java
+    j: interpreted Java
+    A: other
+
+  compilation_tiers:
+    - c1
+    - c2
+
+  gc_types:
+    - G1
+    - Shenandoah
+    - ZGC
+    - Parallel
+    - Serial
+
+  flag_types:
+    - bool
+    - int
+    - uint
+    - intx
+    - uintx
+    - uint64_t
+    - size_t
+    - double
+    - ccstr
+    - ccstrlist
+
+  x86_registers:
+    # 64-bit general purpose
+    - RAX
+    - RBX
+    - RCX
+    - RDX
+    - RSI
+    - RDI
+    - RBP
+    - RSP
+    - R8
+    - R9
+    - R10
+    - R11
+    - R12
+    - R13
+    - R14
+    - R15
+    # 32-bit variants
+    - EAX
+    - EBX
+    - ECX
+    - EDX
+    - ESI
+    - EDI
+    - EBP
+    - ESP
+    - R8D
+    - R9D
+    - R10D
+    - R11D
+    - R12D
+    - R13D
+    - R14D
+    - R15D
+    # 16-bit variants
+    - AX
+    - BX
+    - CX
+    - DX
+    - SI
+    - DI
+    - BP
+    - SP
+    - R8W
+    - R9W
+    - R10W
+    - R11W
+    - R12W
+    - R13W
+    - R14W
+    - R15W
+    # Control/special
+    - RIP
+    - EFLAGS
+    - RFLAGS
+    - CS
+    - DS
+    - SS
+    - FS
+    - GS
+    - ES
+    - ERR
+    - TRAPNO
+    - CSGSFS
+    - FSBASE
+    - GSBASE
+    # SSE/XMM (128-bit vector)
+    - XMM0
+    - XMM1
+    - XMM2
+    - XMM3
+    - XMM4
+    - XMM5
+    - XMM6
+    - XMM7
+    - XMM8
+    - XMM9
+    - XMM10
+    - XMM11
+    - XMM12
+    - XMM13
+    - XMM14
+    - XMM15
+    # AVX/YMM (256-bit vector)
+    - YMM0
+    - YMM1
+    - YMM2
+    - YMM3
+    - YMM4
+    - YMM5
+    - YMM6
+    - YMM7
+    - YMM8
+    - YMM9
+    - YMM10
+    - YMM11
+    - YMM12
+    - YMM13
+    - YMM14
+    - YMM15
+    # AVX-512/ZMM (512-bit vector)
+    - ZMM0
+    - ZMM1
+    - ZMM2
+    - ZMM3
+    - ZMM4
+    - ZMM5
+    - ZMM6
+    - ZMM7
+    - ZMM8
+    - ZMM9
+    - ZMM10
+    - ZMM11
+    - ZMM12
+    - ZMM13
+    - ZMM14
+    - ZMM15
+    # FPU stack
+    - ST0
+    - ST1
+    - ST2
+    - ST3
+    - ST4
+    - ST5
+    - ST6
+    - ST7
+
+  arm_registers:
+    # 64-bit (ARM64/aarch64) general purpose
+    - x0
+    - x1
+    - x2
+    - x3
+    - x4
+    - x5
+    - x6
+    - x7
+    - x8
+    - x9
+    - x10
+    - x11
+    - x12
+    - x13
+    - x14
+    - x15
+    - x16
+    - x17
+    - x18
+    - x19
+    - x20
+    - x21
+    - x22
+    - x23
+    - x24
+    - x25
+    - x26
+    - x27
+    - x28
+    - x29
+    - x30
+    # Special registers (ARM64)
+    - sp
+    - pc
+    - pstate
+    - fp  # frame pointer (x29)
+    - lr  # link register (x30)
+    # NEON/SVE vector registers
+    - v0
+    - v1
+    - v2
+    - v3
+    - v4
+    - v5
+    - v6
+    - v7
+    - v8
+    - v9
+    - v10
+    - v11
+    - v12
+    - v13
+    - v14
+    - v15
+    - v16
+    - v17
+    - v18
+    - v19
+    - v20
+    - v21
+    - v22
+    - v23
+    - v24
+    - v25
+    - v26
+    - v27
+    - v28
+    - v29
+    - v30
+    - v31
+    # 32-bit (ARM) legacy
+    - r0
+    - r1
+    - r2
+    - r3
+    - r4
+    - r5
+    - r6
+    - r7
+    - r8
+    - r9
+    - r10
+    - r11
+    - r12
+    - r13
+    - r14
+    - r15
+    - cpsr
+
+  ppc_registers:
+    # Special/Control registers
+    - pc
+    - lr
+    - ctr
+    - xer
+    - cr
+    - fpscr
+    - msr
+    # General purpose registers
+    - r0
+    - r1
+    - r2
+    - r3
+    - r4
+    - r5
+    - r6
+    - r7
+    - r8
+    - r9
+    - r10
+    - r11
+    - r12
+    - r13
+    - r14
+    - r15
+    - r16
+    - r17
+    - r18
+    - r19
+    - r20
+    - r21
+    - r22
+    - r23
+    - r24
+    - r25
+    - r26
+    - r27
+    - r28
+    - r29
+    - r30
+    - r31
+    # Floating point registers
+    - f0
+    - f1
+    - f2
+    - f3
+    - f4
+    - f5
+    - f6
+    - f7
+    - f8
+    - f9
+    - f10
+    - f11
+    - f12
+    - f13
+    - f14
+    - f15
+    - f16
+    - f17
+    - f18
+    - f19
+    - f20
+    - f21
+    - f22
+    - f23
+    - f24
+    - f25
+    - f26
+    - f27
+    - f28
+    - f29
+    - f30
+    - f31
+
+  s390x_registers:
+    # General purpose registers
+    - r0
+    - r1
+    - r2
+    - r3
+    - r4
+    - r5
+    - r6
+    - r7
+    - r8
+    - r9
+    - r10
+    - r11
+    - r12
+    - r13
+    - r14
+    - r15
+    # Floating point registers
+    - f0
+    - f1
+    - f2
+    - f3
+    - f4
+    - f5
+    - f6
+    - f7
+    - f8
+    - f9
+    - f10
+    - f11
+    - f12
+    - f13
+    - f14
+    - f15
+    - f16
+    - f17
+    - f18
+    - f19
+    - f20
+    - f21
+    - f22
+    - f23
+    - f24
+    - f25
+    - f26
+    - f27
+    - f28
+    - f29
+    - f30
+    - f31
+    # Special registers
+    - pc
+    - psw
+    - cr0
+    - cr1
+    - cr2
+    - cr3
+
+# ---------------------------------------------------------------------------
+# Scope name mapping — semantic category → TextMate scope
+# ---------------------------------------------------------------------------
+scopes:
+
+  # Structure
+  section_banner:       markup.heading.1.hserr
+  subsection_header:    markup.heading.2.hserr
+  separator_line:       comment.line.separator.hserr
+  end_marker:           keyword.control.end.hserr
+
+  # Header comment block
+  comment_prefix:       punctuation.definition.comment.hserr
+  comment_body:         comment.line.number-sign.hserr
+
+  # Numeric literals
+  hex_address:          constant.numeric.hex.address.hserr
+  decimal:              constant.numeric.integer.hserr
+  float:                constant.numeric.float.hserr
+  memory_size:          constant.numeric.size.hserr
+
+  # Language constants
+  signal_name:          constant.language.signal.hserr
+  error_type:           constant.language.error-type.hserr
+  thread_state:         constant.language.state.hserr
+  vm_state:             constant.language.vm-state.hserr
+  boolean:              constant.language.boolean.hserr
+
+  # Keywords / operators
+  frame_type:           keyword.operator.frame-type.hserr
+  current_thread_arrow: keyword.operator.current-thread.hserr
+  compilation_tier:     keyword.other.tier.hserr
+
+  # Names / identifiers
+  thread_type:          entity.name.type.thread.hserr
+  java_class_method:    entity.name.function.java.hserr
+  jvm_signature:        entity.name.type.signature.hserr
+  library_name:         entity.name.library.hserr
+  key_label:            entity.name.tag.hserr
+  flag_type:            storage.type.flag.hserr
+  flag_attribute:       entity.name.type.attribute.hserr
+  signal_handler_name:  entity.name.function.handler.hserr
+  module_info:          entity.name.namespace.module.hserr
+  register_name:        variable.language.register.hserr
+  env_variable_name:    variable.other.env.hserr
+
+  # Strings / paths
+  quoted_string:        string.quoted.double.hserr
+  file_path:            string.unquoted.path.hserr
+  url:                  markup.underline.link.hserr
+
+  # Errors
+  error_during_error:   invalid.deprecated.error-during-error.hserr
+
+  # Event timestamp
+  event_timestamp:      constant.numeric.timestamp.hserr
+
+  # Permissions (Linux /proc/maps)
+  permissions:          keyword.other.permissions.hserr
+
+# ---------------------------------------------------------------------------
+# Global patterns — context-free tokens that apply in most contexts
+# ---------------------------------------------------------------------------
+global_patterns:
+
+  - name: hex_address
+    # Matches 0x followed by hex digits; at least 2 hex digits to avoid false
+    # positives with "0x" in prose.  Negative lookbehind avoids matching
+    # inside larger identifiers.
+    pattern: "(?<!\\w)0x[0-9a-fA-F]{2,}(?!\\w)"
+    scope: constant.numeric.hex.address.hserr
+
+  - name: memory_size
+    # 1234K, 256M, 2G — only when followed by word boundary or ), ], comma
+    pattern: "\\b\\d+[KMG]\\b"
+    scope: constant.numeric.size.hserr
+
+  - name: float
+    pattern: "\\b\\d+\\.\\d+\\b"
+    scope: constant.numeric.float.hserr
+
+  - name: decimal
+    # Integers not already captured by hex_address or memory_size.
+    # Use lower priority than the above.
+    pattern: "(?<!\\.)\\b\\d+\\b(?![.KMGxX])"
+    scope: constant.numeric.integer.hserr
+
+  - name: quoted_string
+    pattern: "\"[^\"]*\""
+    scope: string.quoted.double.hserr
+
+  - name: boolean
+    pattern: "\\b(?:true|false)\\b"
+    scope: constant.language.boolean.hserr
+
+# ---------------------------------------------------------------------------
+# Contexts — state machine defining sections and their token patterns
+# ---------------------------------------------------------------------------
+#
+# Each context has:
+#   begin       — regex that enters this context (matched against full line)
+#   end         — regex that exits (often lookahead for next section)
+#   patterns    — ordered list of match rules applied within the context
+#   sub         — nested sub-contexts (multi-line blocks)
+#
+# Within patterns, each entry is:
+#   match       — regex for the token (may use captures)
+#   scope       — TextMate scope name(s)
+#   captures    — map of capture group → scope (for multi-capture patterns)
+#
+# "include" references pull in other contexts or global_patterns.
+# ---------------------------------------------------------------------------
+
+contexts:
+
+  # =========================================================================
+  # Top-level dispatcher
+  # =========================================================================
+  main:
+    patterns:
+      - include: "#header"
+      - include: "#summary"
+      - include: "#thread_section"
+      - include: "#process_section"
+      - include: "#system_section"
+      - include: "#end_marker"
+
+  # =========================================================================
+  # HEADER — lines prefixed with #
+  # =========================================================================
+  header:
+    begin: "^#"
+    end: "(?=^-{10,}\\s+S U M M A R Y|^-{10,}\\s+T H R E A D)"
+    # Some files skip SUMMARY and go straight to THREAD
+    patterns:
+      - name: header_line
+        match: "^(#)(.*)"
+        captures:
+          1: punctuation.definition.comment.hserr
+          2: comment.line.number-sign.hserr
+        inner_patterns:
+          # These apply to capture group 2 (the rest of the # line)
+          - name: signal_name
+            # Match all POSIX and Windows exception names
+            match: "\\b(?:SIG\\w+|EXCEPTION_\\w+)\\b"
+            scope: constant.language.signal.hserr
+
+          - name: error_type
+            match: "(?:Internal Error|Out of Memory|OutOfMemory|StackOverflow)"
+            scope: constant.language.error-type.hserr
+
+          - name: generic_error_type
+            # Catch-all for Error, Exception, Failure, etc.
+            match: "\\b(?:\\w+(?:Error|Exception|Failure|Violation|Overflow|Abort|Fault|Panic|Crash|Halt))\\b"
+            scope: constant.language.error-type.hserr
+
+          - name: frame_type
+            match: "(?<=# )[VvCJjA]  "
+            scope: keyword.operator.frame-type.hserr
+
+          - name: hex_address
+            match: "(?<!\\w)0x[0-9a-fA-F]{2,}(?!\\w)"
+            scope: constant.numeric.hex.address.hserr
+
+          - name: pid_tid
+            match: "\\b(?:pid|tid)=(\\d+)"
+            captures:
+              1: constant.numeric.integer.hserr
+
+          - name: library_ref
+            match: "\\[([\\w.]+(?:\\.(?:so|dylib|dll))?)\\+0x[0-9a-fA-F]+\\]"
+            captures:
+              1: entity.name.library.hserr
+
+          - name: source_location
+            match: "\\(([^)]+\\.(?:cpp|hpp|c|h|java):\\d+)\\)"
+            captures:
+              1: string.unquoted.path.hserr
+
+          - name: jre_version_label
+            match: "JRE version:|Java VM:|Problematic frame:"
+            scope: entity.name.tag.hserr
+
+          - name: url
+            match: "https?://[^\\s]+"
+            scope: markup.underline.link.hserr
+
+  # =========================================================================
+  # SUMMARY
+  # =========================================================================
+  summary:
+    begin: "^(-{10,}\\s+S U M M A R Y\\s+-{10,})$"
+    end: "(?=^-{10,}\\s+T H R E A D|^-{10,}\\s+P R O C E S S)"
+    # Some files skip THREAD section and go straight to PROCESS
+    beginCaptures:
+      1: markup.heading.1.hserr
+    patterns:
+      - name: command_line
+        match: "^(Command Line:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+          2: string.unquoted.path.hserr
+
+      - name: host_label
+        match: "^(Host:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: time_label
+        match: "^(Time:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - include: global_patterns
+
+  # =========================================================================
+  # THREAD SECTION
+  # =========================================================================
+  thread_section:
+    begin: "^(-{10,}\\s+T H R E A D\\s+-{10,})$"
+    end: "(?=^-{10,}\\s+P R O C E S S)"
+    beginCaptures:
+      1: markup.heading.1.hserr
+    patterns:
+      - include: "#error_during_error"
+      - include: "#current_thread"
+      - include: "#frame_list"
+      - include: "#registers_block"
+      - include: "#register_memory_mapping"
+      - include: "#siginfo"
+      - include: "#stack_bounds"
+      - include: "#top_of_stack"
+      - include: "#instructions"
+      - include: "#stack_slot_mapping"
+      - include: "#lock_stack"
+      - include: "#current_compile_task"
+      - include: "#code_blob"
+      - include: "#generic_subsection"
+      - include: global_patterns
+
+  # — Current thread line —
+  current_thread:
+    match: "^(Current thread)\\s+(\\()(0x[0-9a-fA-F]+)(\\)):\\s+(\\S+)\\s+(\"[^\"]*\")\\s+(\\[)([^\\]]+)(\\]).*"
+    captures:
+      1: entity.name.tag.hserr
+      2: punctuation.bracket.hserr
+      3: constant.numeric.hex.address.hserr
+      4: punctuation.bracket.hserr
+      5: entity.name.type.thread.hserr
+      6: string.quoted.double.hserr
+      7: punctuation.bracket.hserr
+      8: constant.language.state.hserr
+      9: punctuation.bracket.hserr
+
+  # — Frame lists (Native frames / Java frames) —
+  # Headers can have descriptions in parentheses
+  frame_list:
+    begin: "^((?:Native|Java) frames:(?:\\s*\\([^)]*\\))?.*)"
+    end: "(?=^(?:[a-z]|Stack|siginfo|Register|Top of Stack|Instructions|Lock stack|Current Compile|Decoder))"
+    # Ends when hitting next subsection (lowercase start = subsection or indent markers)
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: "#frame_line"
+      - include: global_patterns
+
+  frame_line:
+    patterns:
+      # VM frame: V  [lib+0xoff]  Symbol+0xoff  (src:line)
+      # Library names can be bare (CoreFoundation, AppKit) or have extension (.so/.dylib/.dll)
+      - name: vm_frame
+        match: "^(V)  (\\[)([\\w.-]+)(?:\\.(?:so|dylib|dll))?(\\+)(0x[0-9a-fA-F]+)(\\])\\s+(.+?)(?:(\\+)(0x[0-9a-fA-F]+))?(?:\\s+(\\()([^)]+\\.(?:cpp|hpp|c|h):\\d+)(\\)))?\\s*$"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: punctuation.bracket.hserr
+          3: entity.name.library.hserr
+          4: keyword.operator.hserr
+          5: constant.numeric.hex.address.hserr
+          6: punctuation.bracket.hserr
+          7: entity.name.function.cpp.hserr
+          8: keyword.operator.hserr
+          9: constant.numeric.hex.address.hserr
+          10: punctuation.bracket.hserr
+          11: string.unquoted.path.hserr
+          12: punctuation.bracket.hserr
+
+      # Native C frame: C  [lib+0xoff]  symbol+0xoff
+      # Library names can be bare or have .so/.dylib/.dll extension
+      - name: native_frame
+        match: "^(C)  (\\[)([\\w.-]+)(?:\\.(?:so|dylib|dll))?(\\+)(0x[0-9a-fA-F]+)(\\])\\s+(.*)"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: punctuation.bracket.hserr
+          3: entity.name.library.hserr
+          4: keyword.operator.hserr
+          5: constant.numeric.hex.address.hserr
+          6: punctuation.bracket.hserr
+          7: entity.name.function.cpp.hserr
+
+      # Stub frame: v  ~StubName addr
+      - name: stub_frame
+        match: "^(v)  (~\\S+(?:\\s+\\([^)]+\\))?)\\s+(0x[0-9a-fA-F]+)"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: entity.name.function.stub.hserr
+          3: constant.numeric.hex.address.hserr
+
+      # Compiled Java: J 313 c2 class.method(sig)ret (N bytes) @ addr [addr+off]
+      # Tier (c1/c2) is optional: J 8305  com.sun... has no tier
+      # Some frames may have additional info like [bci], [inline], or no tier info
+      - name: compiled_java_frame
+        match: "^(J)\\s+(\\d+)(?:\\s+(c[12]))?\\s+(\\S+?)(\\([^)]*\\)\\S+)(?:\\s+\\S+@\\S+)?(?:\\s+\\((\\d+) bytes\\))?(?:\\s+@\\s+(0x[0-9a-fA-F]+))?(?:\\s+\\[(0x[0-9a-fA-F]+)(?:\\+(0x[0-9a-fA-F]+))?\\])?"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: constant.numeric.integer.hserr
+          3: keyword.other.tier.hserr
+          4: entity.name.function.java.hserr
+          5: entity.name.type.signature.hserr
+          6: constant.numeric.integer.hserr
+          7: constant.numeric.hex.address.hserr
+          8: constant.numeric.hex.address.hserr
+          9: constant.numeric.hex.address.hserr
+
+      # Interpreted Java: j  class.method(sig)ret+offset [module@version]
+      - name: interpreted_java_frame
+        match: "^(j)\\s+(\\S+?)(\\([^)]*\\)\\S+)(?:\\+(\\d+))?(?:\\s+(\\[)(.+?)(\\]))?(?:\\s+(.*))?$"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: entity.name.function.java.hserr
+          3: entity.name.type.signature.hserr
+          4: constant.numeric.integer.hserr
+          5: punctuation.bracket.hserr
+          6: entity.name.namespace.module.hserr
+          7: punctuation.bracket.hserr
+          8: ""
+
+      # Generic fallback frame type — handles unknown frame prefixes
+      - name: generic_frame
+        match: "^([VvCJjA])\\s+(.*)$"
+        captures:
+          1: keyword.operator.frame-type.hserr
+          2: ""
+
+  # — siginfo —
+  siginfo:
+    match: "^(siginfo:)\\s+(si_signo:\\s*)(\\d+)(?:\\s+(\\()(\\w+)(\\)))?\\s*,\\s*(si_code:\\s*)(\\d+)(?:\\s+(\\()(\\w+)(\\)))?(?:\\s*,\\s*(si_addr:\\s*)(0x[0-9a-fA-F]+))?(?:\\s*,\\s*(si_errno:\\s*)(\\d+))?(?:\\s*,\\s*(si_band:\\s*)(\\d+))?"
+    captures:
+      1: entity.name.tag.hserr
+      2: entity.name.tag.hserr
+      3: constant.numeric.integer.hserr
+      4: punctuation.bracket.hserr
+      5: constant.language.signal.hserr
+      6: punctuation.bracket.hserr
+      7: entity.name.tag.hserr
+      8: constant.numeric.integer.hserr
+      9: punctuation.bracket.hserr
+      10: constant.language.hserr
+      11: punctuation.bracket.hserr
+      12: entity.name.tag.hserr
+      13: constant.numeric.hex.address.hserr
+      14: entity.name.tag.hserr
+      15: constant.numeric.integer.hserr
+      16: entity.name.tag.hserr
+      17: constant.numeric.integer.hserr
+
+  # — Stack bounds —
+  # Format: Stack: [addr1,addr2], sp=0x..., free space=NNNk (with optional wrapping)
+  stack_bounds:
+    match: "^(Stack:)\\s+\\[(0x[0-9a-fA-F]+),(0x[0-9a-fA-F]+)[^]]*\\](?:[^,]*,)?(?:\\s*(sp)\\s*=\\s*(0x[0-9a-fA-F]+))?(?:[^,]*,)?(?:\\s*(free space)\\s*=\\s*(\\d+)\\s*(k|K|m|M|g|G)?b?)?" 
+    captures:
+      1: entity.name.tag.hserr
+      2: constant.numeric.hex.address.hserr
+      3: constant.numeric.hex.address.hserr
+      4: entity.name.tag.hserr
+      5: constant.numeric.hex.address.hserr
+      6: entity.name.tag.hserr
+      7: constant.numeric.integer.hserr
+      8: constant.numeric.size.hserr
+
+  # — Registers block —
+  # Multi-line format: span across adjacent lines with multiple registers per line
+  # Handles x86 (space-separated), ARM (space-separated), PPC, s390x formats
+  registers_block:
+    begin: "^(Registers:)\\s*$"
+    end: "(?=^(?:[a-z]|Stack|siginfo|Register to memory|Top of Stack|Instructions))"
+    # Ends when hitting subsection with lowercase start or specific headers
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: register_assignments
+        # Match multiple registers on one line: regA=0xVAL  regB=0xVAL  ...
+        match: "(?i)((?:(?:R|E)?(?:AX|BX|CX|DX|SI|DI|BP|SP|8[D-W]|9[D-W]|10[D-W]|11[D-W]|12[D-W]|13[D-W]|14[D-W]|15[D-W]|IP|FLAGS|RFLAGS|FSBASE|GSBASE|CS|DS|SS|FS|GS|ES|ERR|TRAPNO|CSGSFS|XMM\\d+|YMM\\d+|ZMM\\d+|ST\\d|x(?:\\d{1,2}|p|c?sp|pc|lr|fp)|[vf]\\d{1,2}|r\\d{1,2}|cr\\d|pstate|psw|ctr|msr|xer|fpscr|cpsr|(?:fr|f)\\d{1,2}))\\s*=\\s*(0x[0-9a-fA-F]+)(?:\\s+|$))+"
+        captures:
+          1: variable.language.register.hserr
+      - include: global_patterns
+
+  # — Register to memory mapping —
+  # Entries are continuous lines starting at column 0; ends at blank or non-register line
+  register_memory_mapping:
+    begin: "^(Register to memory mapping:)\\s*$"
+    end: "(?=^(?!\\s*(?:(?:R|E)?(?:AX|BX|CX|DX|SI|DI|BP|SP|8|9|10|11|12|13|14|15|IP|FLAGS|RFLAGS|FSBASE|GSBASE|CS|DS|SS|FS|GS|ES|ERR|TRAPNO|CSGSFS|XMM|YMM|ZMM|ST|x\\d|[vf]\\d|r\\d|cr\\d|pstate|psw|ctr|msr|xer|fpscr|cpsr|(?:fr|f)\\d)\\s*=)|^$))"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: register_mapping_entry
+        match: "(?i)^\\s*((?:R|E)?(?:AX|BX|CX|DX|SI|DI|BP|SP|8[D-W]|9[D-W]|10[D-W]|11[D-W]|12[D-W]|13[D-W]|14[D-W]|15[D-W]|IP|FLAGS|RFLAGS|FSBASE|GSBASE|CS|DS|SS|FS|GS|ES|ERR|TRAPNO|CSGSFS|XMM\\d+|YMM\\d+|ZMM\\d+|ST\\d|x(?:\\d{1,2}|p|c?sp|pc|lr|fp)|[vf]\\d{1,2}|r\\d{1,2}|cr\\d|pstate|psw|ctr|msr|xer|fpscr|cpsr|(?:fr|f)\\d{1,2}))\\s*=\\s*(0x[0-9a-fA-F]+)"
+        captures:
+          1: variable.language.register.hserr
+          2: constant.numeric.hex.address.hserr
+      - include: global_patterns
+
+  # — Top of Stack —
+  top_of_stack:
+    begin: "^(Top of Stack:)\\s+\\(sp=(0x[0-9a-fA-F]+)\\)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+      2: constant.numeric.hex.address.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Instructions (hex dump) —
+  instructions:
+    begin: "^(Instructions:)\\s+\\(pc=(0x[0-9a-fA-F]+)\\)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+      2: constant.numeric.hex.address.hserr
+    patterns:
+      - name: faulting_instruction
+        match: "^(=>)\\s+"
+        captures:
+          1: keyword.operator.hserr
+      - include: global_patterns
+
+  # — Stack slot to memory mapping —
+  stack_slot_mapping:
+    begin: "^(Stack slot to memory mapping:)\\s*$"
+    end: "(?=^\\S)"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Lock stack —
+  lock_stack:
+    begin: "^(Lock stack of current Java thread.*:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Current CompileTask —
+  current_compile_task:
+    begin: "^(Current CompileTask:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: tier
+        match: "\\b(c[12])\\b"
+        scope: keyword.other.tier.hserr
+      - include: global_patterns
+
+  # — Error during error reporting —
+  error_during_error:
+    match: "^(\\[error occurred during error reporting \\()(.+?)(\\), id )(0x[0-9a-fA-F]+)(,?\\s*)(.*)(\\])"
+    captures:
+      1: invalid.deprecated.error-during-error.hserr
+      2: invalid.deprecated.error-during-error.hserr
+      3: invalid.deprecated.error-during-error.hserr
+      4: constant.numeric.hex.address.hserr
+      5: invalid.deprecated.error-during-error.hserr
+      6: invalid.deprecated.error-during-error.hserr
+      7: invalid.deprecated.error-during-error.hserr
+
+  # — Code blob (disassembly blocks) —
+  code_blob:
+    begin: "^(-{80})$"
+    end: "^(-{80})$"
+    beginCaptures:
+      1: comment.line.separator.hserr
+    endCaptures:
+      1: comment.line.separator.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Generic sub-section (fallback for unknown labeled blocks) —
+  generic_subsection:
+    match: "^(\\S[^:]*:)\\s*$"
+    captures:
+      1: markup.heading.2.hserr
+
+  # =========================================================================
+  # PROCESS SECTION
+  # =========================================================================
+  process_section:
+    begin: "^(-{10,}\\s+P R O C E S S\\s+-{10,})$"
+    end: "(?=^-{10,}\\s+S Y S T E M)"
+    beginCaptures:
+      1: markup.heading.1.hserr
+    patterns:
+      - include: "#error_during_error"
+      - include: "#thread_list"
+      - include: "#threads_smr"
+      - include: "#threads_with_active_compile"
+      - include: "#event_log"
+      - include: "#dynamic_libraries"
+      - include: "#vm_arguments"
+      - include: "#global_flags"
+      - include: "#environment_variables"
+      - include: "#signal_handlers"
+      - include: "#heap_block"
+      - include: "#heap_regions"
+      - include: "#card_table"
+      - include: "#marking_bits"
+      - include: "#metaspace"
+      - include: "#code_cache"
+      - include: "#gc_precious_log"
+      - include: "#nmt_report"
+      - include: "#compiler_memory"
+      - include: "#internal_statistics"
+      - include: "#logging_config"
+      - include: "#release_file"
+      - include: "#active_locale"
+      - include: "#vm_mutex"
+      - include: "#jfr_settings"
+      - include: "#process_single_line_items"
+      - include: "#process_generic_subsection"
+      - include: global_patterns
+
+  # — Thread lists (Java Threads / Other Threads) —
+  thread_list:
+    begin: "^((?:Java|Other) Threads:.*)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: thread_entry
+        match: "^(=>)?\\s*(0x[0-9a-fA-F]+)\\s+(\\S+)\\s+(\"[^\"]*\")\\s*(daemon)?\\s*(\\[)([^\\]]*)(\\])"
+        captures:
+          1: keyword.operator.current-thread.hserr
+          2: constant.numeric.hex.address.hserr
+          3: entity.name.type.thread.hserr
+          4: string.quoted.double.hserr
+          5: keyword.other.daemon.hserr
+          6: punctuation.bracket.hserr
+          7: constant.language.state.hserr
+          8: punctuation.bracket.hserr
+      - name: thread_entry_extended
+        # Handle thread entries with extra properties like lock_count, priority, etc.
+        match: "^(=>)?\\s*(0x[0-9a-fA-F]+)\\s+(\\S+)\\s+(\"[^\"]*\")\\s*(daemon)?(?:\\s+\\(.*\\))?(?:\\s+\\[)([^\\]]*)(\\])"
+        captures:
+          1: keyword.operator.current-thread.hserr
+          2: constant.numeric.hex.address.hserr
+          3: entity.name.type.thread.hserr
+          4: string.quoted.double.hserr
+          5: keyword.other.daemon.hserr
+          6: constant.language.state.hserr
+          7: punctuation.bracket.hserr
+      - name: total_line
+        match: "^(Total:)\\s+(\\d+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+      - include: global_patterns
+
+  # — Threads class SMR info —
+  threads_smr:
+    begin: "^(Threads class SMR info:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Threads with active compile tasks —
+  threads_with_active_compile:
+    begin: "^(Threads with active compile tasks:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: total_line
+        match: "^(Total:)\\s+(\\d+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+      - include: global_patterns
+
+  # — Event logs —
+  # Handles multi-line events (e.g., GC Heap Usage History) with {/} blocks and embedded blank lines
+  event_log:
+    begin: "^(.*?\\(\\d+ events?\\):)\\s*$"
+    end: "(?=^(?=[^ \\t]|$)(?![E]vent:|No events|\\{|\\}))"
+    # Ends when encountering a non-event line (no indentation, not 'Event:', not 'No events')
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: event_entry
+        match: "^(Event:)\\s+(\\d+(?:\\.\\d+)?)(\\s+)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.timestamp.hserr
+          3: ""
+          4: ""
+      - name: no_events
+        match: "^No events$"
+        scope: comment.line.hserr
+      - include: global_patterns
+
+  # — Dynamic libraries —
+  dynamic_libraries:
+    begin: "^(Dynamic libraries:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      # macOS: addr\tpath
+      - name: macos_lib
+        match: "^(0x[0-9a-fA-F]+)\\t(.+)"
+        captures:
+          1: constant.numeric.hex.address.hserr
+          2: string.unquoted.path.hserr
+      # Linux /proc/self/maps: addr_range perms offset dev inode [path]
+      - name: linux_lib
+        match: "^([0-9a-fA-F]+-[0-9a-fA-F]+)\\s+([r-][w-][x-][ps-])\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s*(.*)"
+        captures:
+          1: constant.numeric.hex.address.hserr
+          2: keyword.other.permissions.hserr
+          3: constant.numeric.hex.address.hserr
+          4: constant.numeric.hserr
+          5: constant.numeric.integer.hserr
+          6: string.unquoted.path.hserr
+
+  # — VM Arguments —
+  vm_arguments:
+    begin: "^(VM Arguments:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: vm_arg_label
+        match: "^(jvm_args|java_command|java_class_path \\(initial\\)|Launcher Type):(.+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: string.unquoted.path.hserr
+
+  # — Global flags —
+  global_flags:
+    begin: "^(\\[Global flags\\])\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: flag_entry
+        match: "^\\s*(bool|int|uint|intx|uintx|uint64_t|size_t|double|ccstr|ccstrlist)\\s+(\\S+)\\s*=\\s*(\\S+)\\s*(\\{[^}]+\\})\\s*(\\{[^}]+\\})(?:\\s+(.*))?"
+        captures:
+          1: storage.type.flag.hserr
+          2: variable.other.flag.hserr
+          3: constant.other.hserr
+          4: entity.name.type.attribute.hserr
+          5: entity.name.type.attribute.hserr
+          6: comment.line.description.hserr
+      - include: global_patterns
+
+  # — Environment Variables —
+  environment_variables:
+    begin: "^(Environment Variables:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: env_var
+        match: "^([A-Z_][A-Z0-9_]*)=(.*)"
+        captures:
+          1: variable.other.env.hserr
+          2: string.unquoted.path.hserr
+
+  # — Signal Handlers —
+  signal_handlers:
+    begin: "^(Signal Handlers:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: signal_handler
+        match: "^\\s+((?:SIG|EXCEPTION_)[A-Z_]+)(:)(.*)"
+        captures:
+          1: entity.name.function.handler.hserr
+          2: punctuation.separator.hserr
+          3: ""
+      - include: global_patterns
+
+  # — Heap —
+  heap_block:
+    begin: "^(Heap:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: gc_type
+        match: "\\b(?:garbage-first heap|Shenandoah Heap|ZHeap|PSYoungGen|PSOldGen|ParOldGen|def new generation|tenured generation)\\b"
+        scope: entity.name.type.gc.hserr
+      - include: global_patterns
+
+  # — Heap Regions —
+  heap_regions:
+    begin: "^(Heap Regions:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Card table —
+  card_table:
+    match: "^(Card table byte_map:)\\s+(.*)"
+    captures:
+      1: entity.name.tag.hserr
+
+  # — Marking Bits —
+  marking_bits:
+    begin: "^(Marking Bits:)\\s+(.*)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Metaspace —
+  metaspace:
+    begin: "^(Metaspace\\b.*)"
+    end: "(?=^(?!Metaspace|\\s|Usage:|Virtual space:|Chunk freelists:|MaxMetaspaceSize:|CompressedClassSpaceSize:|Initial GC|Current GC|CDS:|Narrow klass|Encoding Range:|Klass Range:|Klass ID Range:|Protection zone:|UseCompressedClassPointers|Internal statistics:)(?:\\S))"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: metaspace_stats
+        match: "\\b(used|committed|reserved)\\s+(\\d+)([KMG])"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+          3: constant.numeric.size.hserr
+      - include: global_patterns
+
+  # — Code cache —
+  # Continuous block: CodeHeap entries, CodeCache: summary, total_blobs stats, Compilation: status
+  # all without blank-line separators
+  code_cache:
+    begin: "^(Code(?:Heap|Cache)\\b.*)"
+    end: "(?=^(?!\\s*(Code|bounds|total_blobs|nmethods|adapters|full_count|Compilation)))"
+    # Ends when encountering a non-code-cache line
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: cache_stats
+        match: "(size|used|max_used|free)=(\\d+)([KMG]?[Bb]?)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+          3: constant.numeric.size.hserr
+      - name: blob_stats
+        match: "(total_blobs|nmethods|adapters|full_count)=(\\d+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+      - name: compilation_status
+        match: "^(Compilation:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+      - include: global_patterns
+
+  # — GC Precious Log —
+  gc_precious_log:
+    begin: "^(GC Precious Log:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Native Memory Tracking —
+  nmt_report:
+    begin: "^(Native Memory Tracking:)\\s*$"
+    end: "(?=^[^ \\t(-])"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: nmt_category
+        # Format: -  Category (reserved=NKB, committed=NKB)
+        match: "^-\\s+(.+?)\\s+\\(reserved=(\\d+)([KMG]?B),\\s+committed=(\\d+)([KMG]?B)\\)"
+        captures:
+          1: entity.name.type.hserr
+          2: constant.numeric.integer.hserr
+          3: constant.numeric.size.hserr
+          4: constant.numeric.integer.hserr
+          5: constant.numeric.size.hserr
+      - name: nmt_total
+        # Format: Total: reserved=NKB, committed=NKB
+        match: "^(Total:)\\s+reserved=(\\d+)([KMG]?B),\\s+committed=(\\d+)([KMG]?B)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+          3: constant.numeric.size.hserr
+          4: constant.numeric.integer.hserr
+          5: constant.numeric.size.hserr
+      - include: global_patterns
+
+  # — Compiler Memory Statistic —
+  compiler_memory:
+    begin: "^(Compiler Memory Statistic.*)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Internal statistics —
+  internal_statistics:
+    begin: "^(Internal statistics:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Logging —
+  logging_config:
+    begin: "^(Logging:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Release file —
+  release_file:
+    begin: "^(Release file:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: release_entry
+        match: "^(\\w+)=(\"[^\"]*\")"
+        captures:
+          1: entity.name.tag.hserr
+          2: string.quoted.double.hserr
+
+  # — Active Locale —
+  active_locale:
+    begin: "^(Active Locale:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: locale_entry
+        match: "^(LC_\\w+)=(.*)"
+        captures:
+          1: variable.other.env.hserr
+          2: string.unquoted.hserr
+
+  # — VM Mutex info —
+  vm_mutex:
+    begin: "^(VM Mutex/Monitor.*)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — JFR Settings (Java Flight Recorder) —
+  jfr_settings:
+    begin: "^(JFR settings:)\\s*$"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Process section single-line items —
+  process_single_line_items:
+    patterns:
+      - name: uid_line
+        match: "^(uid)\\s+:\\s+(\\d+)\\s+(euid)\\s+:\\s+(\\d+)\\s+(gid)\\s+:\\s+(\\d+)\\s+(egid)\\s+:\\s+(\\d+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+          3: entity.name.tag.hserr
+          4: constant.numeric.integer.hserr
+          5: entity.name.tag.hserr
+          6: constant.numeric.integer.hserr
+          7: entity.name.tag.hserr
+          8: constant.numeric.integer.hserr
+
+      - name: umask_line
+        match: "^(umask:)\\s+(\\d+)\\s+(\\([^)]+\\))"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+          3: string.unquoted.hserr
+
+      - name: vm_state
+        match: "^(VM state:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.language.vm-state.hserr
+
+      - name: heap_address
+        match: "^(Heap address:)\\s+(0x[0-9a-fA-F]+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.hex.address.hserr
+
+      - name: compilation_line
+        match: "^(Compilation:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: cds_line
+        match: "^(CDS archive.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: polling_page
+        match: "^(Polling page:)\\s+(0x[0-9a-fA-F]+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.hex.address.hserr
+
+      - name: jvmti_line
+        match: "^(JVMTI agents:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: preinit_line
+        match: "^(Preinit state:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: periodic_trim
+        match: "^(Periodic native trim)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: encoding_range
+        match: "^(Encoding Range:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: klass_range
+        match: "^(Klass Range:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: klass_id_range
+        match: "^(Klass ID Range:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: protection_zone
+        match: "^(Protection zone:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: malloc_limit
+        match: "^(MallocLimit:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: compilation_standalone
+        # Compilation: when appearing as process item, not code_cache owner
+        match: "^(Compilation:)\\s+(disabled|enabled|tiered|\\S+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.other.hserr
+
+      - name: decoder_state
+        match: "^(Decoder state:)\\s+(.*)"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: vm_error_count
+        match: "^(VM Error Count:)\\s+(\\d+)"
+        captures:
+          1: entity.name.tag.hserr
+          2: constant.numeric.integer.hserr
+
+      - name: current_thread_is_native
+        match: "^(Current thread is native thread)\\s*$"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: sigstack_overflow
+        match: "^(Sigstack overflow)\\s*$"
+        captures:
+          1: entity.name.tag.hserr
+
+      - name: register_window_table_overflow
+        match: "^(Register window table overflow)\\s*$"
+        captures:
+          1: entity.name.tag.hserr
+
+  # — Process generic subsection fallback —
+  process_generic_subsection:
+    match: "^(\\S[^:]*:)\\s*$"
+    captures:
+      1: markup.heading.2.hserr
+
+  # =========================================================================
+  # SYSTEM SECTION
+  # =========================================================================
+  system_section:
+    begin: "^(-{10,}\\s+S Y S T E M\\s+-{10,})$"
+    end: "(?=^END\\.)"
+    beginCaptures:
+      1: markup.heading.1.hserr
+    patterns:
+      - include: "#os_info"
+      - include: "#cpu_info"
+      - include: "#memory_info"
+      - include: "#vm_info"
+      - include: "#system_generic_subsection"
+      - include: global_patterns
+
+  # — OS info —
+  # On Linux, OS: contains multi-line sub-blocks (/proc/meminfo, /sys/kernel/mm,
+  # Process Memory, /proc/sys, container information, Virtualization information)
+  # with blank lines between sub-blocks. Continues through blank lines until CPU:
+  os_info:
+    begin: "^(OS:)\\s*$"
+    end: "(?=^CPU:|^-{10,})"
+    # Ends at CPU: section or next major section marker
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - name: uname
+        match: "^(uname:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+      - name: rlimit
+        match: "(rlimit)"
+        scope: entity.name.tag.hserr
+      - name: load_average
+        match: "^(load average:)(.*)"
+        captures:
+          1: entity.name.tag.hserr
+      - include: global_patterns
+
+  # — CPU info —
+  cpu_info:
+    begin: "^(CPU:)\\s*(.*)"
+    end: "^$"
+    beginCaptures:
+      1: markup.heading.2.hserr
+    patterns:
+      - include: global_patterns
+
+  # — Memory info —
+  memory_info:
+    match: "^(Memory:)\\s+(.*)"
+    captures:
+      1: markup.heading.2.hserr
+
+  # — vm_info line —
+  vm_info:
+    match: "^(vm_info:)\\s+(.*)"
+    captures:
+      1: markup.heading.2.hserr
+
+  # — System generic subsection fallback —
+  system_generic_subsection:
+    match: "^(\\S[^:]*:)\\s*$"
+    captures:
+      1: markup.heading.2.hserr
+
+  # =========================================================================
+  # END marker
+  # =========================================================================
+  end_marker:
+    match: "^(END\\.)\\s*$"
+    captures:
+      1: keyword.control.end.hserr

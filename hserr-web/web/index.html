@@ -4,16 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>hs_err Parser — Parse, Redact &amp; Export</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='18' font-weight='bold' fill='%2358a6ff' text-anchor='middle'%3Ehs%3C/text%3E%3C/svg%3E" />
+<link rel="icon" type="image/svg+xml" href="assets/hserr-icon.svg" />
 
 <!-- highlight.js for syntax highlighting (JSON + plaintext) -->
 <link rel="stylesheet" href="lib/github-dark.min.css" />
 <script src="lib/highlight.min.js"></script>
 
-<!-- CodeMirror 5 for JSON config editing -->
+<!-- CodeMirror 5 for JSON config and hs_err source editing -->
 <link rel="stylesheet" href="lib/codemirror.min.css" />
 <script src="lib/codemirror.min.js"></script>
 <script src="lib/cm-javascript.min.js"></script>
+<script src="lib/cm5-hserr.js"></script>
 
 <style>
   :root {
@@ -109,25 +110,31 @@
     cursor: pointer; font-weight: 600; font-size: 0.95rem;
     color: var(--accent); margin-bottom: 0.5rem;
   }
-  #config-area, #source-output {
+  #config-area {
     width: 100%; font-family: var(--font-mono);
     font-size: 0.8rem; background: var(--surface); color: var(--text);
     border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem;
     resize: vertical;
+    min-height: 200px;
   }
-  #config-area { min-height: 200px; }
+
+  #source-output {
+    width: 100%; font-family: var(--font-mono);
+    font-size: 0.8rem; border-radius: 0;
+    min-height: 300px;
+  }
 
   /* CodeMirror overrides to match site theme */
   .CodeMirror {
     background: var(--surface) !important;
     color: var(--text) !important;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 0;
     font-family: var(--font-mono);
     font-size: 0.8rem;
     height: auto;
-    min-height: 200px;
-    max-height: 400px;
+    min-height: 300px;
+    max-height: 60vh;
   }
   .CodeMirror-gutters {
     background: var(--surface) !important;
@@ -141,13 +148,22 @@
   .cm-s-default .cm-number { color: #79c0ff !important; }
   .cm-s-default .cm-atom { color: #ff7b72 !important; }
   .cm-s-default .cm-property { color: #d2a8ff !important; }
+  .cm-s-default .cm-keyword { color: #ff7b72 !important; }
+  .cm-s-default .cm-variable-2 { color: #f85149 !important; }
+  .cm-s-default .cm-variable-3 { color: #79c0ff !important; }
+  .cm-s-default .cm-variable { color: #d2a8ff !important; }
+  .cm-s-default .cm-type { color: #79c0ff !important; }
+  .cm-s-default .cm-header { color: #58a6ff !important; font-weight: bold; }
+  .cm-s-default .cm-link { color: #58a6ff !important; text-decoration: underline; }
+  .cm-s-default .cm-error { color: #f85149 !important; font-weight: bold; }
+  .cm-s-default .cm-comment { color: #8b949e !important; font-style: italic; }
+  .cm-s-default .cm-tag { color: #7ee787 !important; }
+  .cm-s-default .cm-def { color: #ffa657 !important; }
+  .cm-s-default .cm-qualifier { color: #d2a8ff !important; }
+  .cm-s-default .cm-meta { color: #8b949e !important; }
   .CodeMirror-matchingbracket { color: var(--green) !important; outline: 1px solid var(--green); }
-  .CodeMirror-scroll { max-height: 400px; }
-  #source-output {
-    min-height: 300px; white-space: pre; word-break: normal;
-    overflow: auto; line-height: 1.4; border: none; border-radius: 0;
-    outline: none; tab-size: 4;
-  }
+  .CodeMirror-scroll { max-height: 60vh; }
+  #panel-source .CodeMirror { border-radius: 0 0 8px 8px; }
   .config-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
 
   /* ── footer ─────────────────────────────────────── */
@@ -252,7 +268,7 @@
   </div>
 
   <div class="panel" id="panel-source" style="display:block">
-    <textarea id="source-output" spellcheck="false" placeholder="Paste hs_err file contents here..."></textarea>
+    <div id="source-output" placeholder="Paste hs_err file contents here..."></div>
   </div>
   <div class="panel" id="panel-json">
     <pre><code id="json-output" class="language-json">Waiting for file…</code></pre>
@@ -308,6 +324,30 @@
           window.cmConfigEditor.save();
           ta.dispatchEvent(new Event('input', {bubbles: true}));
         });
+      }
+    })();
+
+    // Initialize CodeMirror 5 for source hs_err file
+    (function() {
+      var div = document.getElementById('source-output');
+      if (typeof CodeMirror !== 'undefined') {
+        window._cmSourceSuppressChange = false;
+        window.cmSourceEditor = CodeMirror(div, {
+          mode: 'hserr',
+          lineNumbers: true,
+          matchBrackets: true,
+          lineWrapping: true,
+          tabSize: 4,
+          indentWithTabs: false,
+          readOnly: false,
+          autofocus: false
+        });
+        window.cmSourceEditor.on('change', function() {
+          if (window._cmSourceSuppressChange) return;
+          div.dispatchEvent(new Event('input', {bubbles: true}));
+        });
+        // Prevent the editor from stealing focus on page load
+        window.cmSourceEditor.getInputField().blur();
       }
     })();
 
@@ -400,11 +440,10 @@
         var panel = getActivePanel();
         if (!panel) return;
 
-        // For source panel (textarea), use browser find or skip highlighting
-        var sourceTextarea = panel.querySelector('textarea');
-        if (sourceTextarea) {
-          // Highlight in textarea via selection
-          var text = sourceTextarea.value;
+         // For source panel (CodeMirror 5), use CodeMirror search
+         if (panel.id === 'panel-source' && typeof window.cmSourceEditor !== 'undefined') {
+           var editor = window.cmSourceEditor;
+           var text = editor.getValue();
           var lower = text.toLowerCase();
           var q = query.toLowerCase();
           var count = 0;
@@ -417,8 +456,11 @@
           }
           countEl.textContent = count > 0 ? count + ' match' + (count > 1 ? 'es' : '') : 'No matches';
           if (firstIdx >= 0) {
-            sourceTextarea.focus();
-            sourceTextarea.setSelectionRange(firstIdx, firstIdx + q.length);
+             editor.focus();
+             var fromPos = editor.posFromIndex(firstIdx);
+             var toPos = editor.posFromIndex(firstIdx + q.length);
+             editor.setSelection(fromPos, toPos);
+             editor.scrollIntoView(fromPos, 100);
           }
           return;
         }

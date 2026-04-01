@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -22,7 +21,6 @@ import java.util.regex.Pattern;
  * <ul>
  *   <li>{@link #redactUsernames} — usernames discovered in paths (/Users/X/, /home/X/)</li>
  *   <li>{@link #redactHostnames} — hostname from Summary host line and uname</li>
- *   <li>{@link #redactPids} — PIDs and thread IDs from header</li>
  *   <li>{@link #redactEnvVars} — environment variable values (except safe list)</li>
  *   <li>{@link #redactPaths} — absolute paths (optionally keep filename)</li>
  *   <li>{@link #redactThreadNames} — thread names</li>
@@ -49,7 +47,6 @@ public final class RedactionConfig {
 
     @JsonProperty private boolean redactUsernames = true;
     @JsonProperty private boolean redactHostnames = true;
-    @JsonProperty private boolean redactPids = true;
     @JsonProperty private boolean redactEnvVars = true;
     @JsonProperty private boolean redactPaths = true;
     @JsonProperty private boolean redactThreadNames = false;
@@ -76,8 +73,6 @@ public final class RedactionConfig {
     @JsonProperty private String userPlaceholder = "REDACTED_USER";
     @JsonProperty private String hostPlaceholder = "REDACTED_HOST";
     @JsonProperty private String pathPlaceholder = "<redacted-path>";
-    @JsonProperty private String pidPlaceholder = "0";
-    @JsonProperty private String tidPlaceholder = "0";
 
     // ── configurable sensitive strings ───────────────────────────────────
 
@@ -120,7 +115,6 @@ public final class RedactionConfig {
     public RedactionConfig(RedactionConfig other) {
         this.redactUsernames = other.redactUsernames;
         this.redactHostnames = other.redactHostnames;
-        this.redactPids = other.redactPids;
         this.redactEnvVars = other.redactEnvVars;
         this.redactPaths = other.redactPaths;
         this.redactThreadNames = other.redactThreadNames;
@@ -132,8 +126,6 @@ public final class RedactionConfig {
         this.userPlaceholder = other.userPlaceholder;
         this.hostPlaceholder = other.hostPlaceholder;
         this.pathPlaceholder = other.pathPlaceholder;
-        this.pidPlaceholder = other.pidPlaceholder;
-        this.tidPlaceholder = other.tidPlaceholder;
         this.additionalUsernames.addAll(other.additionalUsernames);
         this.additionalHostnames.addAll(other.additionalHostnames);
         this.hostnameIgnoreList.addAll(other.hostnameIgnoreList);
@@ -169,7 +161,6 @@ public final class RedactionConfig {
 
     public boolean redactUsernames()         { return redactUsernames; }
     public boolean redactHostnames()         { return redactHostnames; }
-    public boolean redactPids()              { return redactPids; }
     public boolean redactEnvVars()           { return redactEnvVars; }
     public boolean redactPaths()             { return redactPaths; }
     public boolean redactThreadNames()       { return redactThreadNames; }
@@ -181,8 +172,6 @@ public final class RedactionConfig {
     public String userPlaceholder()          { return userPlaceholder; }
     public String hostPlaceholder()          { return hostPlaceholder; }
     public String pathPlaceholder()          { return pathPlaceholder; }
-    public String pidPlaceholder()           { return pidPlaceholder; }
-    public String tidPlaceholder()           { return tidPlaceholder; }
     public List<String> additionalUsernames()   { return Collections.unmodifiableList(additionalUsernames); }
     public List<String> additionalHostnames()   { return Collections.unmodifiableList(additionalHostnames); }
     public List<String> hostnameIgnoreList()     { return Collections.unmodifiableList(hostnameIgnoreList); }
@@ -194,7 +183,6 @@ public final class RedactionConfig {
 
     public RedactionConfig setRedactUsernames(boolean v)        { this.redactUsernames = v; return this; }
     public RedactionConfig setRedactHostnames(boolean v)        { this.redactHostnames = v; return this; }
-    public RedactionConfig setRedactPids(boolean v)             { this.redactPids = v; return this; }
     public RedactionConfig setRedactEnvVars(boolean v)          { this.redactEnvVars = v; return this; }
     public RedactionConfig setRedactPaths(boolean v)            { this.redactPaths = v; return this; }
     public RedactionConfig setRedactThreadNames(boolean v)      { this.redactThreadNames = v; return this; }
@@ -206,9 +194,6 @@ public final class RedactionConfig {
     public RedactionConfig setUserPlaceholder(String v)         { this.userPlaceholder = v; return this; }
     public RedactionConfig setHostPlaceholder(String v)         { this.hostPlaceholder = v; return this; }
     public RedactionConfig setPathPlaceholder(String v)         { this.pathPlaceholder = v; return this; }
-    public RedactionConfig setPidPlaceholder(String v)          { this.pidPlaceholder = v; return this; }
-    public RedactionConfig setTidPlaceholder(String v)          { this.tidPlaceholder = v; return this; }
-
     public RedactionConfig addAdditionalUsername(String username) {
         additionalUsernames.add(username);
         return this;
@@ -247,7 +232,6 @@ public final class RedactionConfig {
     /** Preset: only redact usernames and hostnames. */
     public static RedactionConfig minimal() {
         return new RedactionConfig()
-                .setRedactPids(false)
                 .setRedactEnvVars(false)
                 .setRedactPaths(false)
                 .setRedactIpAddresses(false);

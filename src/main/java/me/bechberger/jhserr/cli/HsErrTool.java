@@ -50,7 +50,7 @@ public class HsErrTool implements Runnable {
             mixinStandardHelpOptions = true)
     public static class RedactCmd implements Callable<Integer> {
 
-        @Parameters(index = "0", description = "Path to the hs_err file (use - for stdin)")
+        @Parameters(description = "Path to the hs_err file (use - for stdin)")
         private String file;
 
         @Option(names = {"-o", "--output"}, description = "Write output to FILE instead of stdout")
@@ -194,7 +194,7 @@ public class HsErrTool implements Runnable {
                 description = {"Convert an hs_err file to JSON."},
                 mixinStandardHelpOptions = true)
         public static class ToCmd implements Callable<Integer> {
-            @Parameters(index = "0", description = "Path to the hs_err file (use - for stdin)")
+            @Parameters(description = "Path to the hs_err file (use - for stdin)")
             private String file;
 
             @Option(names = {"-o", "--output"}, description = "Write JSON to FILE instead of stdout")
@@ -217,7 +217,7 @@ public class HsErrTool implements Runnable {
                 description = {"Convert a JSON file back to hs_err text format."},
                 mixinStandardHelpOptions = true)
         public static class FromCmd implements Callable<Integer> {
-            @Parameters(index = "0", description = "Path to the JSON file (use - for stdin)")
+            @Parameters(description = "Path to the JSON file (use - for stdin)")
             private String file;
 
             @Option(names = {"-o", "--output"}, description = "Write hs_err text to FILE instead of stdout")
@@ -272,7 +272,7 @@ public class HsErrTool implements Runnable {
             mixinStandardHelpOptions = true)
     public static class RoundTripCmd implements Callable<Integer> {
 
-        @Parameters(index = "0", description = "Path to an hs_err file or directory to scan recursively")
+        @Parameters(description = "Path to an hs_err file or directory to scan recursively")
         Path path;
 
         @Option(names = {"--json"}, description = "Also run JSON round-trip when text round-trip succeeds")
@@ -387,6 +387,7 @@ public class HsErrTool implements Runnable {
                         }
                     });
                 }
+                //noinspection InfiniteLoopStatement
                 while (true) {
                     WatchKey key = watcher.take();
                     Path watchedDir = (Path) key.watchable();
@@ -397,6 +398,7 @@ public class HsErrTool implements Runnable {
                         Path changed = watchedDir.resolve(ev.context());
                         if (Files.isRegularFile(changed) && isHsErrFile(changed)) {
                             // Small delay to let the file be fully written
+                            //noinspection BusyWait
                             Thread.sleep(200);
                             System.err.println();
                             testFile(changed);

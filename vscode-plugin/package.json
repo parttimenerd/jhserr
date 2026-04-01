@@ -1,0 +1,84 @@
+{
+  "name": "hserr-syntax",
+  "displayName": "HotSpot Error Report (hs_err)",
+  "description": "Syntax highlighting for HotSpot hs_err crash report files",
+  "version": "0.1.0",
+  "publisher": "bechberger",
+  "license": "MIT",
+  "icon": "icon.png",
+  "main": "./out/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parttimenerd/jhserr"
+  },
+  "homepage": "https://github.com/parttimenerd/jhserr/",
+  "bugs": {
+    "url": "https://github.com/parttimenerd/jhserr/issues"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "activationEvents": [
+    "onLanguage:hserr"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "hotspot",
+    "java",
+    "jvm",
+    "hs_err",
+    "crash-report",
+    "error-report",
+    "crash-dump"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "hserr",
+        "aliases": [
+          "HotSpot Error Report",
+          "hs_err",
+          "hserr"
+        ],
+        "icon": {
+          "light": "./icons/hserr-file-light.svg",
+          "dark": "./icons/hserr-file-dark.svg"
+        },
+        "filenames": [
+          "hserr_example",
+          "found_hs_err.log"
+        ],
+        "filenamePatterns": [
+          "hs_err_pid*.log",
+          "hs_err*.log",
+          "hserr*.log",
+          "replay_pid*.log"
+        ],
+        "firstLine": "^#\\s*$",
+        "mimeTypes": [
+          "text/x-hserr"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "hserr",
+        "scopeName": "source.hserr",
+        "path": "./syntaxes/hserr.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "sync-assets": "node ./scripts/sync-assets.mjs",
+    "compile": "npm run sync-assets && tsc -p ./",
+    "watch": "npm run sync-assets && tsc -watch -p ./",
+    "package": "npm run sync-assets && npx @vscode/vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.70.0",
+    "typescript": "^5.0.0"
+  }
+}

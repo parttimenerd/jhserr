@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Parsed CodeCache section with individual heap entries.
  * Replaces generic NamedSection for "CodeCache:" sections.
- *
+ * <p>
  * Contains multiple CodeHeapEntry records plus aggregate totals.
  */
 public record CodeCacheInfo(

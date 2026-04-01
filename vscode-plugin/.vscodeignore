@@ -1,0 +1,12 @@
+.github/**
+.vscode/**
+codemirror/**
+highlightjs/**
+src/**
+node_modules/**
+hserr.grammar.yaml
+gen_icon.py
+tsconfig.json
+**/.gitignore
+*.vsix
+**/*.map

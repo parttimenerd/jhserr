@@ -45,14 +45,6 @@ class TransformTest {
         assertThat(engine.findings()).anyMatch(f -> f.contains("Username"));
     }
 
-    @Test
-    void redactionFindsPid() throws Exception {
-        HsErrReport report = loadMacOS();
-        RedactionEngine engine = new RedactionEngine();
-        report.accept(engine);
-        assertThat(engine.findings()).anyMatch(f -> f.contains("PID"));
-    }
-
     // ── HsErrTransformer (identity) ──────────────────────────────────────
 
     @Test
@@ -159,19 +151,6 @@ class TransformTest {
     }
 
     // ── RedactionTransformer ─────────────────────────────────────────────
-
-    @Test
-    void redactionTransformerRedactsPid() throws Exception {
-        HsErrReport original = loadMacOS();
-        RedactionTransformer transformer = new RedactionTransformer();
-        HsErrReport redacted = transformer.transform(original);
-
-        assertThat(original.header().pid()).isEqualTo("16540");
-        assertThat(redacted.header().pid()).isEqualTo("0");
-        assertThat(redacted.header().errorDetail()).contains("pid=0");
-        assertThat(redacted.header().errorDetail()).doesNotContain("pid=16540");
-        assertThat(transformer.redactions()).anyMatch(r -> r.contains("PID"));
-    }
 
     @Test
     void redactionTransformerRedactsHostname() throws Exception {
@@ -364,7 +343,6 @@ class TransformTest {
     @Test
     void redactionConfigJsonRoundTrip() throws Exception {
         RedactionConfig config = new RedactionConfig()
-                .setRedactPids(false)
                 .setUserPlaceholder("USER")
                 .setHostPlaceholder("HOST")
                 .addAdditionalUsername("alice")
@@ -375,7 +353,6 @@ class TransformTest {
         String json = config.toJson();
         RedactionConfig restored = RedactionConfig.fromJson(json);
 
-        assertThat(restored.redactPids()).isFalse();
         assertThat(restored.userPlaceholder()).isEqualTo("USER");
         assertThat(restored.hostPlaceholder()).isEqualTo("HOST");
         assertThat(restored.additionalUsernames()).containsExactly("alice");
@@ -494,10 +471,8 @@ class TransformTest {
 
         // Should find hostname from uname
         assertThat(engine.hostnames()).isNotEmpty();
-        // Should find PID
-        assertThat(engine.findings()).anyMatch(f -> f.contains("PID"));
-        // Should find at least hostname + PID findings
-        assertThat(engine.findings()).hasSizeGreaterThanOrEqualTo(2);
+        // Should find at least hostname findings
+        assertThat(engine.findings()).hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -603,7 +578,7 @@ class TransformTest {
         RedactionTransformer transformer = new RedactionTransformer(config);
         HsErrReport redacted = transformer.transform(original);
 
-        // PIDs should NOT be redacted in minimal mode
+        // PIDs are never redacted (not sensitive)
         assertThat(redacted.header().pid()).isEqualTo(original.header().pid());
         // But hostname should still be redacted
         assertThat(transformer.hostnames()).isNotEmpty();
