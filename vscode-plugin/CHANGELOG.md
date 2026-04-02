@@ -4,7 +4,12 @@ All notable changes to the hs_err syntax extension will be documented in this fi
 
 Follows [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.1.2]
+
+### Fixed
+- Screenshot in README.md was not displayed
+
+## [0.1.1]
 
 ### Changed
 - Better file detection

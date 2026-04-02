@@ -2,7 +2,7 @@
 
 Syntax highlighting for HotSpot crash report files such as `hs_err_pid*.log` to let you read and navigate them more easily. The grammar is tuned for real hs_err files, covering signals, threads, stack frames, registers (x86/ARM/PPC/s390x), heap, GC, NMT, and all other sections found in real hs_err files.
 
-![Screenshot](./img/screenshot.png)
+![Screenshot](https://github.com/parttimenerd/jhserr/raw/main/vscode-plugin/img/screenshot.png)
 
 This extension is part of the main `jhserr` project:
 https://github.com/parttimenerd/jhserr
