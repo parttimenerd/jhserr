@@ -2,6 +2,8 @@
 
 Syntax highlighting for HotSpot crash report files such as `hs_err_pid*.log` to let you read and navigate them more easily. The grammar is tuned for real hs_err files, covering signals, threads, stack frames, registers (x86/ARM/PPC/s390x), heap, GC, NMT, and all other sections found in real hs_err files.
 
+![Screenshot](./img/screenshot.png)
+
 This extension is part of the main `jhserr` project:
 https://github.com/parttimenerd/jhserr
 
@@ -44,10 +46,6 @@ are automatically recognised as hs_err if they contain the characteristic
 header and section banners.
 
 **File icons** for common hs_err filenames.
-
-## Screenshot
-
-TODO: add screenshot of the extension highlighting a real `hs_err_pid*.log` file.
 
 ## Build and Package (local)
 

@@ -6,6 +6,9 @@ Follows [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- Better file detection
+
 ## [0.1.0]
 
 ### Added
