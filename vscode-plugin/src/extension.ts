@@ -13,6 +13,20 @@ const SUBSECTION_RE = /^([A-Z][\w /().]+:)\s*$/;
 /** Sub-section headings with inline content (e.g. "CPU: total 12 ...") */
 const SUBSECTION_INLINE_RE = /^([A-Z][\w /().]+:)\s+\S/;
 
+/**
+ * Internal sub-headings that appear inside larger blocks (e.g. inside
+ * Metaspace:, CodeCache:, etc.) and should NOT become outline entries.
+ */
+const SUPPRESSED_HEADINGS = new Set([
+  "Usage:",
+  "Virtual space:",
+  "Chunk freelists:",
+  "Non-Class:",
+  "Class:",
+  "Both:",
+  "Event:",
+]);
+
 /** Headings that always carry inline content — match even if the general
  *  SUBSECTION_INLINE_RE wouldn't fire (e.g. lower-case start for vm_info). */
 const INLINE_HEADINGS = new Set([
@@ -27,6 +41,18 @@ const INLINE_HEADINGS = new Set([
   "Command Line:",
   "Heap address:",
   "VM state:",
+  "Page Sizes:",
+  "Open File Descriptors:",
+]);
+
+/**
+ * System-section headings that start lower-case or have special formatting.
+ * These don't match the generic SUBSECTION_RE (requires uppercase start).
+ */
+const SYSTEM_HEADINGS_LC = new Set([
+  "uname:",
+  "libc:",
+  "vm_info:",
 ]);
 
 /** Event log headings like  Events (1000 events):  or  Compilation events (250 events): */
@@ -44,6 +70,36 @@ const SIGINFO_RE = /^siginfo:\s+/;
 
 /** VM_Operation (0x...): ... */
 const VM_OPERATION_RE = /^VM_Operation \(/;
+
+/** System section: rlimit line */
+const RLIMIT_RE = /^rlimit \(soft\/hard\):/;
+
+/** System section: load average line */
+const LOAD_AVG_RE = /^load average:/;
+
+/** System section: OS uptime line */
+const OS_UPTIME_RE = /^OS uptime:/;
+
+/** System section: /proc/... or /sys/... or /etc/... file headings (Linux) */
+const PROC_PATH_RE = /^(\/(?:proc|sys|etc)\/[\w./()-]+)/;
+
+/** System section: container (cgroup) information: */
+const CONTAINER_RE = /^container \(cgroup\) information:/;
+
+/** System section: Process Memory: */
+const PROCESS_MEMORY_RE = /^Process Memory:/;
+
+/** System section: NUMA node N: ... */
+const NUMA_NODE_RE = /^(NUMA node \d+):?/;
+
+/** System section: Steal ticks ... */
+const STEAL_TICKS_RE = /^Steal ticks/;
+
+/** System section: CPU Model and flags from /proc/cpuinfo: */
+const CPU_MODEL_RE = /^CPU Model and flags from/;
+
+/** NUMA node information: (parent heading, keep; children are noise) */
+const NUMA_INFO_RE = /^NUMA node information:/;
 
 /** Horizontal rule (code blob separator): 80+ dashes */
 const HLINE_RE = /^-{80,}$/;
@@ -154,6 +210,14 @@ function lineEnd(document: vscode.TextDocument, line: number): vscode.Position {
   return new vscode.Position(line, document.lineAt(line).text.length);
 }
 
+/** Max chars for inline detail shown in the outline. */
+const MAX_DETAIL = 80;
+
+/** Truncate a string, appending … if it exceeds `max` chars. */
+function truncate(s: string, max = MAX_DETAIL): string {
+  return s.length <= max ? s : s.slice(0, max) + "…";
+}
+
 /** Close the range of a DocumentSymbol so it extends from its start to `endLine`. */
 function closeRange(
   sym: vscode.DocumentSymbol,
@@ -165,19 +229,89 @@ function closeRange(
 
 /**
  * Detect a sub-section heading from a line of text.
- * Returns the heading label (including the colon) or `undefined`.
+ * Returns [label, inlineContent] or `undefined`.
+ * `inlineContent` is the text after the label on the same line (may be empty).
  */
-function matchSubsection(text: string): string | undefined {
+function matchSubsection(text: string): [string, string] | undefined {
+  /** Helper: return [label, rest-of-line] given a label we matched. */
+  function hit(label: string): [string, string] {
+    const rest = text.slice(label.length).trim();
+    return [label, rest];
+  }
+
   // Standalone heading  e.g. "Registers:"
   const solo = SUBSECTION_RE.exec(text);
   if (solo) {
-    return solo[1];
+    if (SUPPRESSED_HEADINGS.has(solo[1])) {
+      return undefined;
+    }
+    return hit(solo[1]);
   }
 
   // Event log heading  e.g. "Events (1000 events):"
   const ev = EVENT_LOG_RE.exec(text);
   if (ev) {
-    return ev[1];
+    return hit(ev[1]);
+  }
+
+  // Lower-case system headings  e.g. "uname: ...", "libc: ..."
+  for (const lc of SYSTEM_HEADINGS_LC) {
+    if (text.startsWith(lc)) {
+      return hit(lc);
+    }
+  }
+
+  // rlimit (soft/hard):
+  if (RLIMIT_RE.test(text)) {
+    return hit("rlimit:");
+  }
+
+  // load average:
+  if (LOAD_AVG_RE.test(text)) {
+    return ["load average:", text.slice("load average:".length).trim()];
+  }
+
+  // OS uptime:
+  if (OS_UPTIME_RE.test(text)) {
+    return ["OS uptime:", text.slice("OS uptime:".length).trim()];
+  }
+
+  // container (cgroup) information:
+  if (CONTAINER_RE.test(text)) {
+    return hit("container (cgroup) information:");
+  }
+
+  // Process Memory:
+  if (PROCESS_MEMORY_RE.test(text)) {
+    return hit("Process Memory:");
+  }
+
+  // /proc/meminfo, /sys/kernel/... etc.
+  const procMatch = PROC_PATH_RE.exec(text);
+  if (procMatch) {
+    return hit(procMatch[1]);
+  }
+
+  // CPU Model and flags from /proc/cpuinfo:
+  if (CPU_MODEL_RE.test(text)) {
+    return hit("CPU Model and flags:");
+  }
+
+  // NUMA node information:
+  if (NUMA_INFO_RE.test(text)) {
+    return hit("NUMA node information:");
+  }
+
+  // NUMA node N:  (individual nodes)
+  const numaMatch = NUMA_NODE_RE.exec(text);
+  if (numaMatch) {
+    const label = numaMatch[1] + ":";
+    return [label, text.slice(numaMatch[0].length).trim()];
+  }
+
+  // Steal ticks ...
+  if (STEAL_TICKS_RE.test(text)) {
+    return hit("Steal ticks:");
   }
 
   // Special multi-word headings with inline data
@@ -186,17 +320,12 @@ function matchSubsection(text: string): string | undefined {
     const label = inl[1];
     // Accept if it's in our explicit set
     if (INLINE_HEADINGS.has(label)) {
-      return label;
+      return hit(label);
     }
     // Accept any single-word Title-case label with inline data  (e.g. "Heap: ...")
-    if (/^[A-Z]\w+:$/.test(label)) {
-      return label;
+    if (/^[A-Z]\w+:$/.test(label) && !SUPPRESSED_HEADINGS.has(label)) {
+      return hit(label);
     }
-  }
-
-  // vm_info: starts lower-case — special handling
-  if (text.startsWith("vm_info:")) {
-    return "vm_info:";
   }
 
   return undefined;
@@ -348,9 +477,10 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       }
 
       // --- Generic sub-section headings ---
-      const subLabel = matchSubsection(text);
-      if (subLabel && currentSection) {
-        pushChild(subLabel, "", vscode.SymbolKind.Field, line);
+      const subMatch = matchSubsection(text);
+      if (subMatch && currentSection) {
+        const [label, inline] = subMatch;
+        pushChild(label, truncate(inline), vscode.SymbolKind.Field, line);
         continue;
       }
     }

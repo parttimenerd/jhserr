@@ -1,10 +1,10 @@
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="hs_err file icon dark">
-  <rect x="14" y="10" width="100" height="108" rx="14" fill="#0d1117" stroke="#58a6ff" stroke-width="6"/>
-  <path d="M84 10v28h30" fill="#0d1117" stroke="#58a6ff" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="14" y="10" width="100" height="108" rx="14" fill="none" stroke="#58a6ff" stroke-width="6"/>
+  <path d="M84 10v28h30" fill="none" stroke="#58a6ff" stroke-width="6" stroke-linejoin="round"/>
   <path d="M34 47h46" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"/>
   <path d="M34 64h34" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"/>
   <path d="M34 81h28" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"/>
   <circle cx="86" cy="84" r="16" fill="#f85149"/>
-  <rect x="83.5" y="75" width="5" height="12" rx="2.5" fill="#ffffff"/>
-  <circle cx="86" cy="91.5" r="2.7" fill="#ffffff"/>
+  <rect x="83.5" y="75" width="5" height="12" rx="2.5" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+  <circle cx="86" cy="91.5" r="2.7" fill="none" stroke="#ffffff" stroke-width="1.5"/>
 </svg>
