@@ -25,6 +25,15 @@ const SUPPRESSED_HEADINGS = new Set([
   "Class:",
   "Both:",
   "Event:",
+  // Metaspace internals
+  "MaxMetaspaceSize:",
+  "CompressedClassSpaceSize:",
+  "CDS:",
+  // NMT internals
+  "Total:",
+  "MallocLimit:",
+  // Logging internals
+  "Log output configuration:",
 ]);
 
 /** Headings that always carry inline content — match even if the general
@@ -116,8 +125,8 @@ const HLINE_RE = /^-{80,}$/;
 const HEADER_ERROR_RE =
   /^#\s+(SIGSEGV|SIGBUS|SIGFPE|SIGILL|SIGTRAP|EXCEPTION_\w+|Internal Error|Out of Memory Error)\b/;
 
-/** Problematic frame (V/C/J/j/v frame line in header) */
-const HEADER_FRAME_RE = /^#\s+([VvCJjA])\s+/;
+/** Problematic frame (V/C/J/j/v frame line in header) — capture function name */
+const HEADER_FRAME_RE = /^#\s+[VvCJjA]\s+(?:\[\S+\]\s+)?(.+?)(?:\+0x[0-9a-fA-F]+)?\s*$/;
 
 // ---------------------------------------------------------------------------
 // Content detection
@@ -127,33 +136,38 @@ const HEADER_FRAME_RE = /^#\s+([VvCJjA])\s+/;
 const BUG_REPORT_URL = "https://bugreport.java.com/bugreport/crash.jsp";
 
 /**
- * Heuristic content-based detection for hs_err files.
+ * Heuristic content-based detection for hs_err / VM.info files.
  * Requires BOTH:
- *  1. The characteristic bug-report URL in the # header, AND
+ *  1. A characteristic marker in the # header (bug-report URL, or
+ *     JRE version / Java VM lines from jcmd VM.info output), AND
  *  2. A spaced-letter section banner (e.g. ---  T H R E A D  ---).
  */
 function looksLikeHsErr(document: vscode.TextDocument): boolean {
   const lang = document.languageId;
-  if (lang !== "plaintext" && lang !== "log") {
+  // Skip if already detected, or if the language is a rich/programming language
+  if (lang === "hserr" || /^(?:java|python|c|cpp|csharp|javascript|typescript|json|xml|html|css|markdown|yaml|toml|ini|sql|ruby|go|rust|swift|kotlin|scala|php|perl|bash|zsh|sh|powershell|bat|dockerfile|makefile|cmake|properties)$/.test(lang)) {
     return false;
   }
 
   const scanLines = Math.min(document.lineCount, 150);
-  let hasBugReportUrl = false;
+  let hasMarker = false;
   let hasSectionBanner = false;
 
   for (let i = 0; i < scanLines; i++) {
     const text = document.lineAt(i).text;
 
     if (text.includes(BUG_REPORT_URL)) {
-      hasBugReportUrl = true;
+      hasMarker = true;
+    }
+    if (/^#\s+(?:JRE version:|Java VM:)/.test(text)) {
+      hasMarker = true;
     }
 
     if (BANNER_RE.test(text)) {
       hasSectionBanner = true;
     }
 
-    if (hasBugReportUrl && hasSectionBanner) {
+    if (hasMarker && hasSectionBanner) {
       return true;
     }
   }
@@ -169,6 +183,82 @@ function detectAndSetLanguage(document: vscode.TextDocument): void {
   if (looksLikeHsErr(document)) {
     vscode.languages.setTextDocumentLanguage(document, "hserr");
   }
+}
+
+/**
+ * Check raw file bytes for hs_err markers without opening a full TextDocument.
+ * Returns true if the file looks like an hs_err / VM.info report.
+ */
+function looksLikeHsErrRaw(content: string): boolean {
+  const lines = content.split(/\r?\n/, 150);
+  let hasMarker = false;
+  let hasBanner = false;
+  for (const line of lines) {
+    if (line.includes(BUG_REPORT_URL)) { hasMarker = true; }
+    if (/^#\s+(?:JRE version:|Java VM:)/.test(line)) { hasMarker = true; }
+    if (BANNER_RE.test(line)) { hasBanner = true; }
+    if (hasMarker && hasBanner) { return true; }
+  }
+  return false;
+}
+
+/**
+ * Simple string hash (djb2) for cache keys.
+ */
+function hashString(s: string): number {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  }
+  return h >>> 0;
+}
+
+/** Cache key for workspace-level detection results. */
+const CACHE_KEY = "hserr.detectionCache";
+
+interface DetectionCache {
+  [key: string]: boolean; // hash of first 200 chars → isHsErr
+}
+
+/**
+ * Scan workspace for .log and .txt files that might be hs_err reports.
+ * Uses a cache (hash of first 200 chars → result) stored in workspaceState
+ * to avoid re-reading files that haven't changed.
+ */
+async function scanWorkspaceFiles(state: vscode.Memento): Promise<void> {
+  const cache: DetectionCache = state.get<DetectionCache>(CACHE_KEY, {});
+  const newCache: DetectionCache = {};
+
+  const uris = await vscode.workspace.findFiles("**/*.{log,txt}", undefined, 200);
+  for (const uri of uris) {
+    try {
+      const bytes = await vscode.workspace.fs.readFile(uri);
+      // Read first 200 chars for cache key, first 8KB for detection
+      const prefix = String.fromCharCode(...bytes.slice(0, 200));
+      const key = String(hashString(prefix));
+
+      let isHsErr: boolean;
+      if (key in cache) {
+        isHsErr = cache[key];
+      } else {
+        const slice = bytes.byteLength > 8192 ? bytes.slice(0, 8192) : bytes;
+        const head = String.fromCharCode(...slice);
+        isHsErr = looksLikeHsErrRaw(head);
+      }
+      newCache[key] = isHsErr;
+
+      if (isHsErr) {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        if (doc.languageId !== "hserr") {
+          await vscode.languages.setTextDocumentLanguage(doc, "hserr");
+        }
+      }
+    } catch {
+      // Skip files that can't be read
+    }
+  }
+
+  await state.update(CACHE_KEY, newCache);
 }
 
 // ---------------------------------------------------------------------------
@@ -189,17 +279,25 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  // Content-based detection: check already-open editors
-  for (const editor of vscode.window.visibleTextEditors) {
-    detectAndSetLanguage(editor.document);
+  // Content-based detection: check all already-loaded documents
+  for (const doc of vscode.workspace.textDocuments) {
+    detectAndSetLanguage(doc);
   }
 
-  // Content-based detection: check newly opened documents
+  // Content-based detection: check newly opened documents and tab switches
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((doc) => {
       detectAndSetLanguage(doc);
+    }),
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (editor) {
+        detectAndSetLanguage(editor.document);
+      }
     })
   );
+
+  // Scan workspace files for hs_err reports (sets icons in explorer)
+  scanWorkspaceFiles(context.workspaceState);
 }
 
 export function deactivate() {}
@@ -346,6 +444,8 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     let currentSection: vscode.DocumentSymbol | undefined;
     let lastChild: vscode.DocumentSymbol | undefined;
     let headerDescription = "";
+    /** True while inside a /proc/ or /sys/ or /etc/ content block. */
+    let inProcBlock = false;
 
     /** Close the previous child span up to `endLine`. */
     const closePrevChild = (endLine: number) => {
@@ -396,6 +496,7 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       // --- Major section banners ---
       const bannerMatch = BANNER_RE.exec(text);
       if (bannerMatch) {
+        inProcBlock = false;
         closePrevSection(i > 0 ? i - 1 : i);
         const name = bannerMatch[1].replace(/\s+/g, " ");
         currentSection = new vscode.DocumentSymbol(
@@ -410,7 +511,9 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
       }
 
       // --- Header section (lines starting with #) ---
-      if (i === 0 && text.startsWith("#")) {
+      // For VM.info output, there may be preamble lines before the first #.
+      // Detect # header block wherever it starts (before first banner).
+      if (!currentSection && text.startsWith("#")) {
         currentSection = new vscode.DocumentSymbol(
           "Header",
           "",
@@ -422,12 +525,25 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
         continue;
       }
 
-      // Extract error type from header for the description
+      // Extract error type and problematic frame from header for the description
       if (currentSection?.name === "Header") {
         const errMatch = HEADER_ERROR_RE.exec(text);
         if (errMatch && !headerDescription) {
           headerDescription = errMatch[1];
           currentSection.detail = headerDescription;
+        }
+        const frameMatch = HEADER_FRAME_RE.exec(text);
+        if (frameMatch) {
+          let func = frameMatch[1];
+          // Strip trailing (args) or JVM signature
+          func = func.replace(/\(.*$/, "");
+          // For J frames: strip leading compile-id and tier
+          func = func.replace(/^\d+\s+(?:c[12]\s+)?/, "").trim();
+          if (headerDescription) {
+            currentSection.detail = `${headerDescription} at ${func}`;
+          } else {
+            currentSection.detail = func;
+          }
         }
       }
 
@@ -479,28 +595,26 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
         continue;
       }
 
-      // --- GC invocation entries (inside GC Heap History) ---
+      // --- GC invocation entries (update parent detail, don't list individually) ---
       const gcMatch = GC_INVOCATION_RE.exec(text);
-      if (gcMatch && currentSection) {
-        const beforeAfter = gcMatch[1].toLowerCase();
-        const invocations = parseInt(gcMatch[2], 10);
-        const full = gcMatch[3];
-        const gcNum = beforeAfter === "before" ? invocations + 1 : invocations;
-        pushChild(
-          `GC #${gcNum} (${beforeAfter})`,
-          `full ${full}`,
-          vscode.SymbolKind.Event,
-          line
-        );
+      if (gcMatch && lastChild) {
+        lastChild.detail = `${gcMatch[2]} GCs (${gcMatch[3]} full)`;
         continue;
       }
 
       // --- Generic sub-section headings ---
-      const subMatch = matchSubsection(text);
-      if (subMatch && currentSection) {
-        const [label, inline] = subMatch;
-        pushChild(label, truncate(inline), vscode.SymbolKind.Field, line);
-        continue;
+      if (!inProcBlock) {
+        const subMatch = matchSubsection(text);
+        if (subMatch && currentSection) {
+          const [label, inline] = subMatch;
+          if (PROC_PATH_RE.test(text)) {
+            inProcBlock = true;
+          }
+          pushChild(label, truncate(inline), vscode.SymbolKind.Field, line);
+          continue;
+        }
+      } else if (text.trim() === "") {
+        inProcBlock = false;
       }
     }
 
@@ -525,12 +639,15 @@ class HserrFoldingRangeProvider implements vscode.FoldingRangeProvider {
     let subsectionStart = -1;
     let headerStart = -1;
     let codeBlockStart = -1;
+    /** True while inside a /proc/ or /sys/ or /etc/ content block. */
+    let inProcBlock = false;
 
     for (let i = 0; i < document.lineCount; i++) {
       const text = document.lineAt(i).text;
 
       // --- Major section banners ---
       if (BANNER_RE.test(text)) {
+        inProcBlock = false;
         // Close previous subsection and section
         if (subsectionStart >= 0 && i - 1 > subsectionStart) {
           ranges.push(
@@ -547,9 +664,10 @@ class HserrFoldingRangeProvider implements vscode.FoldingRangeProvider {
         continue;
       }
 
-      // --- Header block (# lines at start) ---
-      if (i === 0 && text.startsWith("#")) {
-        headerStart = 0;
+      // --- Header block (# lines) ---
+      // For VM.info output, the # header may not start at line 0.
+      if (headerStart < 0 && sectionStart < 0 && text.startsWith("#")) {
+        headerStart = i;
         continue;
       }
       if (headerStart >= 0 && !text.startsWith("#") && text.trim() === "") {
@@ -579,15 +697,22 @@ class HserrFoldingRangeProvider implements vscode.FoldingRangeProvider {
       }
 
       // --- Sub-section headings ---
+      if (inProcBlock) {
+        if (text.trim() === "") {
+          inProcBlock = false;
+        }
+      } else {
       const isSub =
         matchSubsection(text) !== undefined ||
         CURRENT_THREAD_RE.test(text) ||
         SIGINFO_RE.test(text) ||
         COMPILE_TASK_RE.test(text) ||
-        VM_OPERATION_RE.test(text) ||
-        GC_INVOCATION_RE.test(text);
+        VM_OPERATION_RE.test(text);
 
       if (isSub) {
+        if (PROC_PATH_RE.test(text)) {
+          inProcBlock = true;
+        }
         // Close previous subsection
         if (subsectionStart >= 0 && i - 1 > subsectionStart) {
           ranges.push(
@@ -595,6 +720,7 @@ class HserrFoldingRangeProvider implements vscode.FoldingRangeProvider {
           );
         }
         subsectionStart = i;
+      }
       }
     }
 
