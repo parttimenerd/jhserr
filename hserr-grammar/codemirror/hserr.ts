@@ -389,10 +389,14 @@ function tokenize(stream: any, state: State): any {
     if (stream.match(ERROR_GENERIC_RE))return t.literal;
     // Header label tags
     if (stream.match(/JRE version:|Java VM:|Problematic frame:/)) return t.tagName;
+    // OpenJDK product names
+    if (stream.match(/OpenJDK (?:Runtime Environment|64-Bit (?:Server|Client) VM)/)) return t.typeName;
+    // JVM vendor/distribution names
+    if (stream.match(/\b(?:SapMachine|GraalVM|Temurin|Corretto|Zulu|Semeru|Dragonwell|Liberica|Mandrel|HotSpot)\b/)) return t.typeName;
     // Build type keywords
     if (stream.match(/\b(?:slowdebug|fastdebug|release|product|debug|optimized)\b/)) return t.keyword;
     // VM feature multi-word keywords
-    if (stream.match(/(?:mixed mode|compressed oops|compressed class ptrs|emulated-client)/)) return t.keyword;
+    if (stream.match(/(?:mixed mode|compressed oops|compressed class ptrs|compact obj headers|emulated-client)/)) return t.keyword;
     // VM feature single-word keywords
     if (stream.match(/\b(?:sharing|tiered|interpreted)\b/)) return t.keyword;
     // GC type references in VM info
@@ -407,6 +411,11 @@ function tokenize(stream: any, state: State): any {
     if (stream.match(/\bat\b/)) return t.keyword;
     // 'build' keyword (in JRE version line)
     if (stream.match(/\bbuild\b/)) return t.keyword;
+    // LTS version tag
+    if (stream.match(/\bLTS\b/)) return t.keyword;
+    // Crash context messages
+    if (stream.match(/The crash happened outside the Java Virtual Machine in native code/)) return t.keyword;
+    if (stream.match(/See problematic frame for where to report the bug/)) return t.keyword;
     // URLs
     if (stream.match(/https?:\/\/[^\s]+/)) return t.link;
     // Library references [lib+0x...]
@@ -415,6 +424,10 @@ function tokenize(stream: any, state: State): any {
     if (stream.match(/\([^)]+\.(?:cpp|hpp|c|h|java):\d+\)/)) return t.string;
     // Thread types
     if (stream.match(THREAD_TYPES_RE)) return t.typeName;
+    // C/C++ type keywords (in native function signatures on problematic frame)
+    if (stream.match(/\b(?:int|char|void|unsigned|signed|long|short|float|double|const|bool|size_t|uint\d+_t|int\d+_t)\b/)) return t.typeName;
+    // Platform/compiler type identifiers (e.g. __siginfo)
+    if (stream.match(/__\w+/)) return t.typeName;
   }
 
   // Register assignments (in registers block or register mapping)
