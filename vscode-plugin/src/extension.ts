@@ -98,6 +98,9 @@ const STEAL_TICKS_RE = /^Steal ticks/;
 /** System section: CPU Model and flags from /proc/cpuinfo: */
 const CPU_MODEL_RE = /^CPU Model and flags from/;
 
+/** GC Heap History entries: {Heap before/after GC invocations=N (full F): */
+const GC_INVOCATION_RE = /\{(?:Heap|heap|metaspace)\s+(before|after)\s+GC\s+invocations=(\d+)\s+\(full\s+(\d+)\)/i;
+
 /** NUMA node information: (parent heading, keep; children are noise) */
 const NUMA_INFO_RE = /^NUMA node information:/;
 
@@ -476,6 +479,22 @@ class HserrDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
         continue;
       }
 
+      // --- GC invocation entries (inside GC Heap History) ---
+      const gcMatch = GC_INVOCATION_RE.exec(text);
+      if (gcMatch && currentSection) {
+        const beforeAfter = gcMatch[1].toLowerCase();
+        const invocations = parseInt(gcMatch[2], 10);
+        const full = gcMatch[3];
+        const gcNum = beforeAfter === "before" ? invocations + 1 : invocations;
+        pushChild(
+          `GC #${gcNum} (${beforeAfter})`,
+          `full ${full}`,
+          vscode.SymbolKind.Event,
+          line
+        );
+        continue;
+      }
+
       // --- Generic sub-section headings ---
       const subMatch = matchSubsection(text);
       if (subMatch && currentSection) {
@@ -565,7 +584,8 @@ class HserrFoldingRangeProvider implements vscode.FoldingRangeProvider {
         CURRENT_THREAD_RE.test(text) ||
         SIGINFO_RE.test(text) ||
         COMPILE_TASK_RE.test(text) ||
-        VM_OPERATION_RE.test(text);
+        VM_OPERATION_RE.test(text) ||
+        GC_INVOCATION_RE.test(text);
 
       if (isSub) {
         // Close previous subsection
