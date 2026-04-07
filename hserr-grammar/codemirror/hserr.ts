@@ -374,19 +374,47 @@ function tokenize(stream: any, state: State): any {
 
   // Header comment body — special inner patterns
   if (state.major === 'header') {
+    // Fatal error banner message
+    if (stream.match(/A fatal error has been detected by the Java Runtime Environment/)) return t.keyword;
+    // Core dump messages
+    if (stream.match(/No core dump will be written/)) return t.keyword;
+    if (stream.match(/Core dumps have been disabled/)) return t.keyword;
+    // assert/guarantee internal error patterns
     if (stream.match(/(?:assert|guarantee)(?=\()/)) return t.keyword;
-    if (stream.match(/\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/)) return t.string;
     if (stream.match(/failed:/)) return t.invalid;
-    // After 'failed:', fall through so hex addresses and signals in the message are highlighted
+    // Signal names
     if (stream.match(SIGNALS_RE))      return t.literal;
+    // Error types
     if (stream.match(ERROR_TYPES_RE))  return t.literal;
     if (stream.match(ERROR_GENERIC_RE))return t.literal;
+    // Header label tags
     if (stream.match(/JRE version:|Java VM:|Problematic frame:/)) return t.tagName;
+    // Build type keywords
+    if (stream.match(/\b(?:slowdebug|fastdebug|release|product|debug|optimized)\b/)) return t.keyword;
+    // VM feature multi-word keywords
+    if (stream.match(/(?:mixed mode|compressed oops|compressed class ptrs|emulated-client)/)) return t.keyword;
+    // VM feature single-word keywords
+    if (stream.match(/\b(?:sharing|tiered|interpreted)\b/)) return t.keyword;
+    // GC type references in VM info
+    if (stream.match(/\b(?:g1|shenandoah|parallel|serial|epsilon|z) gc\b/i)) return t.typeName;
+    // Platform (os-arch)
+    if (stream.match(/\b(?:linux|bsd|windows|macosx|aix|solaris)-(?:aarch64|arm64|x86_64|amd64|x86|ppc64le|ppc64|s390x|riscv64)\b/)) return t.typeName;
+    // Frame type code in problematic frame line (V, C, j, J, v, A followed by [lib...])
+    if (stream.match(/[VvCJjA](?=\s{1,3}\[)/)) return t.keyword;
+    // pc=, pid=, tid= labels
+    if (stream.match(/\b(?:pc|pid|tid)=/)) return t.tagName;
+    // 'at' keyword (before pc=)
+    if (stream.match(/\bat\b/)) return t.keyword;
+    // 'build' keyword (in JRE version line)
+    if (stream.match(/\bbuild\b/)) return t.keyword;
+    // URLs
     if (stream.match(/https?:\/\/[^\s]+/)) return t.link;
+    // Library references [lib+0x...]
     if (stream.match(/\[[\w.-]+(?:\.(?:so|dylib|dll))?\+0x[0-9a-fA-F]+\]/)) return t.className;
+    // Source file:line references in parens
     if (stream.match(/\([^)]+\.(?:cpp|hpp|c|h|java):\d+\)/)) return t.string;
+    // Thread types
     if (stream.match(THREAD_TYPES_RE)) return t.typeName;
-    if (stream.match(/\b(?:pid|tid)=/)) return t.tagName;
   }
 
   // Register assignments (in registers block or register mapping)

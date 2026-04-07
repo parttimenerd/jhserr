@@ -26,7 +26,8 @@ class HsErrParserLinuxTest {
         assertThat(h.assertDetail()).isNotNull();
         assertThat(h.jreVersion()).contains("27");
         assertThat(h.javaVm()).contains("OpenJDK");
-        assertThat(h.problematicFrame()).startsWith("V");
+        assertThat(h.problematicFrame()).isNotNull();
+        assertThat(h.problematicFrame().type()).isEqualTo(me.bechberger.jhserr.model.StackFrame.Type.VM);
     }
 
     @Test

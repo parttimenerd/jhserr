@@ -86,7 +86,7 @@ public class RedactionTransformer extends HsErrTransformer {
             scanText(report.header().assertDetail());
             scanText(report.header().jreVersion());
             scanText(report.header().javaVm());
-            scanText(report.header().problematicFrame());
+            scanText(report.header().problematicFrame() != null ? report.header().problematicFrame().toString() : null);
             scanText(report.header().coreDumpLine());
             scanText(report.header().jfrFileLine());
             for (String line : report.header().extraDetailLines()) scanText(line);
@@ -224,7 +224,7 @@ public class RedactionTransformer extends HsErrTransformer {
                 scanText(l);
             }
         } else if (item instanceof ThreadList tl) {
-            for (ThreadEntry te : tl.entries()) scanText(te.line());
+            for (ThreadEntry te : tl.entries()) scanText(te.toString());
         } else if (item instanceof RegisterMemoryMapping rmm) {
             for (RegisterMemoryMapping.Entry entry : rmm.entries()) {
                 if (entry.location() instanceof me.bechberger.jhserr.model.location.LibraryLocation lib) {
@@ -287,10 +287,14 @@ public class RedactionTransformer extends HsErrTransformer {
             if (!redacted.equals(assertDet)) { b.assertDetail(redacted); changed = true; }
         }
 
-        String frame = header.problematicFrame();
+        StackFrame frame = header.problematicFrame();
         if (frame != null) {
-            String redacted = redactText(frame);
-            if (!redacted.equals(frame)) { b.problematicFrame(redacted); changed = true; }
+            String frameStr = frame.toString();
+            String redacted = redactText(frameStr);
+            if (!redacted.equals(frameStr)) {
+                b.problematicFrame(new StackFrame(redacted, frame.type()));
+                changed = true;
+            }
         }
 
         String jre = header.jreVersion();
@@ -607,17 +611,30 @@ public class RedactionTransformer extends HsErrTransformer {
 
     @Override
     protected @Nullable ThreadEntry transformThreadEntry(@NotNull ThreadEntry entry) {
-        String redacted = redactText(entry.line());
-        if (config.redactThreadNames() && entry.name() != null) {
-            redacted = redacted.replace("\"" + entry.name() + "\"",
-                    "\"" + config.redactionText() + "\"");
+        if (entry.unparsedLine() != null) {
+            String redacted = redactText(entry.unparsedLine());
+            return redacted.equals(entry.unparsedLine()) ? entry : new ThreadEntry(redacted);
         }
-        return redacted.equals(entry.line()) ? entry
-                : new ThreadEntry(redacted, entry.current(), entry.address(),
-                        entry.threadType(),
-                        config.redactThreadNames() ? config.redactionText() : entry.name(),
-                        entry.daemon(), entry.state(), entry.osThreadId(),
-                        entry.stackStart(), entry.stackEnd(), entry.stackSize(), entry.smrInfo());
+
+        boolean changed = false;
+        String name = entry.name();
+        if (config.redactThreadNames() && name != null) {
+            name = config.redactionText();
+            changed = true;
+        }
+        // Redact fields that might contain PII
+        String address = entry.address();
+        String smrInfo = entry.smrInfo();
+        if (smrInfo != null) {
+            String redactedSmr = redactText(smrInfo);
+            if (!redactedSmr.equals(smrInfo)) { smrInfo = redactedSmr; changed = true; }
+        }
+
+        return changed ? new ThreadEntry(entry.current(), address, entry.threadType(),
+                name, entry.daemon(), entry.spacingAfterName(), entry.spacingAfterDaemon(),
+                entry.state(), entry.osThreadId(), entry.stackStart(), entry.stackEnd(),
+                entry.stackSize(), smrInfo, entry.oldBracketFormat(), null)
+                : entry;
     }
 
     // SignalInfo, StackBoundsInfo, MemoryInfo: structured fields don't contain PII,

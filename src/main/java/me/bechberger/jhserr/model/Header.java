@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The '#'-prefixed header preamble before the first section banner.
@@ -45,8 +46,8 @@ public class Header {
     /** Java VM info after "Java VM: " prefix */
     private final @Nullable String javaVm;
 
-    /** Problematic frame (without "# " prefix), e.g. "C  [lib.so+0xf588]  handler+0x464" */
-    private final @Nullable String problematicFrame;
+    /** Problematic frame parsed as a StackFrame. */
+    private final @Nullable StackFrame problematicFrame;
 
     /** Process ID extracted from errorDetail */
     private final @Nullable String pid;
@@ -106,7 +107,7 @@ public class Header {
     @JsonProperty public @Nullable String assertDetail() { return assertDetail; }
     @JsonProperty public @Nullable String jreVersion() { return jreVersion; }
     @JsonProperty public @Nullable String javaVm() { return javaVm; }
-    @JsonProperty public @Nullable String problematicFrame() { return problematicFrame; }
+    @JsonProperty public @Nullable StackFrame problematicFrame() { return problematicFrame; }
     @JsonProperty public @Nullable String pid() { return pid; }
     @JsonProperty public @Nullable String tid() { return tid; }
     @JsonProperty public @Nullable String coreDumpLine() { return coreDumpLine; }
@@ -173,7 +174,7 @@ public class Header {
         private String assertDetail;
         private String jreVersion;
         private String javaVm;
-        private String problematicFrame;
+        private StackFrame problematicFrame;
         private String pid;
         private String tid;
         private String coreDumpLine;
@@ -188,7 +189,7 @@ public class Header {
         public Builder assertDetail(String v) { this.assertDetail = v; return this; }
         public Builder jreVersion(String v) { this.jreVersion = v; return this; }
         public Builder javaVm(String v) { this.javaVm = v; return this; }
-        public Builder problematicFrame(String v) { this.problematicFrame = v; return this; }
+        public Builder problematicFrame(StackFrame v) { this.problematicFrame = v; return this; }
         public Builder pid(String v) { this.pid = v; return this; }
         public Builder tid(String v) { this.tid = v; return this; }
         public Builder coreDumpLine(String v) { this.coreDumpLine = v; return this; }

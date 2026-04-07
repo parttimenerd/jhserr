@@ -53,7 +53,7 @@ public class RedactionEngine implements HsErrVisitor {
     @Override
     public void visitHeader(Header header) {
         scanForUsernames(header.jreVersion());
-        scanForUsernames(header.problematicFrame());
+        scanForUsernames(header.problematicFrame() != null ? header.problematicFrame().toString() : null);
         scanForUsernames(header.coreDumpLine());
     }
 

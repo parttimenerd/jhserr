@@ -152,7 +152,9 @@ public class HsErrParser {
             if (stripped.equals("Problematic frame:")) {
                 if (!atEnd() && current().startsWith("#")) {
                     String fRaw = advance();
-                    b.problematicFrame(fRaw.startsWith("# ") ? fRaw.substring(2) : fRaw.substring(1));
+                    String frameLine = fRaw.startsWith("# ") ? fRaw.substring(2) : fRaw.substring(1);
+                    char typeCode = frameLine.isBlank() ? 'A' : frameLine.charAt(0);
+                    b.problematicFrame(new StackFrame(frameLine, StackFrame.Type.fromCode(typeCode)));
                 }
                 continue;
             }
@@ -590,7 +592,7 @@ public class HsErrParser {
     private ThreadEntry parseThreadEntry(String line) {
         Matcher m = THREAD_ENTRY_PAT.matcher(line);
         if (!m.find()) {
-            return new ThreadEntry(line, false, null, null, line, false);
+            return new ThreadEntry(line);
         }
 
         boolean current = m.group(1) != null;
@@ -599,6 +601,22 @@ public class HsErrParser {
         String name = m.group(4);
         boolean daemon = m.group(5) != null;
 
+        // Compute spacing between close-quote and daemon/bracket
+        int afterQuote = m.end(4) + 1; // position after closing "
+        int bracketPos = line.indexOf('[', afterQuote);
+        String spacingAfterName;
+        String spacingAfterDaemon;
+        if (bracketPos < 0) {
+            spacingAfterName = line.substring(afterQuote);
+            spacingAfterDaemon = "";
+        } else if (daemon) {
+            spacingAfterName = line.substring(afterQuote, m.start(5));
+            spacingAfterDaemon = line.substring(m.end(5), bracketPos);
+        } else {
+            spacingAfterName = line.substring(afterQuote, bracketPos);
+            spacingAfterDaemon = "";
+        }
+
         // Parse state, id, stack info from bracket contents
         String state = null;
         String osThreadId = null;
@@ -606,6 +624,7 @@ public class HsErrParser {
         String stackEnd = null;
         String stackSize = null;
         String smrInfo = null;
+        boolean oldBracket = false;
 
         // Try new format: [STATE, id=N, stack(START,END) (SIZEK)]
         Matcher bm = NEW_BRACKET_PAT.matcher(line);
@@ -621,6 +640,7 @@ public class HsErrParser {
             if (sm.find()) {
                 stackStart = sm.group("start");
                 stackEnd = sm.group("end");
+                oldBracket = true;
             }
             Matcher im = OLD_ID_PAT.matcher(line);
             if (im.find()) {
@@ -634,8 +654,10 @@ public class HsErrParser {
             smrInfo = smrM.group(1).strip();
         }
 
-        return new ThreadEntry(line, current, address, threadType, name, daemon,
-                               state, osThreadId, stackStart, stackEnd, stackSize, smrInfo);
+        return new ThreadEntry(current, address, threadType, name, daemon,
+                               spacingAfterName, spacingAfterDaemon,
+                               state, osThreadId, stackStart, stackEnd, stackSize,
+                               smrInfo, oldBracket, null);
     }
 
     private EventLog parseEventLog() {

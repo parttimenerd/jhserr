@@ -29,7 +29,7 @@ public record PollingPageInfo(
     }
 
     public static @NotNull PollingPageInfo fromLine(@NotNull String line) {
-        if (!line.startsWith("Polling page:")) {
+        if (!line.startsWith(POLLING_PAGE_PREFIX)) {
             throw new IllegalArgumentException("Not a polling page line: " + line);
         }
         int colonPos = line.indexOf(':');

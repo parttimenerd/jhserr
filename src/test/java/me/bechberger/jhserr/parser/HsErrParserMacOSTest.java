@@ -25,7 +25,9 @@ class HsErrParserMacOSTest {
         assertThat(h.errorDetail()).contains("SIGSEGV").contains("pid=16540");
         assertThat(h.pid()).isEqualTo("16540");
         assertThat(h.tid()).isEqualTo("8451");
-        assertThat(h.problematicFrame()).startsWith("C  [libSmallProfiler.so");
+        assertThat(h.problematicFrame()).isNotNull();
+        assertThat(h.problematicFrame().type()).isEqualTo(me.bechberger.jhserr.model.StackFrame.Type.NATIVE);
+        assertThat(h.problematicFrame().body()).startsWith("[libSmallProfiler.so");
         assertThat(h.jreVersion()).contains("22");
         assertThat(h.javaVm()).contains("OpenJDK");
     }
