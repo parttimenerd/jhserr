@@ -1,7 +1,7 @@
 #
 # A fatal error has been detected by the Java Runtime Environment:
 #
-#  Internal Error (/priv/jenkins/ci1/client-home/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/gc/shenandoah/shenandoahFreeSet.cpp:669), pid=643832, tid=643933
+#  Internal Error (/ci/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/gc/shenandoah/shenandoahFreeSet.cpp:669), pid=643832, tid=643933
 #  assert(r->is_empty() || r->is_trash()) failed: Region must be empty or trash
 #
 # JRE version: OpenJDK Runtime Environment (27.0) (fastdebug build 27-internal-adhoc.sapmachine.jdk)
@@ -9,7 +9,7 @@
 # Problematic frame:
 # V  [libjvm.so+0x17ca644]  ShenandoahRegionPartitions::retire_range_from_partition(ShenandoahFreeSetPartitionId, long, long)+0x364
 #
-# Core dump will be written. Default location: Determined by the following: "/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E" (alternatively, falling back to /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/scratch/4/core.643832)
+# Core dump will be written. Default location: Determined by the following: "/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E" (alternatively, falling back to /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/scratch/4/core.643832)
 #
 # If you would like to submit a bug report, please visit:
 #   https://bugreport.java.com/bugreport/crash.jsp
@@ -17,9 +17,9 @@
 
 ---------------  S U M M A R Y ------------
 
-Command Line: -Dtest.vm.opts=-Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Dtest.tool.vm.opts=-J-Xmx768m -J-Djava.awt.headless=true -J-Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Dtest.getfreeport.max.tries=40 -J-ea -J-esa -Dtest.compiler.opts= -Dtest.java.opts= -Dtest.jdk=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dcompile.jdk=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dtest.timeout.factor=9.0 -Dtest.nativepath=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -Dtest.root=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg -Dtest.name=gc/shenandoah/TestAllocIntArrays.java#compact -Dtest.file=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah/TestAllocIntArrays.java -Dtest.main.class=TestAllocIntArrays -Dtest.src=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah -Dtest.src.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib -Dtest.classes=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d -Dtest.class.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Dtest.class.path.prefix=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Djava.library.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -Xmx1g -Xms1g -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact com.sun.javatest.regtest.agent.MainWrapper /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/gc/shenandoah/TestAllocIntArrays_compact.d/main.0.jta
+Command Line: -Dtest.vm.opts=-Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Dtest.tool.vm.opts=-J-Xmx768m -J-Djava.awt.headless=true -J-Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Dtest.getfreeport.max.tries=40 -J-ea -J-esa -Dtest.compiler.opts= -Dtest.java.opts= -Dtest.jdk=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dcompile.jdk=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dtest.timeout.factor=9.0 -Dtest.nativepath=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -Dtest.root=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg -Dtest.name=gc/shenandoah/TestAllocIntArrays.java#compact -Dtest.file=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah/TestAllocIntArrays.java -Dtest.main.class=TestAllocIntArrays -Dtest.src=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah -Dtest.src.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib -Dtest.classes=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d -Dtest.class.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Dtest.class.path.prefix=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Djava.library.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -Xmx1g -Xms1g -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact com.sun.javatest.regtest.agent.MainWrapper /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/gc/shenandoah/TestAllocIntArrays_compact.d/main.0.jta
 
-Host: lv3070v3, AArch64, 16 cores, 62G, Ubuntu 24.04.2 LTS
+Host: lv234234, AArch64, 16 cores, 62G, Ubuntu 24.04.2 LTS
 Time: Fri Mar 27 06:54:14 2026 CET elapsed time: 2.415923 seconds (0d 0h 0m 2s)
 
 ---------------  T H R E A D  ---------------
@@ -105,10 +105,10 @@ R30=0x0000eb2e86093024
 
 Register to memory mapping:
 
-R0 =0x0000eb2e86796ee0: <offset 0x0000000001ed6ee0> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R0 =0x0000eb2e86796ee0: <offset 0x0000000001ed6ee0> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 R1 =0x000000000000029d is an unknown value
-R2 =0x0000eb2e867981d0: <offset 0x0000000001ed81d0> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
-R3 =0x0000eb2e867981b0: <offset 0x0000000001ed81b0> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R2 =0x0000eb2e867981d0: <offset 0x0000000001ed81d0> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R3 =0x0000eb2e867981b0: <offset 0x0000000001ed81b0> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 R4 =0x0000eb2e870b2000 in mmap'd memory region [0x0000eb2e870b2000 - 0x0000eb2e870b3000], tag mtInternal
 
 R5 =0x0000000000000058 is an unknown value
@@ -117,7 +117,7 @@ R7 =0x0000000000000009 is an unknown value
 R8 =1872 is a compressed pointer to class: 0x00000004001d4000
 [Ljava.util.Set; {0x00000004001d4000}
  - instance klass: 'java/util/Set'
-R9 =0x0000eb2e86d4f020: <offset 0x000000000248f020> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R9 =0x0000eb2e86d4f020: <offset 0x000000000248f020> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 R10=0x0000eb2e80108968 into live malloced block starting at 0x0000eb2e80108960, size 696, tag mtGC
 R11=1874 is a compressed pointer to class: 0x00000004001d4800
 java.util.Map$Entry {0x00000004001d4800}
@@ -164,12 +164,12 @@ R21=0x0000000000000057 is an unknown value
 R22=0x0000eb2e80108968 into live malloced block starting at 0x0000eb2e80108960, size 696, tag mtGC
 R23=0x0000000000000056 is an unknown value
 R24=0x0 is null
-R25=0x0000eb2e86d4f020: <offset 0x000000000248f020> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R25=0x0000eb2e86d4f020: <offset 0x000000000248f020> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 R26=0x0000eb2e80108968 into live malloced block starting at 0x0000eb2e80108960, size 696, tag mtGC
-R27=0x0000eb2e86dda2e0: <offset 0x000000000251a2e0> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R27=0x0000eb2e86dda2e0: <offset 0x000000000251a2e0> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 R28=0x0 is null
 R29=0x0000eb2e5a607a50 is pointing into the stack for thread: 0x0000eb2e8054ca90
-R30=0x0000eb2e86093024: <offset 0x00000000017d3024> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+R30=0x0000eb2e86093024: <offset 0x00000000017d3024> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 
 Top of Stack: (sp=0x0000eb2e5a607a50)
 0x0000eb2e5a607a50:   0000eb2e5a607ab0 0000eb2e86093024   .z`Z....$0......
@@ -243,7 +243,7 @@ Instructions: (pc=0x0000eb2e8608a644)
 Stack slot to memory mapping:
 
 stack at sp + 0 slots: 0x0000eb2e5a607ab0 is pointing into the stack for thread: 0x0000eb2e8054ca90
-stack at sp + 1 slots: 0x0000eb2e86093024: <offset 0x00000000017d3024> in /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
+stack at sp + 1 slots: 0x0000eb2e86093024: <offset 0x00000000017d3024> in /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so at 0x0000eb2e848c0000
 stack at sp + 2 slots: 0x0000000000000056 is an unknown value
 stack at sp + 3 slots: 0x0000eb2e80108980 into live malloced block starting at 0x0000eb2e80108960, size 696, tag mtGC
 stack at sp + 4 slots: 0x0000eb2e80108960 into live malloced block starting at 0x0000eb2e80108960, size 696, tag mtGC
@@ -2758,14 +2758,14 @@ Event: 2.262 {metaspace Before GC invocations=0 (full 0):
 }
 
 Dll operation events (8 events):
-Event: 0.011 Attempting to load shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
-Event: 0.011 Loaded shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
-Event: 1.667 Attempting to load shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
-Event: 1.668 Loaded shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
-Event: 1.737 Attempting to load shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-Event: 1.737 Loaded shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-Event: 1.993 Attempting to load shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
-Event: 1.993 Loaded shared library /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+Event: 0.011 Attempting to load shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+Event: 0.011 Loaded shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+Event: 1.667 Attempting to load shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+Event: 1.668 Loaded shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+Event: 1.737 Attempting to load shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+Event: 1.737 Loaded shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+Event: 1.993 Attempting to load shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+Event: 1.993 Loaded shared library /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
 
 Deoptimization events (4 events):
 Event: 2.229 Thread 0x0000eb2e8054ca90 Uncommon trap: trap_request=0xffffff45 fr.pc=0x0000eb2e6f1ab46c relative=0x000000000000016c
@@ -2875,11 +2875,11 @@ No events
 
 Internal exceptions (3 events):
 Event: 1.564 Thread 0x0000eb2e800beb80 Exception <a 'java/lang/NoSuchMethodError'{0x00000000c012b538}: 'int java.lang.invoke.Invokers$Holder.invokeExact_MT(java.lang.Object, java.lang.Object)'> (0x00000000c012b538) 
-thrown [/priv/jenkins/ci1/client-home/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
+thrown [/ci/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
 Event: 1.797 Thread 0x0000eb2e8054ca90 Exception <a 'java/lang/NoSuchMethodError'{0x00000000c01684e8}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(java.lang.Object, java.lang.Object)'> (0x00000000c01684e8) 
-thrown [/priv/jenkins/ci1/client-home/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
+thrown [/ci/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
 Event: 1.825 Thread 0x0000eb2e8054ca90 Exception <a 'java/lang/NoSuchMethodError'{0x00000000c0173e98}: 'void java.lang.invoke.DirectMethodHandle$Holder.invokeSpecial(java.lang.Object, java.lang.Object, java.lang.Object)'> (0x00000000c0173e98) 
-thrown [/priv/jenkins/ci1/client-home/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
+thrown [/ci/workspace/openjdk-jdk-dev-linux_aarch64-dbg/jdk/src/hotspot/share/interpreter/linkResolver.cpp, line 803]
 
 VM Operations (18 events):
 Event: 2.262 Executing safepoint VM operation: Shenandoah Init Marking
@@ -2991,15 +2991,15 @@ Dynamic libraries:
 00008000-0000a000 rw-p 00000000 00:00 0 
 c0000000-100000000 rw-p 00000000 00:00 0 
 400000000-400010000 ---p 00000000 00:00 0 
-400010000-400ea0000 rw-p 00010000 fc:00 3622183                          /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/classes_coh.jsa
+400010000-400ea0000 rw-p 00010000 fc:00 3622183                          /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/classes_coh.jsa
 400ea0000-401000000 ---p 00000000 00:00 0 
 401000000-401020000 rw-p 00000000 00:00 0 
 401020000-401040000 ---p 00000000 00:00 0 
 401040000-401050000 rw-p 00000000 00:00 0 
 401050000-441000000 ---p 00000000 00:00 0 
-bd9eff9a0000-bd9eff9a2000 r-xp 00000000 fc:00 3622338                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
-bd9eff9bf000-bd9eff9c0000 r--p 0000f000 fc:00 3622338                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
-bd9eff9c0000-bd9eff9c1000 rw-p 00010000 fc:00 3622338                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
+bd9eff9a0000-bd9eff9a2000 r-xp 00000000 fc:00 3622338                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
+bd9eff9bf000-bd9eff9c0000 r--p 0000f000 fc:00 3622338                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
+bd9eff9c0000-bd9eff9c1000 rw-p 00010000 fc:00 3622338                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/bin/java
 bd9f33ab8000-bd9f33d3c000 rw-p 00000000 00:00 0                          [heap]
 eb2e5963a000-eb2e5a40c000 rw-p 00000000 00:00 0 
 eb2e5a40c000-eb2e5a410000 ---p 00000000 00:00 0 
@@ -3031,14 +3031,14 @@ eb2e5f808000-eb2e5fa02000 rw-p 00000000 00:00 0
 eb2e5fa02000-eb2e5fa06000 ---p 00000000 00:00 0 
 eb2e5fa06000-eb2e5fc00000 rw-p 00000000 00:00 0 
 eb2e5fc00000-eb2e5feeb000 r--p 00000000 fc:00 3014797                    /usr/lib/locale/locale-archive
-eb2e5ff40000-eb2e5ff48000 r-xp 00000000 fc:00 3621486                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-eb2e5ff48000-eb2e5ff5f000 ---p 00008000 fc:00 3621486                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-eb2e5ff5f000-eb2e5ff60000 r--p 0000f000 fc:00 3621486                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-eb2e5ff60000-eb2e5ff61000 rw-p 00010000 fc:00 3621486                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
-eb2e5ff70000-eb2e5ff84000 r-xp 00000000 fc:00 3621480                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
-eb2e5ff84000-eb2e5ff9f000 ---p 00014000 fc:00 3621480                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
-eb2e5ff9f000-eb2e5ffa0000 r--p 0001f000 fc:00 3621480                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
-eb2e5ffa0000-eb2e5ffa1000 rw-p 00020000 fc:00 3621480                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+eb2e5ff40000-eb2e5ff48000 r-xp 00000000 fc:00 3621486                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+eb2e5ff48000-eb2e5ff5f000 ---p 00008000 fc:00 3621486                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+eb2e5ff5f000-eb2e5ff60000 r--p 0000f000 fc:00 3621486                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+eb2e5ff60000-eb2e5ff61000 rw-p 00010000 fc:00 3621486                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libzip.so
+eb2e5ff70000-eb2e5ff84000 r-xp 00000000 fc:00 3621480                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+eb2e5ff84000-eb2e5ff9f000 ---p 00014000 fc:00 3621480                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+eb2e5ff9f000-eb2e5ffa0000 r--p 0001f000 fc:00 3621480                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
+eb2e5ffa0000-eb2e5ffa1000 rw-p 00020000 fc:00 3621480                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnio.so
 eb2e5ffaf000-eb2e600cc000 rw-p 00000000 00:00 0 
 eb2e600cc000-eb2e600dc000 ---p 00000000 00:00 0 
 eb2e600dc000-eb2e600e0000 ---p 00000000 00:00 0 
@@ -3050,10 +3050,10 @@ eb2e604e8000-eb2e604f8000 ---p 00000000 00:00 0
 eb2e604f8000-eb2e606f6000 rw-p 00000000 00:00 0 
 eb2e606f6000-eb2e60706000 ---p 00000000 00:00 0 
 eb2e60706000-eb2e60904000 rw-p 00000000 00:00 0 
-eb2e60920000-eb2e6092c000 r-xp 00000000 fc:00 3621478                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
-eb2e6092c000-eb2e6093f000 ---p 0000c000 fc:00 3621478                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
-eb2e6093f000-eb2e60940000 r--p 0000f000 fc:00 3621478                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
-eb2e60940000-eb2e60941000 rw-p 00010000 fc:00 3621478                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
+eb2e60920000-eb2e6092c000 r-xp 00000000 fc:00 3621478                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
+eb2e6092c000-eb2e6093f000 ---p 0000c000 fc:00 3621478                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
+eb2e6093f000-eb2e60940000 r--p 0000f000 fc:00 3621478                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
+eb2e60940000-eb2e60941000 rw-p 00010000 fc:00 3621478                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libnet.so
 eb2e60944000-eb2e60954000 ---p 00000000 00:00 0 
 eb2e60954000-eb2e60b52000 rw-p 00000000 00:00 0 
 eb2e60b52000-eb2e60b62000 ---p 00000000 00:00 0 
@@ -3102,7 +3102,7 @@ eb2e6f1a0000-eb2e6f410000 rwxp 00000000 00:00 0
 eb2e6f410000-eb2e76600000 ---p 00000000 00:00 0 
 eb2e76600000-eb2e76ed4000 r--s 00000000 fc:00 1311016                    /var/lib/sss/mc/passwd
 eb2e76eff000-eb2e77000000 rw-p 00000000 00:00 0 
-eb2e77000000-eb2e7ffa7000 r--s 00000000 fc:00 3621440                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/modules
+eb2e77000000-eb2e7ffa7000 r--s 00000000 fc:00 3621440                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/modules
 eb2e7ffc0000-eb2e8070b000 rw-p 00000000 00:00 0 
 eb2e8070b000-eb2e84000000 ---p 00000000 00:00 0 
 eb2e8401e000-eb2e84068000 rw-p 00000000 00:00 0 
@@ -3111,10 +3111,10 @@ eb2e84230000-eb2e8423d000 rw-p 00000000 00:00 0
 eb2e8423d000-eb2e8424e000 ---p 00000000 00:00 0 
 eb2e8424e000-eb2e84258000 rw-p 00000000 00:00 0 
 eb2e84258000-eb2e84420000 ---p 00000000 00:00 0 
-eb2e84420000-eb2e84442000 r-xp 00000000 fc:00 3621470                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
-eb2e84442000-eb2e8445f000 ---p 00022000 fc:00 3621470                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
-eb2e8445f000-eb2e84460000 r--p 0002f000 fc:00 3621470                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
-eb2e84460000-eb2e84461000 rw-p 00030000 fc:00 3621470                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+eb2e84420000-eb2e84442000 r-xp 00000000 fc:00 3621470                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+eb2e84442000-eb2e8445f000 ---p 00022000 fc:00 3621470                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+eb2e8445f000-eb2e84460000 r--p 0002f000 fc:00 3621470                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
+eb2e84460000-eb2e84461000 rw-p 00030000 fc:00 3621470                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjava.so
 eb2e84461000-eb2e84462000 rw-p 00000000 00:00 0 
 eb2e84470000-eb2e8447b000 r-xp 00000000 fc:00 3052617                    /usr/lib/aarch64-linux-gnu/libnss_sss.so.2
 eb2e8447b000-eb2e8448f000 ---p 0000b000 fc:00 3052617                    /usr/lib/aarch64-linux-gnu/libnss_sss.so.2
@@ -3134,10 +3134,10 @@ eb2e8457c000-eb2e8458f000 ---p 0000c000 fc:00 3016281                    /usr/li
 eb2e8458f000-eb2e84590000 r--p 0000f000 fc:00 3016281                    /usr/lib/aarch64-linux-gnu/libnuma.so.1.0.0
 eb2e84590000-eb2e84591000 rw-p 00010000 fc:00 3016281                    /usr/lib/aarch64-linux-gnu/libnuma.so.1.0.0
 eb2e84591000-eb2e84595000 rw-p 00000000 00:00 0 
-eb2e845a0000-eb2e845bf000 r-xp 00000000 fc:00 3621472                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
-eb2e845bf000-eb2e845de000 ---p 0001f000 fc:00 3621472                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
-eb2e845de000-eb2e845e0000 r--p 0002e000 fc:00 3621472                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
-eb2e845e0000-eb2e845e1000 rw-p 00030000 fc:00 3621472                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+eb2e845a0000-eb2e845bf000 r-xp 00000000 fc:00 3621472                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+eb2e845bf000-eb2e845de000 ---p 0001f000 fc:00 3621472                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+eb2e845de000-eb2e845e0000 r--p 0002e000 fc:00 3621472                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
+eb2e845e0000-eb2e845e1000 rw-p 00030000 fc:00 3621472                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjimage.so
 eb2e845e2000-eb2e845e6000 ---p 00000000 00:00 0 
 eb2e845e6000-eb2e847e0000 rw-p 00000000 00:00 0 
 eb2e847e0000-eb2e84865000 r-xp 00000000 fc:00 3048696                    /usr/lib/aarch64-linux-gnu/libm.so.6
@@ -3148,10 +3148,10 @@ eb2e84890000-eb2e84891000 r-xp 00000000 fc:00 3048707                    /usr/li
 eb2e84891000-eb2e848af000 ---p 00001000 fc:00 3048707                    /usr/lib/aarch64-linux-gnu/librt.so.1
 eb2e848af000-eb2e848b0000 r--p 0000f000 fc:00 3048707                    /usr/lib/aarch64-linux-gnu/librt.so.1
 eb2e848b0000-eb2e848b1000 rw-p 00010000 fc:00 3048707                    /usr/lib/aarch64-linux-gnu/librt.so.1
-eb2e848c0000-eb2e86bb3000 r-xp 00000000 fc:00 3622182                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
-eb2e86bb3000-eb2e86bc9000 ---p 022f3000 fc:00 3622182                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
-eb2e86bc9000-eb2e86cd0000 r--p 022f9000 fc:00 3622182                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
-eb2e86cd0000-eb2e86cfe000 rw-p 02400000 fc:00 3622182                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
+eb2e848c0000-eb2e86bb3000 r-xp 00000000 fc:00 3622182                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
+eb2e86bb3000-eb2e86bc9000 ---p 022f3000 fc:00 3622182                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
+eb2e86bc9000-eb2e86cd0000 r--p 022f9000 fc:00 3622182                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
+eb2e86cd0000-eb2e86cfe000 rw-p 02400000 fc:00 3622182                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/server/libjvm.so
 eb2e86cfe000-eb2e86de4000 rw-p 00000000 00:00 0 
 eb2e86df0000-eb2e86df1000 r-xp 00000000 fc:00 3048705                    /usr/lib/aarch64-linux-gnu/libpthread.so.0
 eb2e86df1000-eb2e86e0f000 ---p 00001000 fc:00 3048705                    /usr/lib/aarch64-linux-gnu/libpthread.so.0
@@ -3170,10 +3170,10 @@ eb2e8702a000-eb2e8703d000 ---p 0019a000 fc:00 3048693                    /usr/li
 eb2e8703d000-eb2e87040000 r--p 0019d000 fc:00 3048693                    /usr/lib/aarch64-linux-gnu/libc.so.6
 eb2e87040000-eb2e87042000 rw-p 001a0000 fc:00 3048693                    /usr/lib/aarch64-linux-gnu/libc.so.6
 eb2e87042000-eb2e8704e000 rw-p 00000000 00:00 0 
-eb2e87050000-eb2e8705f000 r-xp 00000000 fc:00 3621474                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
-eb2e8705f000-eb2e8706f000 ---p 0000f000 fc:00 3621474                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
-eb2e8706f000-eb2e87070000 r--p 0000f000 fc:00 3621474                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
-eb2e87070000-eb2e87071000 rw-p 00010000 fc:00 3621474                    /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
+eb2e87050000-eb2e8705f000 r-xp 00000000 fc:00 3621474                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
+eb2e8705f000-eb2e8706f000 ---p 0000f000 fc:00 3621474                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
+eb2e8706f000-eb2e87070000 r--p 0000f000 fc:00 3621474                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
+eb2e87070000-eb2e87071000 rw-p 00010000 fc:00 3621474                    /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm/lib/libjli.so
 eb2e87073000-eb2e8707a000 r--s 00000000 fc:00 3048682                    /usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache
 eb2e8707a000-eb2e870a1000 r-xp 00000000 fc:00 3048690                    /usr/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1
 eb2e870a2000-eb2e870aa000 rw-s 00000000 fc:00 1310793                    /tmp/hsperfdata_jvmtests/643832
@@ -3193,9 +3193,9 @@ JVMTI agents: none
 
 
 VM Arguments:
-jvm_args: -Dtest.vm.opts=-Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Dtest.tool.vm.opts=-J-Xmx768m -J-Djava.awt.headless=true -J-Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Dtest.getfreeport.max.tries=40 -J-ea -J-esa -Dtest.compiler.opts= -Dtest.java.opts= -Dtest.jdk=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dcompile.jdk=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dtest.timeout.factor=9.0 -Dtest.nativepath=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -Dtest.root=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg -Dtest.name=gc/shenandoah/TestAllocIntArrays.java#compact -Dtest.file=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah/TestAllocIntArrays.java -Dtest.main.class=TestAllocIntArrays -Dtest.src=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah -Dtest.src.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib -Dtest.classes=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d -Dtest.class.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Dtest.class.path.prefix=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Djava.library.path=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -Xmx1g -Xms1g -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact 
-java_command: com.sun.javatest.regtest.agent.MainWrapper /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/gc/shenandoah/TestAllocIntArrays_compact.d/main.0.jta
-java_class_path (initial): /priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib:/priv/jvmtests/artifacts/jtreg-8.2.1+1/lib/jtreg.jar
+jvm_args: -Dtest.vm.opts=-Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Dtest.tool.vm.opts=-J-Xmx768m -J-Djava.awt.headless=true -J-Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -J-Dtest.getfreeport.max.tries=40 -J-ea -J-esa -Dtest.compiler.opts= -Dtest.java.opts= -Dtest.jdk=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dcompile.jdk=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/testee-vm -Dtest.timeout.factor=9.0 -Dtest.nativepath=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -Dtest.root=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg -Dtest.name=gc/shenandoah/TestAllocIntArrays.java#compact -Dtest.file=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah/TestAllocIntArrays.java -Dtest.main.class=TestAllocIntArrays -Dtest.src=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah -Dtest.src.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib -Dtest.classes=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d -Dtest.class.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Dtest.class.path.prefix=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib -Xmx768m -Djava.awt.headless=true -Djava.util.prefs.userRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.util.prefs.systemRoot=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Djava.io.tmpdir=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/tmp -Dtest.getfreeport.max.tries=40 -ea -esa -Djava.library.path=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/native -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -Xmx1g -Xms1g -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact 
+java_command: com.sun.javatest.regtest.agent.MainWrapper /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/gc/shenandoah/TestAllocIntArrays_compact.d/main.0.jta
+java_class_path (initial): /testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib:/testfolder/artifacts/jtreg-8.2.1+1/lib/jtreg.jar
 Launcher Type: SUN_STANDARD
 
 [Global flags]
@@ -3251,7 +3251,7 @@ OS_NAME="Linux"
 SOURCE=".:git:da2e98a334f0"
 
 Environment Variables:
-CLASSPATH=/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib:/priv/jvmtests/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib:/priv/jvmtests/artifacts/jtreg-8.2.1+1/lib/jtreg.jar
+CLASSPATH=/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/hotspot/jtreg/gc/shenandoah:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg_hotspot_tier2_work/JTwork/classes/1/gc/shenandoah/TestAllocIntArrays_compact.d/test/lib:/testfolder/output_openjdk27_dev_dbgU_linuxaarch64/jtreg/test/lib:/testfolder/artifacts/jtreg-8.2.1+1/lib/jtreg.jar
 PATH=/bin:/usr/bin:/usr/sbin
 LANG=en_US.UTF-8
 
@@ -3399,7 +3399,7 @@ DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=24.04
 DISTRIB_CODENAME=noble
 DISTRIB_DESCRIPTION="Ubuntu 24.04.2 LTS"
-uname: Linux lv3070v3 6.8.0-58-generic #60-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar 14 18:09:50 UTC 2025 aarch64
+uname: Linux lv234234 6.8.0-58-generic #60-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar 14 18:09:50 UTC 2025 aarch64
 OS uptime: 325 days 21:53 hours
 libc: glibc 2.39 NPTL 2.39 
 rlimit (soft/hard): STACK 8192k/infinity , CORE infinity/infinity , NPROC 256224/256224 , NOFILE 1048576/1048576 , AS infinity/infinity , CPU infinity/infinity , DATA infinity/infinity , FSIZE infinity/infinity , MEMLOCK 8213404k/8213404k

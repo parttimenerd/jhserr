@@ -2,7 +2,7 @@
   "name": "hserr-syntax",
   "displayName": "HotSpot Error Report (hs_err)",
   "description": "Syntax highlighting for HotSpot hs_err crash report files",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "bechberger",
   "license": "MIT",
   "icon": "icon.png",
