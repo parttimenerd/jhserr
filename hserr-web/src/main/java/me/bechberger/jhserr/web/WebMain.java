@@ -260,6 +260,32 @@ public class WebMain {
                 .replace("\"", "&quot;").replace("'", "&#39;");
     }
 
+    /** Append a diff line with the changed portion highlighted inline. */
+    private static void appendWordDiffLine(StringBuilder sb, String cssClass, String wordCss,
+                                           String prefix, String line, String origLine) {
+        int prefixLen = 0;
+        int minLen = Math.min(line.length(), origLine.length());
+        while (prefixLen < minLen && line.charAt(prefixLen) == origLine.charAt(prefixLen)) {
+            prefixLen++;
+        }
+        int suffixLen = 0;
+        while (suffixLen < (minLen - prefixLen)
+                && line.charAt(line.length() - 1 - suffixLen) == origLine.charAt(origLine.length() - 1 - suffixLen)) {
+            suffixLen++;
+        }
+        sb.append("<span class=\"").append(cssClass).append("\">").append(prefix);
+        sb.append(escapeHtml(line.substring(0, prefixLen)));
+        String middle = line.substring(prefixLen, line.length() - suffixLen);
+        if (!middle.isEmpty()) {
+            sb.append("<span class=\"").append(wordCss).append("\">");
+            sb.append(escapeHtml(middle)).append("</span>");
+        }
+        if (suffixLen > 0) {
+            sb.append(escapeHtml(line.substring(line.length() - suffixLen)));
+        }
+        sb.append("</span>");
+    }
+
     /** Build a line-level diff showing only changed lines with context. */
     private static void buildDiff(String original, String redacted) {
         String[] origLines = original.split("\n", -1);
@@ -308,8 +334,8 @@ public class WebMain {
             String o = i < origLines.length ? origLines[i] : "";
             String r = i < redLines.length ? redLines[i] : "";
             if (changed[i]) {
-                sb.append("<span class=\"diff-del\">- ").append(escapeHtml(o)).append("</span>");
-                sb.append("<span class=\"diff-add\">+ ").append(escapeHtml(r)).append("</span>");
+                appendWordDiffLine(sb, "diff-del", "diff-del-word", "- ", o, r);
+                appendWordDiffLine(sb, "diff-add", "diff-add-word", "+ ", r, o);
             } else {
                 sb.append("<span class=\"diff-ctx\">  ").append(escapeHtml(o)).append("</span>\n");
             }
